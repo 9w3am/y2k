@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "미니홈피",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "./미니홈피", "run", "dev"],
+      "port": 5190,
+      "autoPort": true
+    },
+    {
+      "name": "수신함",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "./문자메이커", "run", "dev"],
+      "port": 5183,
+      "autoPort": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+/* 폰트는 직접 들고 있는다.
+   CDN 에서 불러오면 PNG 로 내보낼 때 바깥 CSS 를 읽지 못해 10초 넘게 걸린다. */
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('../fonts/Galmuri11.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Galmuri9';
+  src: url('../fonts/Galmuri9.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}

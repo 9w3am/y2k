@@ -1,0 +1,165 @@
+/* ── 받은문자함 ──────────────────────────────────────────── */
+.t-inbox {
+  position: relative;
+  --bar-1: #3aa0e8;
+  --bar-2: #1565c0;
+  --bar-line: #0c3f7d;
+  --paper: #eef4f8;
+  --paper-2: #e2ecf3;
+  --ink: #14232e;
+  --sel-1: #2f8de0;
+  --sel-2: #1256a8;
+  --status: #0f2b44;
+  --ed-hi: rgba(0, 0, 0, 0.3);
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+}
+
+.t-inbox.hue-green {
+  --bar-1: #58bf7e;
+  --bar-2: #1f8b4c;
+  --bar-line: #146336;
+  --paper: #eef7f0;
+  --paper-2: #e0efe4;
+  --sel-1: #3fae69;
+  --sel-2: #177a41;
+  --status: #123c26;
+}
+.t-inbox.hue-gray {
+  --bar-1: #9aa6b0;
+  --bar-2: #5d6a76;
+  --bar-line: #3d4750;
+  --paper: #f1f2f4;
+  --paper-2: #e5e7ea;
+  --sel-1: #8a97a3;
+  --sel-2: #4e5a65;
+  --status: #2b333b;
+}
+
+/* 통신사 줄 */
+.t-inbox .status {
+  flex: none;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--status);
+  color: #fff;
+  font-size: 16px;
+}
+.t-inbox .status-spacer {
+  flex: 1;
+}
+.t-inbox .mark {
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  font-size: 17px;
+}
+.t-inbox .ant {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.t-inbox .ant i {
+  width: 4px;
+  background: currentColor;
+}
+.t-inbox .ant i:nth-child(1) {
+  height: 5px;
+}
+.t-inbox .ant i:nth-child(2) {
+  height: 8px;
+}
+.t-inbox .ant i:nth-child(3) {
+  height: 11px;
+}
+.t-inbox .ant i:nth-child(4) {
+  height: 14px;
+}
+
+/* 타이틀 */
+.t-inbox .title {
+  flex: none;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 24px;
+  background: linear-gradient(180deg, var(--bar-1), var(--bar-2));
+  border-bottom: 2px solid var(--bar-line);
+  --ed-hi: rgba(255, 255, 255, 0.55);
+}
+
+/* 목록 */
+.t-inbox .list {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 4px 0;
+}
+.t-inbox .row {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-bottom: 1px dotted rgba(20, 35, 46, 0.28);
+}
+.t-inbox .row:nth-child(even) {
+  background: var(--paper-2);
+}
+.t-inbox .row.sel {
+  background: linear-gradient(180deg, var(--sel-1), var(--sel-2));
+  color: #fff;
+  --ed-hi: rgba(255, 255, 255, 0.55);
+  border-bottom-color: var(--bar-line);
+}
+.t-inbox .row-txt {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: normal;
+}
+/* 편집 중에는 잘리지 않게 풀어준다 */
+.t-inbox .row-txt:focus {
+  text-overflow: clip;
+}
+
+.t-inbox .mailbtn {
+  flex: none;
+  width: 26px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  display: grid;
+  place-items: center;
+}
+
+/* 소프트키 */
+.t-inbox .keys {
+  flex: none;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 21px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--bar-1), var(--bar-2));
+  border-top: 2px solid var(--bar-line);
+  --ed-hi: rgba(255, 255, 255, 0.55);
+}

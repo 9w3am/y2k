@@ -1,0 +1,62 @@
+name: 배포
+
+# main 에 올릴 때마다 두 사이트를 빌드해서 GitHub Pages 로 내보낸다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 깃허브 화면에서 손으로도 돌릴 수 있게
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 연달아 올려도 마지막 것만 배포되도록
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 아이로그 빌드
+        working-directory: 미니홈피
+        run: |
+          npm ci
+          npm run build
+
+      - name: 수신함 빌드
+        working-directory: 문자메이커
+        run: |
+          npm ci
+          npm run build
+
+      - name: 한 폴더로 모으기
+        run: |
+          mkdir -p _site
+          cp landing/index.html _site/index.html
+          cp -r 미니홈피/dist  _site/ilog
+          cp -r 문자메이커/dist _site/inbox
+          # 주소를 직접 쳐서 들어와도 앱이 뜨도록 (Pages 는 404.html 을 내려준다)
+          cp landing/index.html _site/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

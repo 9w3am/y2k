@@ -1,0 +1,306 @@
+/* ══════════════════════════════════════════════════════════
+   반응형
+   그 시절 미니홈피는 900px 고정이었지만, 지금은 폰으로도 본다.
+   넓은 화면에서는 그때 그 조판을 그대로 두고,
+   좁아지면 세로로 쌓는다.
+   ══════════════════════════════════════════════════════════ */
+
+/* 고정 폭을 전부 유동으로 */
+.gnb-in,
+.gnb-sub-in,
+.wrap {
+  width: min(900px, 100%);
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* ── 태블릿 ──────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .side {
+    width: 200px;
+  }
+  .rings {
+    width: 18px;
+    gap: 90px;
+  }
+  .tabs {
+    width: 64px;
+  }
+  .portal-2col {
+    flex-direction: column;
+  }
+  .login-box {
+    width: 250px;
+  }
+}
+
+/* ── 폰 — 세로로 쌓는다 ──────────────────────────────────── */
+@media (max-width: 700px) {
+  body {
+    font-size: 13px;
+  }
+
+  /* 글로벌 바 */
+  .gnb-in {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .gnb-menu {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .gnb-menu::-webkit-scrollbar {
+    display: none;
+  }
+  .gnb-user {
+    margin-left: auto;
+    gap: 6px;
+    font-size: 10.5px;
+  }
+  .gnb-sub-in {
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .gnb-sub-in::-webkit-scrollbar {
+    display: none;
+  }
+  .marquee {
+    display: none;
+  }
+
+  /* 책 프레임 — 여백을 줄이고 테두리도 얇게 */
+  .wrap {
+    min-height: 0;
+    padding-top: 10px;
+    padding-bottom: 14px;
+  }
+  .hompy {
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow:
+      0 0 0 2px var(--accent-2),
+      0 0 0 5px var(--paper),
+      0 0 0 6px var(--line-2),
+      0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+  .hompy::after {
+    inset: 6px;
+    border-radius: 9px;
+  }
+  .hompy-ribbon {
+    width: 70px;
+    top: -10px;
+  }
+  .hompy-top {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .hompy-title {
+    font-size: 28px;
+    order: 3;
+    width: 100%;
+  }
+  .editmark {
+    order: 4;
+  }
+
+  /* 본문 — 탭이 위로 올라오고 프로필·내용이 세로로 */
+  .hompy-body {
+    flex-direction: column;
+    min-height: 0;
+    gap: 10px;
+  }
+  .rings {
+    display: none;
+  }
+  .side {
+    width: 100%;
+  }
+  .side-pic {
+    height: 190px;
+  }
+  .side-intro {
+    min-height: 0;
+  }
+  .main {
+    width: 100%;
+  }
+
+  .tabs {
+    order: -1;
+    width: 100%;
+    flex-direction: row;
+    gap: 5px;
+    padding: 0 0 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tabs a {
+    flex: none;
+    margin-left: 0;
+    padding: 7px 13px;
+    border: 2px dotted var(--line-2);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .tabs a.on {
+    margin-left: 0;
+    border-style: solid;
+  }
+
+  /* 표 모양 줄들 */
+  .form-row {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .form-row > label {
+    width: auto;
+    padding-top: 0;
+  }
+  .counts {
+    grid-template-columns: 1fr;
+  }
+  .grid-pic,
+  .jjak-grid,
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* BGM — 줄바꿈 허용 */
+  .bgm-row {
+    flex-wrap: wrap;
+  }
+  .bgm-name {
+    order: -1;
+    width: 100%;
+    flex: none;
+  }
+  .bgm-vol {
+    width: 72px;
+  }
+
+  /* 첫 화면 */
+  .portal {
+    flex-direction: column;
+  }
+  .login-box {
+    width: 100%;
+  }
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+  .hero-t {
+    font-size: 32px;
+  }
+  .hero-btns {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .rank li,
+  .notice-list li {
+    font-size: 11px;
+  }
+
+  /* 글쓰기 상자 */
+  .rowform {
+    flex-wrap: wrap;
+  }
+
+  /* 프로그램 모드 — 폰에서는 창을 꽉 채운다 */
+  .desktop {
+    padding: 8px 0 0;
+  }
+  .desk-icons {
+    display: none;
+  }
+  .win {
+    width: 100%;
+    max-width: none;
+    height: calc(100% - 42px);
+    border-width: 2px;
+  }
+  .win-mb {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .win-tool {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .win-mb::-webkit-scrollbar,
+  .win-tool::-webkit-scrollbar {
+    display: none;
+  }
+  .win-body {
+    padding: 8px 4px;
+    margin: 3px;
+  }
+  .win-status span:nth-last-child(-n + 3) {
+    display: none;
+  }
+  .taskbar {
+    height: 38px;
+  }
+}
+
+/* ── 아주 좁은 폰 ────────────────────────────────────────── */
+@media (max-width: 420px) {
+  .grid-pic,
+  .jjak-grid,
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+  .stat-row {
+    gap: 3px 10px;
+  }
+  .hompy-title {
+    font-size: 25px;
+  }
+  .logo b {
+    font-size: 17px;
+  }
+  .gnb-user > span:first-child {
+    display: none;
+  }
+}
+
+/* ── 손가락으로 누르는 기기 ──────────────────────────────── */
+@media (pointer: coarse) {
+  .btn {
+    padding: 7px 15px;
+  }
+  .btn-x {
+    width: 24px;
+    height: 24px;
+  }
+  .tabs a {
+    padding: 9px 6px;
+  }
+  .bgm button {
+    padding: 4px 6px;
+  }
+  .bgm-bar {
+    height: 12px;
+  }
+  .inp,
+  .ta {
+    font-size: 16px; /* iOS 에서 입력할 때 화면이 확대되지 않게 */
+  }
+}

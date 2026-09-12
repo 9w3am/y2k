@@ -1,0 +1,73 @@
+/* ══════════════════════════════════════════════════════════
+   LCD 화면 효과
+   그 시절 화면은 늘 '찍은 사진'으로 남아 있었다.
+   색이 틀어지고, 서브픽셀 결이 보이고, 유리에 빛이 반사됐다.
+   이 층이 없으면 아무리 잘 그려도 요즘 목업처럼 보인다.
+   ══════════════════════════════════════════════════════════ */
+
+.screenfx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  overflow: hidden;
+}
+
+.screenfx > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* 서브픽셀 — 세로 RGB 줄과 가로 주사선 */
+.fx-grain-v {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.055) 0 1px,
+    rgba(0, 255, 0, 0.055) 1px 2px,
+    rgba(0, 60, 255, 0.055) 2px 3px
+  );
+  mix-blend-mode: multiply;
+}
+.fx-grain-h {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.115) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* 색 틀어짐 — 사진에 끼는 색조 */
+.fx-tint-mul {
+  mix-blend-mode: multiply;
+}
+.fx-tint-scr {
+  mix-blend-mode: screen;
+}
+
+/* 유리 반사 */
+.fx-glare {
+  background: linear-gradient(
+    114deg,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.08) 17%,
+    transparent 38%,
+    transparent 62%,
+    rgba(255, 255, 255, 0.06) 82%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  mix-blend-mode: screen;
+}
+
+/* 가장자리 그늘 — 액정 테두리에 눌린 자국 */
+.fx-vig {
+  box-shadow:
+    inset 0 0 28px rgba(20, 30, 40, 0.34),
+    inset 0 0 76px rgba(20, 30, 40, 0.18);
+}
+
+/* 번짐 — 화면 내용에만 걸고, 효과 층은 또렷하게 둔다 */
+.fx-soft > *:not(.screenfx) {
+  filter: blur(var(--fx-blur, 0px));
+}
+
+/* 내보낼 때도 효과는 그대로 나간다. 편집 흔적만 사라진다. */

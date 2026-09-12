@@ -1,0 +1,217 @@
+/* ── 폴더폰 문자 화면 ─────────────────────────────────────── */
+.t-smswrite {
+  --lcd-1: #f4f6f8;
+  --lcd-2: #e2e8ec;
+  --lcd-3: #cfd8de;
+  --ink: #2b2f33;
+  --ink-dim: #79838a;
+  --key: #c9ced2;
+  --key-hi: #f0f3f5;
+  --key-lo: #8d959b;
+  --key-ink: #24282b;
+  --ed-hi: rgba(0, 0, 0, 0.3);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, var(--lcd-1), var(--lcd-2) 58%, var(--lcd-3));
+  font-family: 'Malgun Gothic', Dotum, Gulim, sans-serif;
+  color: var(--ink);
+}
+
+/* 백라이트 색 */
+.t-smswrite.lcd-blue {
+  --lcd-1: #dff0fb;
+  --lcd-2: #c3e2f6;
+  --lcd-3: #a8d2ef;
+  --ink: #14304a;
+  --ink-dim: #517695;
+  --key: #b9cfdd;
+  --key-hi: #e6f2fa;
+  --key-lo: #7b98ab;
+  --key-ink: #14304a;
+}
+.t-smswrite.lcd-green {
+  --lcd-1: #d6e6bd;
+  --lcd-2: #c2d8a3;
+  --lcd-3: #aac68a;
+  --ink: #2c3a1c;
+  --ink-dim: #5c6e46;
+  --key: #b3c795;
+  --key-hi: #dfeccb;
+  --key-lo: #83996a;
+  --key-ink: #2c3a1c;
+}
+
+/* 배경 사진 */
+.t-smswrite .lcd-photo {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat;
+}
+.t-smswrite .lcd-dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+}
+
+/* 스캔라인 + 가장자리 그늘 — LCD 특유의 결 */
+.t-smswrite .lcd-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.045) 0 1px,
+    transparent 1px 3px
+  );
+}
+.t-smswrite .lcd-vig {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 34px rgba(40, 60, 75, 0.22);
+}
+
+/* ── 상태바 ─────────────────────────────────────────────── */
+.t-smswrite .bar {
+  position: relative;
+  flex: none;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 15px;
+  font-size: 19px;
+  color: var(--ink);
+}
+.t-smswrite .bar-spacer {
+  flex: 1;
+}
+.t-smswrite .byte-counter {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  white-space: pre;
+}
+.t-smswrite .byte-unit {
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+/* 안테나 막대 */
+.t-smswrite .ant {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 17px;
+}
+.t-smswrite .ant i {
+  width: 4px;
+  background: var(--ink);
+  opacity: 0.2;
+}
+.t-smswrite .ant i.on {
+  opacity: 1;
+}
+.t-smswrite .ant i:nth-child(1) {
+  height: 6px;
+}
+.t-smswrite .ant i:nth-child(2) {
+  height: 9px;
+}
+.t-smswrite .ant i:nth-child(3) {
+  height: 13px;
+}
+.t-smswrite .ant i:nth-child(4) {
+  height: 17px;
+}
+
+/* 배터리 */
+.t-smswrite .batt {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.t-smswrite .batt-shell {
+  width: 24px;
+  height: 13px;
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+}
+.t-smswrite .batt-shell i {
+  flex: 1;
+  align-self: stretch;
+  background: var(--ink);
+  opacity: 0.18;
+}
+.t-smswrite .batt-shell i.on {
+  opacity: 1;
+}
+.t-smswrite .batt-nub {
+  width: 2px;
+  height: 6px;
+  background: var(--ink);
+}
+
+/* ── 본문 ───────────────────────────────────────────────── */
+.t-smswrite .sheet {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 34px 22px;
+}
+.t-smswrite .body {
+  width: 100%;
+  color: var(--ink);
+}
+.t-smswrite .stamp {
+  margin-top: 44px;
+  align-self: flex-end;
+  font-size: 19px;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* 픽셀 글꼴 모드 */
+.t-smswrite.f-pixel .body,
+.t-smswrite.f-pixel .stamp,
+.t-smswrite.f-pixel .bar,
+.t-smswrite.f-pixel .sk {
+  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+}
+
+/* ── 소프트키 ───────────────────────────────────────────── */
+.t-smswrite .keys {
+  position: relative;
+  flex: none;
+  height: 68px;
+  display: flex;
+  gap: 12px;
+  padding: 10px 14px 16px;
+}
+/* 그 시절 소프트키는 모서리가 둥근 알약이었다 */
+.t-smswrite .sk {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+  color: var(--key-ink);
+  background: linear-gradient(180deg, var(--key-hi), var(--key) 46%, var(--key-lo));
+  border: 1px solid rgba(0, 0, 0, 0.34);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}

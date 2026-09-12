@@ -1,0 +1,16 @@
+{
+  "name": "수신함 — 그 시절 화면을 그대로",
+  "short_name": "수신함",
+  "description": "폴더폰 문자·받은문자함·통화기록·PC 문자 발송기 화면을 만들어 PNG로 저장합니다.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eaf4fb",
+  "theme_color": "#3f9ede",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

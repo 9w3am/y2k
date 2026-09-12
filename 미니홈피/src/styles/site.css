@@ -1,0 +1,1097 @@
+/* ══════════════════════════════════════════════════════════
+   또래방 — 2000년대 한국 웹 조판
+   1px 선, 그라데이션 바, 돋움 11~12px. 둥근 모서리와 그림자는
+   최소한으로. 이 시절 화면은 리플로우되지 않았다.
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  --accent: #1d7fc0;
+  --accent-2: #4aa8dd;
+  --accent-ink: #ffffff;
+  --bg-1: #bfe6fb;
+  --bg-2: #8fd0f4;
+  --bg-3: #63b7e8;
+  --paper: #ffffff;
+  --ink: #33383d;
+  --ink-dim: #8a929a;
+  --line: #d6e4ee;
+  --line-2: #b9c9d6;
+  --tab: #eef7fd;
+  --field: #ffffff;
+  --deco: rgba(255, 255, 255, 0.6);
+}
+
+html[data-skin='pink'] {
+  --accent: #e0417c;
+  --accent-2: #f47ba7;
+  --bg-1: #ffe6f0;
+  --bg-2: #ffc6dd;
+  --bg-3: #ff9fc5;
+  --line: #ffd8e6;
+  --line-2: #f5b6cd;
+  --tab: #fff1f6;
+}
+html[data-skin='night'] {
+  --accent: #6c63c9;
+  --accent-2: #9a92e8;
+  --bg-1: #2b3158;
+  --bg-2: #1d2242;
+  --bg-3: #12162e;
+  --line: #dfe0ef;
+  --line-2: #c3c5dd;
+  --tab: #f2f2fa;
+  --deco: rgba(255, 255, 255, 0.85);
+}
+html[data-skin='lemon'] {
+  --accent: #c98b0d;
+  --accent-2: #efc44f;
+  --bg-1: #fff5cf;
+  --bg-2: #ffe79a;
+  --bg-3: #ffd75e;
+  --line: #f3e4b4;
+  --line-2: #e2ca86;
+  --tab: #fffae8;
+}
+html[data-skin='mint'] {
+  --accent: #17564d;
+  --accent-2: #3f9b88;
+  --bg-1: #cdeee3;
+  --bg-2: #9fdcc9;
+  --bg-3: #62c0a7;
+  --line: #cfe9e0;
+  --line-2: #a6cec2;
+  --tab: #eafaf5;
+}
+html[data-skin='grid'] {
+  --accent: #5a6472;
+  --accent-2: #8b97a8;
+  --bg-1: #f2f4f7;
+  --bg-2: #e4e8ee;
+  --bg-3: #d3d9e2;
+  --line: #dfe3e9;
+  --line-2: #c2c8d1;
+  --tab: #f6f8fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-attachment: fixed;
+  font-family: Dotum, Gulim, 'Malgun Gothic', 'Noto Sans KR', 'Segoe UI Emoji', sans-serif;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+html[data-skin='grid'] body {
+  background-image:
+    repeating-linear-gradient(to right, rgba(90, 100, 114, 0.09) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(to bottom, rgba(90, 100, 114, 0.09) 0 1px, transparent 1px 26px),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* ── 글로벌 바 ───────────────────────────────────────────── */
+.gnb {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, #ffffff, #f2f5f8 70%, #e4eaf0);
+  border-bottom: 1px solid var(--line-2);
+}
+.gnb-in {
+  width: 900px;
+  margin: 0 auto;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  text-decoration: none;
+}
+.logo b {
+  font-size: 20px;
+  letter-spacing: -0.06em;
+  color: var(--accent);
+  font-weight: 800;
+}
+.logo i {
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+.gnb-menu {
+  display: flex;
+  gap: 13px;
+  margin-left: 6px;
+}
+.gnb-menu a {
+  color: var(--ink);
+  font-size: 12px;
+}
+.gnb-menu a.on {
+  color: var(--accent);
+  font-weight: 700;
+}
+.gnb-sp {
+  flex: 1;
+}
+.gnb-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.candy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink);
+}
+.candy b {
+  color: var(--accent);
+}
+
+/* 2000년대 서브 네비 — 얇은 띠 */
+.gnb-sub {
+  position: relative;
+  z-index: 2;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.gnb-sub-in {
+  width: 900px;
+  margin: 0 auto;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+.gnb-sub-in a {
+  color: rgba(255, 255, 255, 0.88);
+}
+.gnb-sub-in a:hover,
+.gnb-sub-in a.on {
+  color: #fff;
+  font-weight: 700;
+}
+.gnb-sub-in .sp {
+  flex: 1;
+}
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 330px;
+}
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: slide 16s linear infinite;
+}
+@keyframes slide {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* ── 본문 폭 ─────────────────────────────────────────────── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: 900px;
+  margin: 0 auto;
+  padding: 18px 0 34px;
+}
+
+/* ── 미니홈피 책 프레임 ──────────────────────────────────── */
+.hompy {
+  position: relative;
+  background: var(--paper);
+  border: 3px solid var(--accent);
+  padding: 10px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.08);
+}
+.hompy::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed var(--accent-2);
+  pointer-events: none;
+}
+/* 머리줄 — 왼쪽 TODAY|TOTAL, 오른쪽 큰 제목과 EDIT */
+.hompy-top {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 2px 4px 7px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+.hompy-top .sp {
+  flex: 1;
+}
+.counter {
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+.counter b {
+  font-weight: 700;
+  color: var(--accent);
+}
+.counter .bar {
+  color: var(--line-2);
+  margin: 0 3px;
+}
+.hompy-title {
+  margin: 0;
+  font-family: 'Nanum Pen Script', Dotum, cursive;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--accent);
+}
+.editmark {
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: var(--accent-2);
+  padding: 1px 5px 2px;
+  border-radius: 2px;
+  align-self: center;
+}
+
+/* 사진 밑 기분 한 줄 — 그 시절 미니홈피의 상징 */
+.todayis {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+}
+.todayis > span:first-child {
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+.todayis b {
+  color: #ffe0ea;
+}
+.todayis .ed {
+  flex: 1;
+  min-width: 0;
+  --ed-hi: rgba(255, 255, 255, 0.6);
+}
+
+.hompy-body {
+  display: flex;
+  align-items: stretch;
+  min-height: 560px;
+}
+
+/* 왼쪽 — 프로필 */
+.side {
+  width: 232px;
+  flex: none;
+  border: 1px solid var(--line);
+  padding: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.side-pic {
+  width: 100%;
+  height: 176px;
+  border: 1px solid var(--line-2);
+  background: var(--tab) center / cover no-repeat;
+  display: grid;
+  place-items: center;
+  color: var(--ink-dim);
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+}
+.side-intro {
+  flex: 1;
+  min-height: 84px;
+  white-space: pre-wrap;
+  font-size: 11.5px;
+  line-height: 1.8;
+  word-break: break-all;
+}
+.side-edit {
+  font-size: 11px;
+  color: var(--accent);
+  display: flex;
+  gap: 8px;
+}
+.side-name {
+  border-top: 1px solid var(--line);
+  padding-top: 7px;
+  font-weight: 700;
+}
+.side-name em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+.wave {
+  display: flex;
+  border: 1px solid var(--line-2);
+  background: #fff;
+}
+.wave select {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 3px;
+  font-size: 11px;
+  background: transparent;
+}
+.wave button {
+  border: 0;
+  border-left: 1px solid var(--line-2);
+  background: linear-gradient(#fff, #e8edf1);
+  padding: 0 8px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+/* 가운데 금속 클립 — 레퍼런스의 ⊂⊃ 모양 두 개 */
+.rings {
+  width: 22px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 128px;
+}
+.rings i {
+  width: 20px;
+  height: 26px;
+  border: 2px solid #9aa4ad;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 11px / 13px;
+  background: linear-gradient(
+    90deg,
+    #e7ebee 0%,
+    #ffffff 22%,
+    #c3cbd2 50%,
+    #ffffff 74%,
+    #aab3ba 100%
+  );
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.16);
+}
+
+/* 오른쪽 — 내용 */
+.main {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 세로 탭 */
+.tabs {
+  width: 74px;
+  flex: none;
+  padding: 8px 0 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tabs a {
+  display: block;
+  margin-left: 6px;
+  padding: 5px 4px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  background: var(--tab);
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0 9px 9px 0;
+}
+.tabs a:hover {
+  text-decoration: none;
+  color: var(--accent);
+}
+.tabs a.on {
+  margin-left: 0;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── 내용 공통 ───────────────────────────────────────────── */
+/* 섹션 머리 — 큰 영문 옆에 작은 회색 대문자 부제가 붙는다 */
+.sect {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.sect h2 {
+  margin: 0;
+  font-family: Verdana, Tahoma, Dotum, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.sect em {
+  font-style: normal;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 0.11em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sect .sp {
+  flex: 1;
+}
+.sect small {
+  color: var(--ink-dim);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.btn {
+  border: 1px solid var(--line-2);
+  background: linear-gradient(#fff, #eef1f4);
+  padding: 3px 10px;
+  cursor: pointer;
+  font-size: 11.5px;
+}
+.btn:hover {
+  border-color: var(--accent-2);
+  color: var(--accent);
+}
+.btn-main {
+  border-color: var(--accent);
+  background: linear-gradient(var(--accent-2), var(--accent));
+  color: #fff;
+  font-weight: 700;
+}
+.btn-main:hover {
+  color: #fff;
+  filter: brightness(1.07);
+}
+.btn-x {
+  border: 0;
+  background: none;
+  color: var(--ink-dim);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 3px;
+}
+.btn-x:hover {
+  color: #d0433f;
+}
+
+.inp,
+.ta {
+  width: 100%;
+  border: 1px solid var(--line-2);
+  background: var(--field);
+  padding: 4px 6px;
+  line-height: 1.6;
+}
+.ta {
+  resize: vertical;
+  min-height: 72px;
+}
+.inp:focus,
+.ta:focus {
+  outline: 1px solid var(--accent-2);
+  outline-offset: -1px;
+}
+
+.rowform {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+.chk {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.empty {
+  padding: 26px 0;
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 11.5px;
+}
+
+/* BGM 플레이어 — 그 시절 미니 플레이어 바 */
+.bgm {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line-2);
+  background: linear-gradient(#ffffff, var(--tab));
+  padding: 4px 8px;
+  font-size: 11px;
+}
+.bgm-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 11px;
+  flex: none;
+}
+.bgm-eq i {
+  width: 2.5px;
+  background: var(--line-2);
+  height: 3px;
+}
+.bgm.on .bgm-eq i {
+  background: var(--accent);
+  animation: eq 0.8s steps(4) infinite;
+}
+.bgm.on .bgm-eq i:nth-child(2) {
+  animation-duration: 0.56s;
+}
+.bgm.on .bgm-eq i:nth-child(3) {
+  animation-duration: 1.04s;
+}
+.bgm.on .bgm-eq i:nth-child(4) {
+  animation-duration: 0.68s;
+}
+@keyframes eq {
+  0% {
+    height: 3px;
+  }
+  50% {
+    height: 11px;
+  }
+  100% {
+    height: 4px;
+  }
+}
+.bgm-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bgm-name em {
+  font-style: normal;
+  color: var(--ink-dim);
+  font-size: 10px;
+}
+.bgm-warn {
+  flex: none;
+  color: #fff;
+  background: var(--accent-2);
+  padding: 0 5px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.bgm button {
+  border: 0;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  font-size: 10px;
+}
+.bgm-vol {
+  width: 54px;
+  flex: none;
+  height: 12px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.bgm-vol::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--line-2);
+}
+.bgm-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -3px;
+  background: var(--accent);
+  border: 0;
+}
+
+/* 카운트 그리드 */
+.counts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px 14px;
+  font-size: 11.5px;
+}
+.counts span {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted var(--line);
+}
+.counts b {
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+/* 내방(미니룸) */
+.room {
+  height: 190px;
+  border: 1px solid var(--line-2);
+  background: var(--tab) center / cover no-repeat;
+  display: grid;
+  place-items: center;
+  color: var(--ink-dim);
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* 목록 */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+.item {
+  border-bottom: 1px dotted var(--line);
+  padding: 7px 2px;
+}
+.item-h {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.item-h b {
+  font-size: 12.5px;
+}
+.item-h .sp {
+  flex: 1;
+}
+.item-h small {
+  color: var(--ink-dim);
+  font-size: 11px;
+}
+.item-b {
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: #4a5158;
+  margin-top: 3px;
+  font-size: 11.5px;
+}
+.reply {
+  margin: 5px 0 0 14px;
+  padding: 5px 8px;
+  background: var(--tab);
+  border-left: 2px solid var(--accent-2);
+  font-size: 11.5px;
+  white-space: pre-wrap;
+}
+
+/* 사진첩 */
+.grid-pic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pic {
+  border: 1px solid var(--line-2);
+  background: var(--tab);
+  padding: 5px;
+}
+.pic .ph {
+  height: 104px;
+  background: #fff center / cover no-repeat;
+  border: 1px solid var(--line);
+}
+.pic .cap {
+  margin-top: 4px;
+  font-size: 11px;
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+}
+.pic .cap span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 단짝 */
+.jjak-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.jjak {
+  border: 1px solid var(--line);
+  padding: 7px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.jjak i {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.jjak b {
+  display: block;
+  font-size: 12px;
+}
+.jjak small {
+  color: var(--ink-dim);
+  font-size: 10.5px;
+}
+
+/* 상점 */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.shop-card {
+  border: 1px solid var(--line-2);
+  padding: 7px;
+  text-align: center;
+}
+.shop-card .pv {
+  height: 66px;
+  border: 1px solid var(--line);
+  margin-bottom: 6px;
+}
+.shop-card b {
+  display: block;
+  font-size: 12px;
+}
+.shop-card small {
+  color: var(--ink-dim);
+}
+
+/* 설정 */
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--line);
+}
+.form-row > label {
+  width: 92px;
+  flex: none;
+  color: var(--ink-dim);
+  font-size: 11.5px;
+  padding-top: 4px;
+}
+.form-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── 포털 첫 화면 ────────────────────────────────────────── */
+.portal {
+  display: flex;
+  gap: 12px;
+}
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line-2);
+  padding: 11px 13px;
+}
+.panel h3 {
+  margin: 0 0 7px;
+  font-size: 12.5px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+.login-box {
+  width: 236px;
+  flex: none;
+}
+.login-box .inp {
+  margin-bottom: 5px;
+}
+.portal-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hero {
+  background: var(--paper);
+  border: 1px solid var(--line-2);
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.hero-t {
+  font-family: 'Nanum Pen Script', Dotum, cursive;
+  font-size: 42px;
+  line-height: 1.1;
+  color: var(--accent);
+}
+.hero p {
+  margin: 4px 0 0;
+  color: var(--ink-dim);
+  font-size: 11.5px;
+}
+.notice-list li {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px dotted var(--line);
+  padding: 3px 0;
+  font-size: 11.5px;
+}
+.notice-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notice-list .sp {
+  flex: 1;
+}
+.notice-list small {
+  color: var(--ink-dim);
+}
+
+/* ── 푸터 ────────────────────────────────────────────────── */
+/* 어떤 스킨 위에서도 읽히도록 옅은 판을 깔고 어두운 글씨를 쓴다 */
+.footer {
+  position: relative;
+  z-index: 1;
+  width: 900px;
+  margin: 0 auto 30px;
+  padding: 12px 14px 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: #5c646d;
+  font-size: 11px;
+}
+html[data-skin='night'] .footer {
+  background: rgba(18, 22, 46, 0.6);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ccd0e8;
+}
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer-links {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.footer-note {
+  opacity: 0.82;
+  line-height: 1.7;
+}
+
+/* 인라인 편집 — 눌러서 바로 고치기 */
+.ed {
+  cursor: text;
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-width: 1ch;
+  display: inline-block;
+}
+.ed:hover {
+  outline-color: rgba(0, 0, 0, 0.22);
+}
+.ed:focus {
+  outline: 1px dashed var(--accent-2);
+}
+.ed:empty::before {
+  content: attr(data-ph);
+  opacity: 0.4;
+}
+.hompy-title .ed,
+.tabs .ed {
+  display: inline;
+}
+
+/* ══ 레퍼런스 반영 보정 ═══════════════════════════════════ */
+
+/* 왼쪽 칸 — 더 촘촘하게 */
+.side {
+  gap: 6px;
+  padding: 8px;
+}
+.side-pic {
+  height: 168px;
+}
+.side-intro {
+  font-size: 11px;
+  line-height: 1.72;
+}
+.side-name {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: 11.5px;
+}
+.side-name .sp {
+  flex: 1;
+}
+.side-edit {
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.side-foot {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  border-top: 1px dotted var(--line);
+  padding-top: 5px;
+}
+.side-foot b {
+  color: var(--accent);
+}
+
+/* 본문 — 글줄을 그 시절처럼 촘촘히 */
+.main {
+  gap: 7px;
+  padding: 9px 11px;
+}
+.item {
+  padding: 5px 2px;
+}
+.item-b {
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* 목록 앞의 · 불릿과 [스크랩] 꼬리표 */
+.news-line {
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+  padding: 1px 0;
+  font-size: 11px;
+}
+.news-line::before {
+  content: '·';
+  color: var(--accent-2);
+  font-weight: 700;
+}
+.news-line .tag {
+  color: var(--ink-dim);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.news-line a,
+.news-line .t {
+  color: var(--accent);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 스킨마다 다른 바탕 무늬 ─────────────────────────────── */
+html[data-skin='lemon'] body {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 2.5px, transparent 3px),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-size: 26px 26px, auto;
+}
+html[data-skin='mint'] body {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.22) 0 8px,
+      transparent 8px 20px
+    ),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+}
+html[data-skin='pink'] body {
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5) 1.5px, transparent 2px),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-size: 18px 18px, auto;
+}
+html[data-skin='night'] body {
+  background-image:
+    radial-gradient(ellipse at 50% 120%, rgba(120, 132, 220, 0.35), transparent 60%),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+}
+
+/* 책 프레임 — 종이 질감과 그림자를 조금 더 */
+.hompy {
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent 120px),
+    var(--paper);
+  box-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.05),
+    0 12px 26px rgba(0, 0, 0, 0.16);
+}

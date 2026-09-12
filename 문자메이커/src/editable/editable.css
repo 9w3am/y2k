@@ -1,0 +1,122 @@
+/* ── 화면 안에서 바로 고치는 글자 ─────────────────────────────
+   평소엔 편집기라는 티가 전혀 나면 안 된다.
+   마우스를 올렸을 때만 얇은 점선, 포커스되면 캐럿만. */
+
+.ed {
+  /* 테마가 --ed-hi 로 점선 색을 덮어쓴다 (어두운 LCD 에선 밝은 선) */
+  --ed-hi: rgba(0, 0, 0, 0.28);
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  cursor: text;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  min-width: 1ch;
+  min-height: 1em;
+  border-radius: 1px;
+}
+
+.ed:hover {
+  outline-color: var(--ed-hi);
+}
+
+.ed:focus {
+  outline: 1px dashed var(--ed-hi);
+  outline-offset: 2px;
+  background: none;
+}
+
+/* 키보드 Tab 으로 왔을 때는 확실히 보여야 한다 */
+.ed:focus-visible {
+  outline: 1px dashed var(--ed-hi);
+}
+
+.ed-inline {
+  display: inline-block;
+  white-space: pre;
+  word-break: normal;
+  vertical-align: baseline;
+}
+
+/* 빈 칸일 때만 안내 문구 */
+.ed:empty::before {
+  content: attr(data-ph);
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+/* 바이트 초과 시 1초간 깜빡 */
+.byte-blink {
+  animation: byteBlink 0.22s steps(1) 0s 4;
+}
+@keyframes byteBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+/* 교체 가능한 이미지 */
+.edimg {
+  --ed-hi: rgba(0, 0, 0, 0.28);
+  position: relative;
+  cursor: pointer;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.edimg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  outline: 1px dashed transparent;
+  outline-offset: -1px;
+  pointer-events: none;
+}
+.edimg:hover::after,
+.edimg.over::after {
+  outline-color: var(--ed-hi);
+}
+.edimg-hint {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-family: var(--ui-font);
+  font-size: 10px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+}
+.edimg:hover .edimg-hint,
+.edimg.over .edimg-hint {
+  opacity: 1;
+}
+.edimg.is-empty .edimg-hint {
+  opacity: 0.65;
+}
+
+/* ── 내보내기 중에는 편집 흔적을 전부 지운다 ─────────────── */
+[data-exporting] .ed,
+[data-exporting] .ed:hover,
+[data-exporting] .ed:focus,
+[data-exporting] .edimg::after {
+  outline: none !important;
+}
+[data-exporting] .ed:empty::before {
+  content: '' !important;
+}
+[data-exporting] .edimg-hint,
+[data-exporting] .no-export {
+  display: none !important;
+}
+[data-exporting] .byte-blink {
+  animation: none !important;
+  opacity: 1 !important;
+}

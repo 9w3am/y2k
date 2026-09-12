@@ -1,0 +1,462 @@
+/* ── PC 문자 발송기 (Windows XP 창) ──────────────────────────
+   XP 원래 치수 그대로 400×490 에 그린다. 무대가 알아서 키워 보여준다. */
+.t-xp {
+  position: relative;
+  --tb-1: #0058e6;
+  --tb-2: #3d8bff;
+  --tb-3: #0054e3;
+  --tb-4: #0046c8;
+  --frame: #0054e3;
+  --face: #ece9d8;
+  --face-lo: #d6d2bf;
+  --face-hi: #ffffff;
+  --grv: #7f9db9;
+  --ink: #000000;
+  --ink-dim: #4a4a44;
+  --ed-hi: rgba(0, 0, 0, 0.35);
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--frame);
+  border: 3px solid var(--frame);
+  border-top: 0;
+  /* 그 시절 윈도우 한글은 비트맵이었다 — 픽셀 글꼴로 그 결을 맞춘다 */
+  font-family: 'Galmuri11', Gulim, Dotum, 'Malgun Gothic', sans-serif;
+  font-size: 11px;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+  line-height: 1.45;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.t-xp.skin-silver {
+  --tb-1: #8c8ca8;
+  --tb-2: #c3c3d6;
+  --tb-3: #8e8ea8;
+  --tb-4: #6f6f8c;
+  --frame: #8e8ea8;
+}
+.t-xp.skin-olive {
+  --tb-1: #7a9a4e;
+  --tb-2: #a8c47a;
+  --tb-3: #6f9142;
+  --tb-4: #587434;
+  --frame: #6f9142;
+}
+
+/* 타이틀바 */
+.t-xp .tb {
+  flex: none;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 3px 0 5px;
+  background: linear-gradient(180deg, var(--tb-1), var(--tb-2) 8%, var(--tb-3) 40%, var(--tb-4));
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45);
+  --ed-hi: rgba(255, 255, 255, 0.65);
+}
+.t-xp .tb-spacer {
+  flex: 1;
+}
+.t-xp .wbtn {
+  width: 21px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4b95ff, #0b5ada);
+  color: #fff;
+  font-size: 9px;
+  line-height: 1;
+}
+.t-xp .wbtn.close {
+  background: linear-gradient(180deg, #f08a7a, #d33c22);
+}
+
+/* 메뉴바 */
+.t-xp .mb {
+  flex: none;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 7px;
+  background: var(--face);
+  border-bottom: 1px solid var(--face-lo);
+}
+.t-xp .mb span:hover {
+  background: #316ac5;
+  color: #fff;
+}
+
+/* 탭 */
+.t-xp .tabs {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 22px;
+  padding: 3px 6px 0;
+  background: var(--face);
+}
+.t-xp .tab {
+  padding: 2px 8px 3px;
+  background: #dedacb;
+  border: 1px solid var(--face-lo);
+  border-bottom: 0;
+  color: var(--ink-dim);
+}
+.t-xp .tab.on {
+  background: var(--face);
+  color: var(--ink);
+  font-weight: 700;
+  padding-bottom: 4px;
+}
+.t-xp .tabs .right {
+  margin-left: auto;
+  color: #0b3f8f;
+  padding: 2px 6px;
+}
+
+/* 본문 */
+.t-xp .body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 5px;
+  padding: 5px 6px;
+  background: var(--face);
+  border-top: 1px solid var(--face-lo);
+}
+.t-xp .col-l {
+  width: 152px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.t-xp .col-m {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.t-xp .col-r {
+  width: 104px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 그룹 상자 */
+.t-xp .grp {
+  border: 1px solid #c0bdae;
+  background: #f4f2e9;
+  padding: 3px;
+  min-height: 0;
+}
+.t-xp .grp-t {
+  font-weight: 700;
+  color: #26497e;
+  margin-bottom: 2px;
+}
+
+/* 휴대폰 일러스트 */
+.t-xp .phone {
+  border: 1px solid #b9c6d2;
+  background: linear-gradient(160deg, #eaf2f9, #c8d9e8 60%, #aec4d8);
+  border-radius: 7px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+.t-xp .lcd {
+  flex: 1;
+  min-height: 0;
+  background: #f7fbf2;
+  border: 1px solid #8fa6b8;
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.13);
+  padding: 4px 5px;
+  overflow: hidden;
+  color: #1d2a1c;
+}
+.t-xp .lcd-byte {
+  text-align: right;
+  color: #47605e;
+  border-top: 1px dotted #a9bcc6;
+  margin-top: 3px;
+  padding-top: 2px;
+}
+.t-xp .pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.t-xp .pad i {
+  height: 7px;
+  background: linear-gradient(180deg, #fdfefe, #cdd9e3);
+  border: 1px solid #9fb1c0;
+  border-radius: 2px;
+}
+
+/* 입력 필드 */
+.t-xp .lbl {
+  color: var(--ink-dim);
+  margin-bottom: 1px;
+}
+.t-xp .fld {
+  background: #fff;
+  border: 1px solid var(--grv);
+  padding: 2px 3px;
+  min-height: 17px;
+  --ed-hi: rgba(0, 0, 0, 0.35);
+}
+.t-xp .addr {
+  border: 1px solid #c8302a;
+  color: #c8302a;
+  padding: 1px 4px;
+  background: var(--face);
+  white-space: nowrap;
+}
+.t-xp .row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* 이모티콘 폴더 */
+.t-xp .tree {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.t-xp .tree div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 2px;
+}
+.t-xp .tree div:hover {
+  background: #316ac5;
+  color: #fff;
+}
+
+/* 특수문자 */
+.t-xp .chars {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+}
+.t-xp .chars button {
+  border: 1px solid transparent;
+  background: #fff;
+  padding: 0;
+  height: 15px;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+}
+.t-xp .chars button:hover {
+  border-color: #316ac5;
+  background: #d5e3f7;
+}
+
+/* 오른쪽 정보 */
+.t-xp .info {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 1px 0;
+}
+.t-xp .info b {
+  font-weight: 400;
+  color: #26497e;
+}
+.t-xp .cashmark {
+  text-align: center;
+  font-weight: 700;
+  color: #d4470f;
+  border: 1px solid #e0b48a;
+  background: linear-gradient(180deg, #fff6e7, #ffe4bf);
+  padding: 2px;
+  letter-spacing: 0.02em;
+}
+.t-xp .rbtn {
+  border: 1px solid #9b9781;
+  background: linear-gradient(180deg, #fdfdf9, #e3e0d2);
+  box-shadow: inset 0 1px 0 #fff;
+  padding: 2px 4px;
+  text-align: center;
+}
+
+/* 광고 배너 */
+.t-xp .ad {
+  border: 2px solid #e02020;
+  background: #ffef3f;
+  padding: 3px;
+  text-align: center;
+  --ed-hi: rgba(0, 0, 0, 0.4);
+}
+.t-xp .ad-l {
+  font-weight: 700;
+  color: #d00000;
+}
+.t-xp .ad.blink .ad-l {
+  animation: xpBlink 0.9s steps(1) infinite;
+}
+@keyframes xpBlink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.t-xp .ad-s {
+  color: #3a3a1a;
+  font-size: 10px;
+}
+.t-xp .ad-b {
+  display: inline-block;
+  margin-top: 2px;
+  background: #e02020;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+[data-exporting] .t-xp .ad.blink .ad-l {
+  animation: none;
+  opacity: 1;
+}
+
+/* 아래 버튼 */
+.t-xp .foot {
+  flex: none;
+  display: flex;
+  gap: 5px;
+  padding: 0 6px 6px;
+  background: var(--face);
+}
+.t-xp .xbtn {
+  min-width: 58px;
+  padding: 3px 10px;
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fdfdfd 0%, #f2f1ea 46%, #e3e0d2 47%, #eceae0 100%);
+  box-shadow: inset 0 0 0 1px #fff;
+  text-align: center;
+}
+
+/* ── 이모티콘 묶음 ───────────────────────────────────────── */
+.t-xp .emo-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 3px;
+}
+.t-xp .emo-tabs button {
+  flex: 1;
+  border: 1px solid #b9b5a3;
+  background: linear-gradient(#fdfdf9, #e3e0d2);
+  font-family: inherit;
+  font-size: 10px;
+  padding: 1px 0;
+  cursor: pointer;
+}
+.t-xp .emo-tabs button.on {
+  background: #fff;
+  border-color: #26497e;
+  color: #26497e;
+  font-weight: 700;
+}
+.t-xp .emo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+}
+.t-xp .emo-grid button {
+  border: 1px solid #d7d3c4;
+  background: #fff;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1;
+  height: 17px;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+.t-xp .emo-grid button:hover {
+  border-color: #316ac5;
+  background: #d5e3f7;
+}
+
+/* 메시지함 줄 — 아이콘 + 이름 + 개수 */
+.t-xp .rbtn.box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-align: left;
+}
+.t-xp .rbtn.box b {
+  margin-left: auto;
+  font-weight: 700;
+  color: #26497e;
+}
+
+/* 창 아래 상태줄 */
+.t-xp .statusbar {
+  flex: none;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 3px 0 6px;
+  margin: 0 3px 3px;
+  font-size: 10px;
+  color: #3d3d3d;
+  border: 1px solid;
+  border-color: #9e9a89 #fff #fff #9e9a89;
+  background: var(--face);
+}
+.t-xp .statusbar .sp {
+  flex: 1;
+}
+.t-xp .statusbar .grip {
+  width: 12px;
+  height: 12px;
+  background:
+    linear-gradient(135deg, transparent 45%, #9e9a89 45% 55%, transparent 55%),
+    linear-gradient(135deg, transparent 70%, #9e9a89 70% 80%, transparent 80%);
+}
+
+/* 메시지함 줄은 한 줄로 — 이름이 접히면 개수가 밀린다 */
+.t-xp .rbtn.box {
+  white-space: nowrap;
+  font-size: 10px;
+  padding: 2px 5px;
+}
+.t-xp .rbtn.box .ed {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.t-xp .ad-s {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}

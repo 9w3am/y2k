@@ -1,0 +1,323 @@
+/* ══════════════════════════════════════════════════════════
+   프로그램 모드 — 설치해 둔 옛날 윈도우 프로그램처럼
+   ══════════════════════════════════════════════════════════ */
+
+.desktop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0 0;
+  background:
+    radial-gradient(140% 90% at 50% 0%, rgba(255, 255, 255, 0.28), transparent 60%),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  overflow: hidden;
+}
+
+/* 바탕화면 아이콘 */
+.desk-icons {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 78px;
+}
+.desk-ico {
+  background: none;
+  border: 0;
+  padding: 3px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 11px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.desk-ico:hover span {
+  text-decoration: underline;
+}
+.desk-ico i {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  background: linear-gradient(160deg, #ffffff, var(--bg-1) 55%, var(--bg-2));
+  font-style: normal;
+  font-size: 17px;
+  color: var(--accent);
+}
+
+/* 창 */
+.win {
+  position: relative;
+  z-index: 2;
+  width: 940px;
+  max-width: calc(100% - 24px);
+  height: calc(100% - 74px);
+  display: flex;
+  flex-direction: column;
+  background: #ece9d8;
+  border: 3px solid var(--accent);
+  border-top: 0;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+}
+.win.min {
+  display: none;
+}
+
+.win-tb {
+  flex: none;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 3px 0 6px;
+  background: linear-gradient(
+    180deg,
+    var(--accent-2),
+    color-mix(in srgb, var(--accent-2) 60%, #fff) 8%,
+    var(--accent) 42%,
+    color-mix(in srgb, var(--accent) 78%, #000)
+  );
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+}
+.win-tb .sp {
+  flex: 1;
+}
+.win-btn {
+  width: 23px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05));
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.win-btn:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.15));
+}
+.win-btn.close {
+  background: linear-gradient(180deg, #f08a7a, #d33c22);
+}
+
+.win-mb {
+  flex: none;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  background: #ece9d8;
+  border-bottom: 1px solid #d6d2bf;
+  font-size: 11.5px;
+  color: #1b1b1b;
+}
+.win-mb span {
+  padding: 0 3px;
+  cursor: default;
+}
+.win-mb span:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.win-tool {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  background: linear-gradient(#fdfdf9, #e6e3d5);
+  border-bottom: 1px solid #c6c2b1;
+  font-size: 11.5px;
+}
+.win-tool a,
+.win-tool button {
+  border: 1px solid transparent;
+  background: none;
+  padding: 2px 8px;
+  color: #1b1b1b;
+  text-decoration: none;
+  cursor: pointer;
+}
+.win-tool a:hover,
+.win-tool button:hover {
+  border-color: #b9b5a3;
+  background: #f6f4ea;
+  text-decoration: none;
+}
+.win-tool a.on {
+  border-color: #b9b5a3;
+  background: #fff;
+  font-weight: 700;
+  color: var(--accent);
+}
+.win-tool .div {
+  width: 1px;
+  height: 16px;
+  background: #c6c2b1;
+  margin: 0 3px;
+}
+.win-tool .sp {
+  flex: 1;
+}
+
+.win-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  background: linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  border: 2px inset #cfcbba;
+  margin: 5px;
+}
+.win-body .wrap {
+  width: 900px;
+  margin: 0 auto;
+  padding: 0 0 10px;
+}
+
+.win-status {
+  flex: none;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 7px 0 5px;
+  font-size: 11px;
+  color: #3c3c3c;
+  background: #ece9d8;
+  border-top: 1px solid #d6d2bf;
+}
+.win-status i {
+  font-style: normal;
+  border: 1px inset #cfcbba;
+  padding: 0 7px;
+  min-width: 92px;
+}
+.win-status .sp {
+  flex: 1;
+}
+
+/* 작업 표시줄 */
+.taskbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 5px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 70%, #fff),
+    var(--accent) 12%,
+    color-mix(in srgb, var(--accent) 80%, #000)
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+.start {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 14px 0 10px;
+  border: 0;
+  border-radius: 0 9px 9px 0;
+  background: linear-gradient(180deg, #7fd07f, #3f9b3f 48%, #2c7a2c);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12.5px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+.task-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.task-btn.on {
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.tray {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 11.5px;
+}
+
+/* 시작 메뉴 */
+.startmenu {
+  position: absolute;
+  left: 5px;
+  bottom: 36px;
+  z-index: 4;
+  width: 232px;
+  background: #fff;
+  border: 1px solid var(--accent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+.startmenu-h {
+  padding: 9px 11px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  color: #fff;
+  font-weight: 700;
+}
+.startmenu a,
+.startmenu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 12px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+.startmenu a:hover,
+.startmenu button:hover {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+.startmenu hr {
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* 창 안에서는 본문이 창 폭에 맞춰 들어간다 — 가로 스크롤이 생기면 안 된다 */
+.win-body .wrap {
+  width: 100%;
+  max-width: 900px;
+}

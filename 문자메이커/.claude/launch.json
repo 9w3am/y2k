@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "문자메이커", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 5183, "autoPort": true }
+  ]
+}

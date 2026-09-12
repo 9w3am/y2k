@@ -1,0 +1,180 @@
+/* ── 편지지·아바타 딸린 문자 작성 ────────────────────────── */
+.t-attach {
+  /* 레퍼런스가 흑백 사진이었다. 색을 넣지 않는다. */
+  filter: grayscale(1);
+  --lcd: #c6c6c6;
+  --lcd-2: #b2b2b2;
+  --ink: #151515;
+  --ink-dim: #4e4e4e;
+  --status: #0b0b0b;
+  --chrome: #9c9c9c;
+  --ed-hi: rgba(0, 0, 0, 0.4);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--lcd);
+  color: var(--ink);
+  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+}
+
+
+/* 상태줄 */
+.t-attach .status {
+  flex: none;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  background: var(--status);
+  color: #e9ecea;
+  font-size: 20px;
+}
+.t-attach .status .sp {
+  flex: 1;
+}
+.t-attach .ant {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+.t-attach .ant i {
+  width: 4px;
+  background: currentColor;
+}
+.t-attach .ant i:nth-child(1) { height: 6px; }
+.t-attach .ant i:nth-child(2) { height: 10px; }
+.t-attach .ant i:nth-child(3) { height: 13px; }
+.t-attach .ant i:nth-child(4) { height: 16px; }
+.t-attach .batt {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.t-attach .batt-shell {
+  width: 26px;
+  height: 14px;
+  border: 2px solid currentColor;
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+}
+.t-attach .batt-shell i {
+  flex: 1;
+  background: currentColor;
+  opacity: 0.2;
+}
+.t-attach .batt-shell i.on {
+  opacity: 1;
+}
+.t-attach .batt-nub {
+  width: 2px;
+  height: 7px;
+  background: currentColor;
+}
+
+/* 편지지 / 아바타 줄 */
+.t-attach .tabs {
+  flex: none;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+  background: var(--lcd-2);
+  border-bottom: 2px solid var(--ink);
+  font-size: 21px;
+}
+.t-attach .tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.t-attach .chk {
+  width: 17px;
+  height: 17px;
+  border: 2px solid var(--ink);
+  background: var(--lcd);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+.t-attach .chk span {
+  display: none;
+  width: 9px;
+  height: 9px;
+  background: var(--ink);
+}
+.t-attach .chk.on span {
+  display: block;
+}
+
+/* 본문 */
+.t-attach .page {
+  flex: 1;
+  min-height: 0;
+  margin: 8px;
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  background: var(--lcd);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.t-attach .body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.t-attach .byte {
+  align-self: flex-end;
+  color: var(--ink-dim);
+  font-size: 24px;
+  padding-top: 6px;
+}
+
+/* 첨부 */
+.t-attach .attach {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 6px;
+  font-size: 21px;
+}
+.t-attach .attach-field {
+  flex: 1;
+  height: 26px;
+  border: 2px solid var(--ink);
+  background: var(--lcd-2);
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+/* 소프트키 — 눌린 듯한 베벨 */
+.t-attach .keys {
+  flex: none;
+  height: 52px;
+  display: flex;
+  gap: 6px;
+  padding: 0 6px 6px;
+}
+.t-attach .sk {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  color: var(--ink);
+  background: linear-gradient(180deg, #e6e8e4, var(--chrome));
+  border: 2px solid var(--ink);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.7);
+}

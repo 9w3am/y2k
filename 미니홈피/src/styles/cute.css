@@ -1,0 +1,1010 @@
+/* ══════════════════════════════════════════════════════════
+   귀엽게
+   그 시절 미니홈피는 각진 회색 표가 아니라 파스텔과 점선,
+   하트와 리본으로 덮여 있었다. 이 층이 분위기를 만든다.
+   site.css 다음에 불러서 덮어쓴다.
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  --round: 12px;
+  --round-sm: 8px;
+  --dot: rgba(0, 0, 0, 0.16);
+}
+
+/* ── 파스텔로 다시 고른 색 ───────────────────────────────── */
+:root {
+  --accent: #3f9ede;
+  --accent-2: #7ec4ee;
+  --bg-1: #dff2fd;
+  --bg-2: #bfe4fa;
+  --bg-3: #9dd3f4;
+  --ink: #3a444f;
+  --ink-dim: #7f8d9a;
+  --line: #dcecf6;
+  --line-2: #a5d2ec;
+  --tab: #f0f9fe;
+}
+html[data-skin='pink'] {
+  --accent: #ec6d99;
+  --accent-2: #ff9dbe;
+  --bg-1: #ffeef4;
+  --bg-2: #ffd6e5;
+  --bg-3: #ffbcd5;
+  --ink: #5a3a46;
+  --ink-dim: #b07f92;
+  --line: #ffe1eb;
+  --line-2: #ffc3d8;
+  --tab: #fff5f9;
+}
+html[data-skin='lemon'] {
+  --accent: #cf9316;
+  --accent-2: #ffd97a;
+  --bg-1: #fff8dc;
+  --bg-2: #ffefb8;
+  --bg-3: #ffe28f;
+  --ink: #574722;
+  --ink-dim: #a08a56;
+  --line: #fbeec4;
+  --line-2: #f2d894;
+  --tab: #fffbed;
+}
+html[data-skin='mint'] {
+  --accent: #17a583;
+  --accent-2: #5fd9b6;
+  --bg-1: #2b322f;
+  --bg-2: #1a201e;
+  --bg-3: #0c100f;
+  --ink: #26403a;
+  --ink-dim: #6b8d84;
+  --line: #dcefe9;
+  --line-2: #b4dcd0;
+  --tab: #f0faf7;
+}
+html[data-skin='night'] {
+  --accent: #6b63c4;
+  --accent-2: #a59df0;
+  --bg-1: #2a2f5e;
+  --bg-2: #191d40;
+  --bg-3: #0b0e22;
+  --ink: #3b3760;
+  --ink-dim: #7d78a0;
+  --line: #e4e2f4;
+  --line-2: #c6c2e6;
+  --tab: #f4f3fc;
+}
+html[data-skin='grid'] {
+  --accent: #7d8fa6;
+  --accent-2: #b2c1d2;
+  --bg-1: #f4f7fa;
+  --bg-2: #e6ecf2;
+  --bg-3: #d5dee7;
+  --ink: #49535e;
+  --ink-dim: #8794a1;
+  --line: #e4eaf0;
+  --line-2: #c7d2dd;
+  --tab: #f8fbfd;
+}
+
+/* ── 바탕 무늬 — 하트와 별을 깐다 ────────────────────────── */
+body {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='46'%3E%3Cpath d='M12 9c-2-2.6-6-1-6 2 0 2.6 3.4 4.6 6 6.4 2.6-1.8 6-3.8 6-6.4 0-3-4-4.6-6-2z' fill='rgba(255,255,255,.72)'/%3E%3Cpath d='M33 27l1.4 3.1 3.4.4-2.5 2.3.7 3.3-3-1.7-3 1.7.7-3.3-2.5-2.3 3.4-.4z' fill='rgba(255,255,255,.6)'/%3E%3C/svg%3E"),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-size: 46px 46px, auto;
+}
+html[data-skin='grid'] body {
+  background-image:
+    repeating-linear-gradient(to right, rgba(125, 143, 166, 0.1) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(to bottom, rgba(125, 143, 166, 0.1) 0 1px, transparent 1px 24px),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-size: auto, auto, auto;
+}
+html[data-skin='night'] body {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpath d='M22 14l1.5 3.3 3.6.4-2.7 2.5.8 3.6-3.2-1.9-3.2 1.9.8-3.6-2.7-2.5 3.6-.4z' fill='rgba(255,255,255,.8)'/%3E%3Cpath d='M86 72l1.1 2.4 2.6.3-1.9 1.8.5 2.6-2.3-1.4-2.3 1.4.5-2.6-1.9-1.8 2.6-.3z' fill='rgba(255,255,255,.62)'/%3E%3Ccircle cx='60' cy='34' r='1.7' fill='rgba(255,255,255,.75)'/%3E%3Ccircle cx='103' cy='20' r='1.1' fill='rgba(255,255,255,.5)'/%3E%3Ccircle cx='14' cy='66' r='1.3' fill='rgba(255,255,255,.6)'/%3E%3Ccircle cx='44' cy='96' r='1' fill='rgba(255,255,255,.45)'/%3E%3Ccircle cx='72' cy='108' r='1.5' fill='rgba(255,255,255,.55)'/%3E%3Ccircle cx='112' cy='92' r='1' fill='rgba(255,255,255,.4)'/%3E%3C/svg%3E"),
+    radial-gradient(70% 45% at 78% 6%, rgba(196,189,255,.4), transparent 62%),
+    radial-gradient(90% 60% at 12% 100%, rgba(86,96,190,.36), transparent 66%),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+  background-size: 120px 120px, auto, auto, auto;
+}
+
+/* ── 글로벌 바 ───────────────────────────────────────────── */
+.gnb {
+  background: linear-gradient(180deg, #ffffff, #fdfeff 60%, var(--tab));
+  border-bottom: 2px dotted var(--line-2);
+}
+.logo b {
+  letter-spacing: -0.04em;
+}
+.candy {
+  border: 1px dashed var(--line-2);
+  border-radius: 999px;
+  background: var(--tab);
+}
+.gnb-sub {
+  border-radius: 0;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+
+/* ── 책 프레임 ───────────────────────────────────────────── */
+.hompy {
+  border: 0;
+  border-radius: 20px;
+  padding: 14px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 3px var(--accent-2),
+    0 0 0 7px var(--paper),
+    0 0 0 8px var(--line-2),
+    0 14px 30px rgba(0, 0, 0, 0.13);
+}
+.hompy::after {
+  inset: 8px;
+  border: 2px dotted var(--line-2);
+  border-radius: 13px;
+}
+
+/* 위에 붙은 리본 */
+.hompy-ribbon {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+
+.hompy-top {
+  border-bottom: 2px dotted var(--line-2);
+}
+.hompy-title {
+  font-size: 36px;
+}
+.editmark {
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: var(--accent-2);
+  color: #fff;
+}
+
+/* ── 섹션 머리에 하트 ────────────────────────────────────── */
+.sect {
+  border-bottom: 2px dotted var(--line-2);
+  padding-bottom: 4px;
+}
+.sect h2::before {
+  content: '♥';
+  color: var(--accent-2);
+  margin-right: 4px;
+  font-size: 11px;
+}
+
+/* ── 왼쪽 칸 ─────────────────────────────────────────────── */
+.side {
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+  background: var(--tab);
+}
+.side-pic {
+  border: 5px solid #fff;
+  border-radius: var(--round-sm);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+}
+.todayis {
+  border-radius: 999px;
+  padding: 4px 12px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+}
+.side-intro {
+  background: #fff;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--round-sm);
+  padding: 8px 9px;
+}
+.wave {
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+}
+.wave button {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  border-left: 0;
+}
+.side-foot {
+  border-top: 1px dashed var(--line-2);
+}
+
+/* ── 링 클립 ─────────────────────────────────────────────── */
+.rings {
+  gap: 120px;
+}
+.rings i {
+  border-color: var(--line-2);
+}
+
+/* ── 오른쪽 내용 ─────────────────────────────────────────── */
+.main {
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+  background: #fff;
+}
+
+/* ── 세로 탭 — 동글동글 ──────────────────────────────────── */
+.tabs a {
+  border: 2px dotted var(--line-2);
+  border-left: 0;
+  border-radius: 0 999px 999px 0;
+  background: var(--tab);
+  padding: 6px 6px 6px 4px;
+}
+.tabs a.on {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  border-color: var(--accent);
+  border-style: solid;
+  color: #fff;
+}
+
+/* ── 버튼 ────────────────────────────────────────────────── */
+.btn {
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, #fff, var(--tab));
+  padding: 4px 13px;
+}
+.btn:hover {
+  border-color: var(--accent);
+  background: #fff;
+}
+.btn-main {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
+}
+.btn-x {
+  border-radius: 999px;
+  width: 17px;
+  height: 17px;
+  line-height: 1;
+  background: var(--tab);
+}
+.btn-x:hover {
+  background: #ffe0e6;
+  color: #e2607a;
+}
+
+/* ── 입력칸 ──────────────────────────────────────────────── */
+.inp,
+.ta {
+  border: 1px solid var(--line-2);
+  border-radius: var(--round-sm);
+  padding: 5px 9px;
+}
+.inp:focus,
+.ta:focus {
+  outline: 2px solid var(--accent-2);
+  outline-offset: -1px;
+}
+
+/* ── 목록 ────────────────────────────────────────────────── */
+.item {
+  border-bottom: 1px dashed var(--line);
+}
+.item-h b::before {
+  content: '·';
+  color: var(--accent-2);
+  margin-right: 4px;
+}
+.reply {
+  border-left: 0;
+  border-radius: var(--round-sm);
+  background: var(--tab);
+  position: relative;
+  margin-left: 18px;
+}
+.reply::before {
+  content: '┗';
+  position: absolute;
+  left: -14px;
+  top: 3px;
+  color: var(--accent-2);
+}
+
+/* 그 시절 문자 이모티콘은 폭이 흔들리지 않게 */
+.mood {
+  font-family: Dotum, Gulim, monospace;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.lockmark {
+  color: var(--accent);
+  font-size: 10px;
+  margin-right: 3px;
+}
+
+/* ── BGM ─────────────────────────────────────────────────── */
+.bgm {
+  border: 1px dashed var(--line-2);
+  border-radius: 999px;
+  padding: 5px 12px;
+  background: linear-gradient(180deg, #fff, var(--tab));
+}
+
+/* ── 내방 ────────────────────────────────────────────────── */
+.room {
+  border: 5px solid #fff;
+  border-radius: var(--round-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--tab);
+}
+
+/* ── 사진첩 / 단짝 / 상점 카드 ───────────────────────────── */
+.pic,
+.jjak,
+.shop-card,
+.panel,
+.hero {
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+  background: #fff;
+}
+.pic .ph {
+  border-radius: var(--round-sm);
+  border: 1px solid var(--line);
+}
+.jjak i {
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--line-2);
+}
+.shop-card .pv {
+  border-radius: var(--round-sm);
+  border: 1px solid var(--line-2);
+}
+.counts span {
+  border-bottom: 1px dashed var(--line);
+}
+
+/* ── 빈 상태도 귀엽게 ────────────────────────────────────── */
+.empty::before {
+  content: '( ˘ ³˘ )';
+  display: block;
+  font-size: 15px;
+  color: var(--accent-2);
+  margin-bottom: 6px;
+  font-family: Dotum, monospace;
+}
+
+/* ── 대화상자 ────────────────────────────────────────────── */
+.dlg-back {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(60, 70, 85, 0.42);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.dlg {
+  width: min(360px, 100%);
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 3px var(--accent-2),
+    0 14px 34px rgba(0, 0, 0, 0.28);
+}
+.dlg-tb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  font-size: 11.5px;
+}
+.dlg-ico {
+  font-size: 12px;
+}
+.dlg-body {
+  padding: 18px 18px 14px;
+  text-align: center;
+}
+.dlg-body strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.dlg-body p {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  line-height: 1.7;
+}
+.dlg-foot {
+  display: flex;
+  gap: 7px;
+  padding: 0 18px 18px;
+}
+.dlg-foot .btn {
+  flex: 1;
+  padding: 7px 0;
+}
+
+/* ── 푸터 ────────────────────────────────────────────────── */
+.footer {
+  border: 2px dotted rgba(255, 255, 255, 0.75);
+  border-radius: var(--round);
+  background: rgba(255, 255, 255, 0.76);
+}
+html[data-skin='night'] .footer {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── BGM 플레이어 — 위는 조작줄, 아래는 재생 위치 막대 ───── */
+.bgm {
+  display: block;
+  padding: 6px 12px 7px;
+}
+.bgm-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.bgm-bar {
+  margin-top: 5px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  overflow: hidden;
+}
+.bgm-bar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.bgm-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  transition: width 0.12s linear;
+}
+
+/* ── 푸터를 뺀 자리가 휑하지 않도록 본문이 화면을 채운다 ── */
+.wrap {
+  min-height: calc(100vh - 74px);
+  padding: 14px 0 18px;
+  display: flex;
+  flex-direction: column;
+}
+.wrap > .hompy,
+.wrap > .portal {
+  flex: 1;
+}
+.hompy {
+  display: flex;
+  flex-direction: column;
+}
+.hompy-body {
+  flex: 1;
+}
+/* 프로그램 창 안에서는 창이 이미 높이를 정한다 */
+.win-body .wrap {
+  min-height: 0;
+  padding-bottom: 4px;
+}
+
+/* 블랙민트 — 검정 위에 민트 빗금과 번짐 */
+html[data-skin='mint'] body {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(95, 217, 182, 0.09) 0 10px,
+      transparent 10px 24px
+    ),
+    radial-gradient(80% 50% at 50% 0%, rgba(95, 217, 182, 0.22), transparent 64%),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+}
+
+/* ══ 포털 첫 화면 ═════════════════════════════════════════ */
+.portal {
+  gap: 14px;
+  align-items: flex-start;
+}
+.portal-main {
+  gap: 14px;
+}
+.portal-2col {
+  display: flex;
+  gap: 14px;
+}
+.portal-2col > .panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero {
+  gap: 18px;
+  padding: 20px 22px;
+  background: linear-gradient(160deg, #fff, var(--tab));
+}
+.hero-t {
+  font-family: 'Nanum Pen Script', Dotum, cursive;
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--accent);
+}
+.hero p {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--ink-dim);
+}
+.hero-btns {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+}
+.hero-btns .btn {
+  text-decoration: none;
+}
+
+/* 공지 */
+.notice-list li {
+  align-items: center;
+  gap: 7px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.ntag {
+  flex: none;
+  font-size: 9.5px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--tab);
+  border: 1px solid var(--line-2);
+  color: var(--accent);
+}
+.ntag.ev {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.newmark {
+  flex: none;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: #f2708f;
+  border-radius: 999px;
+  padding: 1px 5px;
+}
+
+/* 내 기록장 통계 */
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  margin-bottom: 10px;
+}
+.stat-row b {
+  color: var(--accent);
+  font-size: 12.5px;
+}
+.inkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--round-sm);
+  background: var(--tab);
+  padding: 9px 11px;
+}
+.inkbox b {
+  font-size: 13px;
+  color: var(--accent);
+}
+.inkbox p {
+  margin: 2px 0 7px;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+.inkbox .btn {
+  text-decoration: none;
+  font-size: 11px;
+  padding: 3px 11px;
+}
+
+/* 인기 기록장 */
+.rank {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rank li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 11.5px;
+}
+.rank b {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  background: var(--tab);
+  border: 1px solid var(--line-2);
+  color: var(--ink-dim);
+}
+.rank b.top {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-color: var(--accent);
+  color: #fff;
+}
+.rank i {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.rank small {
+  color: var(--ink-dim);
+  font-size: 10px;
+}
+
+/* 로그인 상자 */
+.login-box .inp {
+  margin-bottom: 6px;
+}
+.login-links {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 9px;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+.login-note {
+  margin: 9px 0 0;
+  font-size: 10px;
+  color: var(--ink-dim);
+  line-height: 1.7;
+}
+
+/* 이벤트 배너 — 그 시절 구석에 꼭 있던 것 */
+.evt {
+  margin-top: 12px;
+  border: 2px dashed var(--accent-2);
+  border-radius: var(--round-sm);
+  background: linear-gradient(160deg, #fff, var(--tab));
+  padding: 9px;
+  text-align: center;
+}
+.evt b {
+  display: block;
+  font-size: 12px;
+  color: var(--accent);
+  animation: evtBlink 1.2s steps(1) infinite;
+}
+.evt span {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+@keyframes evtBlink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* 단짝 바로가기 */
+.jjak-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.jjak-mini a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 11.5px;
+}
+.jjak-mini a:hover {
+  background: var(--tab);
+  text-decoration: none;
+}
+.jjak-mini i {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--line-2);
+}
+.jjak-mini small {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+/* ══ 상점 ═════════════════════════════════════════════════ */
+.shop-card {
+  padding: 9px;
+}
+.shop-card .pv {
+  height: 62px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.shop-card b {
+  font-size: 12.5px;
+}
+.shop-card small {
+  display: block;
+  font-size: 10.5px;
+  line-height: 1.5;
+  min-height: 30px;
+}
+.shop-card .btn {
+  width: 100%;
+  font-size: 11px;
+}
+
+/* 첫 화면도 아래가 휑하지 않게 — 마지막 줄이 남은 높이를 먹는다 */
+.portal {
+  align-items: stretch;
+}
+.portal-main {
+  display: flex;
+  flex-direction: column;
+}
+.portal-2col {
+  flex: 1;
+}
+.portal-2col > .panel,
+.login-box {
+  display: flex;
+  flex-direction: column;
+}
+.login-box .jjak-mini {
+  flex: 1;
+}
+
+/* ── 저장할 때는 편집 흔적을 지운다 ─────────────────────── */
+[data-exporting] .ed {
+  outline: none !important;
+  cursor: default;
+}
+[data-exporting] .ed:empty::before {
+  content: '' !important;
+}
+[data-exporting] .side-pic span,
+[data-exporting] .room span {
+  display: none;
+}
+
+/* 상점 — 잉크 얻는 방법 */
+.ink-how {
+  margin: 4px 0 9px;
+  padding-left: 15px;
+  font-size: 11px;
+  line-height: 1.85;
+  color: var(--ink-dim);
+}
+.ink-how i {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 700;
+}
+.inkbox > div {
+  min-width: 0;
+}
+
+/* 설정 — 고르기 줄과 안내 문구 */
+.pickrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.hint {
+  margin: 6px 0 0;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--ink-dim);
+}
+
+/* ── 직접 꾸민 바탕 — 프리셋 위에 덮어쓴다 ──────────────── */
+html[data-custom='1'] body {
+  background-color: var(--my-bg);
+  background-image: var(--my-bg-image);
+  background-size: var(--my-bg-size);
+  background-repeat: var(--my-bg-repeat);
+  background-position: center;
+}
+
+/* 직접 꾸미기 상자 */
+.deco-box {
+  margin-top: 8px;
+  border: 1px dashed var(--line-2);
+  border-radius: var(--round-sm);
+  background: var(--tab);
+  padding: 9px 10px;
+}
+.deco-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 8px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.deco-row input[type='color'] {
+  width: 30px;
+  height: 24px;
+  padding: 1px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* ── 공유 ────────────────────────────────────────────────── */
+.viewing-bar {
+  position: relative;
+  z-index: 2;
+  width: min(900px, 100%);
+  margin: 10px auto -4px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 2px dashed var(--accent-2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+}
+.viewing-bar b {
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 11px;
+  flex: none;
+}
+.viewing-bar span {
+  flex: 1;
+  min-width: 0;
+}
+.viewing-bar .btn {
+  flex: none;
+  padding: 3px 12px;
+}
+html[data-viewing='1'] .ed {
+  cursor: default;
+}
+html[data-viewing='1'] .ed:hover {
+  outline-color: transparent;
+}
+
+.share-wait {
+  width: min(900px, 100%);
+  margin: 40px auto;
+  padding: 30px;
+  text-align: center;
+  line-height: 1.9;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+}
+
+@media (max-width: 700px) {
+  .viewing-bar {
+    flex-wrap: wrap;
+    border-radius: var(--round);
+  }
+  .viewing-bar span {
+    order: 3;
+    width: 100%;
+    flex: none;
+  }
+}
+
+.buildmark {
+  margin: 6px 0 0;
+  font-size: 10px;
+  color: var(--ink-dim);
+  opacity: 0.75;
+  font-family: Verdana, Tahoma, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ── 글쓰기 상자 ─────────────────────────────────────────── */
+.writer {
+  position: relative;
+  border: 2px dashed var(--line-2);
+  border-radius: var(--round-sm);
+  background: var(--tab);
+  padding: 10px;
+}
+.writer-tag {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+.item.editing {
+  background: var(--tab);
+  border-radius: var(--round-sm);
+}
+
+/* 고치기 단추 — ✕ 보다 넓게 */
+.btn-x.wide {
+  width: auto;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+}
+.btn-x.wide:hover {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+/* ── 사진 설명 ───────────────────────────────────────────── */
+.pic .cap .ed {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+}
+.cap-date {
+  font-size: 9.5px;
+  color: var(--ink-dim);
+  padding: 0 1px;
+}
+
+/* ── 탭 설정 ─────────────────────────────────────────────── */
+.tabcfg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tabcfg-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.tabcfg-row .inp {
+  flex: 1;
+  min-width: 0;
+}
+.tabcfg-row .btn {
+  flex: none;
+  padding: 4px 9px;
+  font-size: 11px;
+}
+.tabcfg-row .btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

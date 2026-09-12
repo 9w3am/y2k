@@ -1,0 +1,171 @@
+/* ── 문자 보기 화면 (백라이트 켜진 LCD) ───────────────────── */
+.t-smsview {
+  --sky-1: #52b6ea;
+  --sky-2: #2b93d6;
+  --sky-3: #1d6fae;
+  --field: #cfeafb;
+  --box: #eaf6fe;
+  --ink: #102c45;
+  --title-ink: #ffffff;
+  --status: #12446b;
+  --ed-hi: rgba(255, 255, 255, 0.5);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--field);
+  font-family: 'Malgun Gothic', Dotum, Gulim, sans-serif;
+  color: var(--ink);
+}
+
+.t-smsview.hue-green {
+  --sky-1: #62c48c;
+  --sky-2: #35a065;
+  --sky-3: #237a4a;
+  --field: #d3f0de;
+  --box: #ecfaf1;
+  --ink: #12381f;
+  --status: #17563a;
+}
+.t-smsview.hue-violet {
+  --sky-1: #a58ae0;
+  --sky-2: #7c5fc7;
+  --sky-3: #5b41a0;
+  --field: #e3daf7;
+  --box: #f3eefc;
+  --ink: #291b4d;
+  --status: #3d2b6b;
+}
+.t-smsview.hue-amber {
+  --sky-1: #f0b64e;
+  --sky-2: #d8912a;
+  --sky-3: #a96c14;
+  --field: #f8e7c4;
+  --box: #fdf5e4;
+  --ink: #40290a;
+  --status: #6b4611;
+}
+
+/* 최상단 아이콘 줄 */
+.t-smsview .status {
+  flex: none;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  background: var(--status);
+  color: #fff;
+}
+.t-smsview .status-spacer {
+  flex: 1;
+}
+.t-smsview .ant {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 15px;
+}
+.t-smsview .ant i {
+  width: 4px;
+  background: currentColor;
+  opacity: 0.28;
+}
+.t-smsview .ant i.on {
+  opacity: 1;
+}
+.t-smsview .ant i:nth-child(1) {
+  height: 5px;
+}
+.t-smsview .ant i:nth-child(2) {
+  height: 8px;
+}
+.t-smsview .ant i:nth-child(3) {
+  height: 11px;
+}
+.t-smsview .ant i:nth-child(4) {
+  height: 15px;
+}
+.t-smsview .batt-shell {
+  width: 22px;
+  height: 12px;
+  border: 2px solid currentColor;
+  display: flex;
+  gap: 1px;
+  padding: 2px;
+}
+.t-smsview .batt-shell i {
+  flex: 1;
+  background: currentColor;
+  opacity: 0.2;
+}
+.t-smsview .batt-shell i.on {
+  opacity: 1;
+}
+
+/* 발신자 타이틀바 */
+.t-smsview .title {
+  flex: none;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 26px;
+  color: var(--title-ink);
+  background: linear-gradient(180deg, var(--sky-1), var(--sky-2) 62%, var(--sky-3));
+  border-bottom: 2px solid rgba(0, 0, 0, 0.28);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 본문 상자 */
+.t-smsview .page {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 14px;
+  display: flex;
+}
+.t-smsview .box {
+  flex: 1;
+  background: var(--box);
+  border: 2px solid rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.75);
+  overflow: hidden;
+}
+.t-smsview .body {
+  color: var(--ink);
+  --ed-hi: rgba(0, 0, 0, 0.3);
+}
+
+/* 아래 소프트키 줄 */
+.t-smsview .keys {
+  flex: none;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(180deg, var(--sky-1), var(--sky-2) 62%, var(--sky-3));
+  border-top: 2px solid rgba(0, 0, 0, 0.28);
+  color: var(--title-ink);
+  font-size: 22px;
+  padding: 0 16px;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+.t-smsview .keys .sk {
+  flex: 1;
+}
+.t-smsview .keys .sk:nth-child(2) {
+  text-align: center;
+}
+.t-smsview .keys .sk:nth-child(3) {
+  text-align: right;
+}
+
+.t-smsview.f-pixel .body,
+.t-smsview.f-pixel .title,
+.t-smsview.f-pixel .keys {
+  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+  text-shadow: none;
+}

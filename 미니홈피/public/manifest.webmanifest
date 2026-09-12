@@ -1,0 +1,17 @@
+{
+  "name": "아이로그 iLOG — 오늘의 나를 기록하는 곳",
+  "short_name": "아이로그",
+  "description": "2000년대 미니홈피를 되살린 개인 기록장. 다이어리·사진첩·방명록·내방 꾸미기.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#8fd0f4",
+  "theme_color": "#1d7fc0",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
