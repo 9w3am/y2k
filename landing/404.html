@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>없는 주소입니다 — 그 시절</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#3f9ede" />
+    <style>
+      :root {
+        --ink: #2e3a44;
+        --dim: #7b8b98;
+        --line: #cfe3f1;
+        --sky: #3f9ede;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        color: var(--ink);
+        font-family: 'Malgun Gothic', Dotum, -apple-system, sans-serif;
+        background-color: #dff1fc;
+        background-image:
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M12 9c-2-2.6-6-1-6 2 0 2.6 3.4 4.6 6 6.4 2.6-1.8 6-3.8 6-6.4 0-3-4-4.6-6-2z' fill='rgba(255,255,255,.7)'/%3E%3Cpath d='M32 26l1.3 2.9 3.2.4-2.3 2.1.6 3.1-2.8-1.6-2.8 1.6.6-3.1-2.3-2.1 3.2-.4z' fill='rgba(255,255,255,.55)'/%3E%3C/svg%3E");
+        background-size: 44px 44px;
+      }
+      main {
+        width: min(420px, 100%);
+        text-align: center;
+        background: #fff;
+        border: 2px dotted var(--line);
+        border-radius: 16px;
+        padding: 30px 22px 26px;
+      }
+      .num {
+        font-size: 46px;
+        letter-spacing: 0.08em;
+        color: var(--sky);
+        margin-bottom: 2px;
+      }
+      h1 { margin: 0 0 10px; font-size: 16px; }
+      p { margin: 0 0 20px; font-size: 12px; line-height: 1.9; color: var(--dim); }
+      .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+      a {
+        text-decoration: none;
+        font-size: 12px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        border: 2px solid var(--line);
+        color: var(--sky);
+        background: #fff;
+      }
+      a:hover { border-color: var(--sky); }
+      a.first { background: var(--sky); border-color: var(--sky); color: #fff; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="num">404</div>
+      <h1>그런 주소는 없습니다</h1>
+      <p>
+        주소를 잘못 눌렀거나, 예전에 있던 자리일 수 있습니다.<br />
+        아래에서 다시 들어가 주세요.
+      </p>
+      <div class="btns">
+        <!-- 배포할 때 저장소 주소가 __BASE__ 자리에 박힌다 (.github/workflows/deploy.yml) -->
+        <a class="first" href="__BASE__">처음으로</a>
+        <a href="__BASE__ilog/">아이로그</a>
+        <a href="__BASE__inbox/">수신함</a>
+      </div>
+    </main>
+
+    <script>
+      /* 나중에 내 도메인을 붙이면 사이트가 루트로 옮겨간다.
+         그때는 박아둔 /저장소이름/ 이 더는 맞지 않으므로,
+         지금 열린 주소를 보고 링크를 고쳐 단다. */
+      (function () {
+        var built = '__BASE__'
+        var base = location.pathname.indexOf(built) === 0 ? built : '/'
+        if (base === built) return
+        var links = document.querySelectorAll('.btns a')
+        links[0].setAttribute('href', base)
+        links[1].setAttribute('href', base + 'ilog/')
+        links[2].setAttribute('href', base + 'inbox/')
+      })()
+    </script>
+  </body>
+</html>

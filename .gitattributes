@@ -1,0 +1,6 @@
+# 윈도우에서 만들어 리눅스에서 돌린다.
+# 줄바꿈이 CRLF 로 들어가면 배포 스크립트가 깨지므로 못 박아 둔다.
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
+*.ico binary

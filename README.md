@@ -41,6 +41,43 @@ npm --prefix ./미니홈피 run build     # → 미니홈피/dist
 두 사이트 모두 `manifest.webmanifest` 와 서비스 워커가 있어서, 배포한 주소를
 브라우저에서 열면 **설치**해 프로그램처럼 쓸 수 있습니다. (HTTPS 필요)
 
+### GitHub Pages 로 올리기
+
+`.github/workflows/deploy.yml` 이 `main` 에 올릴 때마다 알아서 합니다.
+두 사이트를 빌드해 한 폴더로 모으고 Pages 로 내보냅니다.
+
+```
+/            그 시절 — 두 사이트 고르는 첫 화면
+/ilog/       아이로그
+/inbox/      수신함
+```
+
+처음 한 번만 해줄 일:
+
+1. 저장소를 만들고 `main` 에 올린다
+2. 저장소 → **Settings → Pages → Build and deployment → Source** 를
+   **GitHub Actions** 로 바꾼다
+3. **Actions** 탭에서 `배포` 가 초록불이 되면 끝. 주소는
+   `https://<아이디>.github.io/<저장소이름>/`
+
+저장소 이름을 `<아이디>.github.io` 로 만들면 주소가
+`https://<아이디>.github.io/` 로 짧아집니다.
+
+### 내 도메인 붙이기
+
+도메인은 따로 사야 합니다(1년에 만원 안팎). 호스팅 값은 Pages 가 공짜라 0원입니다.
+
+1. 도메인 판매처(가비아·Cloudflare·Namecheap 등)에서 도메인을 산다
+2. DNS 에 레코드를 넣는다
+   - `example.com` 으로 쓸 때 — `A` 레코드 네 개:
+     `185.199.108.153` `185.199.109.153` `185.199.110.153` `185.199.111.153`
+   - `www.example.com` 으로 쓸 때 — `CNAME` 레코드 하나: `<아이디>.github.io`
+3. 저장소 → **Settings → Pages → Custom domain** 에 도메인을 넣고 저장
+   (GitHub 이 저장소에 `CNAME` 파일을 만들어 줍니다)
+4. 인증서가 발급되면 **Enforce HTTPS** 를 켠다 (보통 몇 분~한 시간)
+
+도메인을 붙이면 사이트가 루트에 놓이므로 `/ilog/` `/inbox/` 주소는 그대로입니다.
+
 ---
 
 ## 수신함 — 그 시절 화면을 그대로

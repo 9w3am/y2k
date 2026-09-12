@@ -44,8 +44,20 @@ jobs:
           cp landing/index.html _site/index.html
           cp -r 미니홈피/dist  _site/ilog
           cp -r 문자메이커/dist _site/inbox
-          # 주소를 직접 쳐서 들어와도 앱이 뜨도록 (Pages 는 404.html 을 내려준다)
-          cp landing/index.html _site/404.html
+
+          # 404 쪽 링크는 어느 주소에서 열리든 맞아야 하므로,
+          # 여기서 이 저장소의 실제 주소를 박아 넣는다.
+          #   · 사용자 페이지(이름.github.io) → /
+          #   · 그 밖의 저장소               → /저장소이름/
+          REPO='${{ github.event.repository.name }}'
+          OWNER=$(echo '${{ github.repository_owner }}' | tr 'A-Z' 'a-z')
+          if [ "$(echo "$REPO" | tr 'A-Z' 'a-z')" = "$OWNER.github.io" ]; then
+            BASE='/'
+          else
+            BASE="/$REPO/"
+          fi
+          sed "s|__BASE__|$BASE|g" landing/404.html > _site/404.html
+          echo "404 링크 기준 주소: $BASE"
 
       - uses: actions/upload-pages-artifact@v3
         with:

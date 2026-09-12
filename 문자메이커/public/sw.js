@@ -8,7 +8,10 @@
    · 그 밖        : 네트워크 먼저, 안 되면 캐시
    ══════════════════════════════════════════════════════════ */
 
-const CACHE = 'ilog-v2'
+// 두 사이트가 같은 주소 아래 나란히 올라가므로,
+// 캐시 이름 앞에 제 이름을 붙이고 제 것만 지운다. 남의 캐시를 건드리면 안 된다.
+const PREFIX = 'inbox-'
+const CACHE = PREFIX + 'v3'
 
 self.addEventListener('install', () => self.skipWaiting())
 
@@ -17,7 +20,7 @@ self.addEventListener('activate', (e) => {
     (async () => {
       // 예전 판이 남긴 캐시를 전부 버린다
       const names = await caches.keys()
-      await Promise.all(names.filter((n) => n !== CACHE).map((n) => caches.delete(n)))
+      await Promise.all(names.filter((n) => n.startsWith(PREFIX) && n !== CACHE).map((n) => caches.delete(n)))
       await self.clients.claim()
     })(),
   )
