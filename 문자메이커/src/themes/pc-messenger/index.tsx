@@ -1,5 +1,6 @@
 import './theme.css'
 import { ScreenFx, ScreenFxPanel, useFxRoot } from '../../editable/ScreenFx'
+import { ScreenPhoto, ScreenPhotoPanel } from '../../editable/ScreenPhoto'
 import { EditableText, ByteCounter } from '../../editable/EditableText'
 import { useStore, useValue } from '../../lib/store'
 import { krByte } from '../../lib/krByte'
@@ -77,6 +78,7 @@ export function Screen() {
 
   return (
     <div className={`t-xp skin-${skin} ${fx.className}`} style={fx.style}>
+      <ScreenPhoto />
       <div className="tb">
         <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
           <rect x="2.5" y="0.5" width="8" height="12" rx="1.5" fill="#dfe9f5" stroke="#2b5ea8" />
@@ -316,6 +318,7 @@ export function Panel() {
       </Section>
 
       <ScreenFxPanel n="04" />
+      <ScreenPhotoPanel n="05" />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import './theme.css'
 import { ScreenFx, ScreenFxPanel, useFxRoot } from '../../editable/ScreenFx'
+import { ScreenPhoto, ScreenPhotoPanel } from '../../editable/ScreenPhoto'
 import { EditableText } from '../../editable/EditableText'
 import { useStore, useValue } from '../../lib/store'
 import { Section, Slider } from '../../ui/controls'
@@ -66,6 +67,7 @@ export function Screen() {
 
   return (
     <div className={`t-attach ${fx.className}`} style={fx.style}>
+      <ScreenPhoto />
       <div className="status">
         <span className="ant" aria-hidden="true">
           <i />
@@ -160,6 +162,7 @@ export function Panel() {
 
 
       <ScreenFxPanel n="02" />
+      <ScreenPhotoPanel n="03" />
     </>
   )
 }

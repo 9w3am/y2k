@@ -1,7 +1,9 @@
 import { fxDefaults } from '../../editable/ScreenFx'
+import { photoDefaults } from '../../editable/ScreenPhoto'
 
 export const defaults = {
   ...fxDefaults,
+  ...photoDefaults,
   fxTint: '#7fb4d8',
   fxTintAmt: '10',
   fxGlow: '4',

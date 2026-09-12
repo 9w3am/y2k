@@ -1,7 +1,9 @@
 import { fxDefaults } from '../../editable/ScreenFx'
+import { photoDefaults } from '../../editable/ScreenPhoto'
 
 export const defaults = {
   ...fxDefaults,
+  ...photoDefaults,
   // 이 테마에 맞춘 효과 기본값
   fxTint: '#4fa8ff',
   fxBlur: '0',

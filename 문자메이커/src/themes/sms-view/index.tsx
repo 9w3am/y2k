@@ -1,5 +1,6 @@
 import './theme.css'
 import { ScreenFx, ScreenFxPanel, useFxRoot } from '../../editable/ScreenFx'
+import { ScreenPhoto, ScreenPhotoPanel } from '../../editable/ScreenPhoto'
 import { EditableText } from '../../editable/EditableText'
 import { useValue } from '../../lib/store'
 import { Section, Seg, Slider, SwitchField } from '../../ui/controls'
@@ -32,6 +33,7 @@ export function Screen() {
 
   return (
     <div className={`t-smsview hue-${hue} f-${font} ${fx.className}`} style={fx.style}>
+      <ScreenPhoto />
       <div className="status">
         <span className="ant" aria-hidden="true">
           {[1, 2, 3, 4].map((n) => (
@@ -126,6 +128,7 @@ export function Panel() {
         <SwitchField k="showLock" label="잠금 아이콘" />
       </Section>
       <ScreenFxPanel n="04" />
+      <ScreenPhotoPanel n="05" />
     </>
   )
 }

@@ -1,7 +1,9 @@
 import { fxDefaults } from '../../editable/ScreenFx'
+import { photoDefaults } from '../../editable/ScreenPhoto'
 
 export const defaults = {
   ...fxDefaults,
+  ...photoDefaults,
   // CRT 모니터를 찍은 느낌 — 주사선을 살리고 색조는 옅게
   fxTint: '#9fd4ff',
   fxTintAmt: '8',

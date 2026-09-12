@@ -747,3 +747,48 @@ input[type='range']::-webkit-slider-thumb {
   padding: 0 10px;
   letter-spacing: 0.01em;
 }
+
+/* ══ 화면 뒤에 까는 사진 ═══════════════════════════════════
+   테마마다 껍데기가 달라도 사진은 똑같이 깔린다.
+   화면 칸의 첫 줄에 놓이므로 나머지 내용이 그 위로 올라온다.
+   ══════════════════════════════════════════════════════════ */
+.scr-photo,
+.scr-dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/*
+   사진은 화면 껍데기 위, 글자 아래에 놓여야 한다.
+   껍데기 안의 줄들이 static 이면 자리를 잡은 사진이 그 위를 덮어버리므로,
+   줄들을 relative 로 올려 글자가 사진 위로 오게 한다.
+   (문자 쓰기 테마는 처음부터 relative 라 손댈 것이 없다)
+*/
+.t-smsview > *:not(.scr-photo):not(.scr-dim):not(.screenfx),
+.t-compose > *:not(.scr-photo):not(.scr-dim):not(.screenfx),
+.t-attach > *:not(.scr-photo):not(.scr-dim):not(.screenfx),
+.t-inbox > *:not(.scr-photo):not(.scr-dim):not(.screenfx),
+.t-xp > *:not(.scr-photo):not(.scr-dim):not(.screenfx) {
+  position: relative;
+}
+.scr-photo {
+  background: center / cover no-repeat;
+}
+.scr-dim {
+  background: #000;
+}
+
+/*
+   껍데기가 빈틈없이 칠해진 테마는 사진을 깔아도 아무 변화가 없다.
+   사진이 있을 때만 글 놓이는 면을 비워, 그 자리로 사진이 비치게 한다.
+   (:has 를 모르는 옛 브라우저에서는 사진이 안 보일 뿐 깨지지는 않는다)
+*/
+.t-attach:has(> .scr-photo) .page,
+.t-attach:has(> .scr-photo) .tabs,
+.t-xp:has(> .scr-photo) .body,
+.t-inbox:has(> .scr-photo) .list,
+.t-compose:has(> .scr-photo) .box-wrap,
+.t-smsview:has(> .scr-photo) .page {
+  background: transparent;
+}

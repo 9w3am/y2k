@@ -1,5 +1,6 @@
 import './theme.css'
 import { ScreenFx, ScreenFxPanel, useFxRoot } from '../../editable/ScreenFx'
+import { ScreenPhoto, ScreenPhotoPanel } from '../../editable/ScreenPhoto'
 import { EditableText } from '../../editable/EditableText'
 import { useValue } from '../../lib/store'
 import { Section, Seg, Slider } from '../../ui/controls'
@@ -33,6 +34,7 @@ export function Screen() {
 
   return (
     <div className={`t-compose t-${tone} ${fx.className}`} style={fx.style}>
+      <ScreenPhoto />
       <div className="title">
         <EditableText k="title" multiline={false} maxChars={12} />
       </div>
@@ -104,6 +106,7 @@ export function Panel() {
       </Section>
 
       <ScreenFxPanel n="03" />
+      <ScreenPhotoPanel n="04" />
     </>
   )
 }
