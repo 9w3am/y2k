@@ -45,6 +45,7 @@ interface YtPlayer {
   getDuration(): number
   seekTo(sec: number, allow: boolean): void
   getPlayerState(): number
+  getVideoData(): { title?: string; author?: string }
 }
 
 /**
@@ -118,6 +119,7 @@ async function ensureYt(videoId: string): Promise<YtPlayer | null> {
             // 준비가 끝난 지금에야 바깥에서 쓸 수 있게 넘긴다
             yt = made
             ytVideo = videoId
+            tellTitle()
             resolve(made)
           },
         },
@@ -131,6 +133,7 @@ async function ensureYt(videoId: string): Promise<YtPlayer | null> {
   if (ytVideo !== videoId) {
     ytCall('loadVideoById', videoId)
     ytVideo = videoId
+    setTimeout(tellTitle, 800)
   }
   return yt
 }
@@ -147,6 +150,22 @@ let vol = 0.6
 export type Failure = 'blocked' | 'missing' | null
 let failure: Failure = null
 export const lastFailure = () => failure
+
+/**
+ * 유튜브가 알려준 영상 제목. 틀이 준비된 뒤에야 알 수 있어서,
+ * 화면 쪽에서 여기에 귀를 대고 있다가 오면 받아 적는다.
+ */
+let ytTitleListeners: ((t: string) => void)[] = []
+export function onYtTitle(fn: (t: string) => void) {
+  ytTitleListeners.push(fn)
+  return () => {
+    ytTitleListeners = ytTitleListeners.filter((f) => f !== fn)
+  }
+}
+function tellTitle() {
+  const t = (ytCall('getVideoData') as { title?: string } | undefined)?.title
+  if (t) ytTitleListeners.forEach((f) => f(t))
+}
 
 export const player = {
   /** 재생을 시작한다. 브라우저가 막으면 false */
@@ -190,6 +209,8 @@ export const player = {
     const st = ytCall('getPlayerState')
     const ok = st === 1 || st === 3
     if (!ok) failure = 'blocked'
+    // 제목은 재생이 시작돼야 채워지는 일이 많아 여기서 한 번 더 묻는다
+    tellTitle()
     return ok
   },
 

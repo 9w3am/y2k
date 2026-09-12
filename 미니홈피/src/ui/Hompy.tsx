@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { TRACKS, trackById } from '../lib/bgm'
-import { lastFailure, player, type Source } from '../lib/player'
+import { lastFailure, onYtTitle, player, type Source } from '../lib/player'
 import { youtubeId } from '../lib/audioStore'
 import { pickImage } from '../lib/img'
 import { Ed } from './Ed'
@@ -84,6 +84,16 @@ export function BgmHost() {
   useEffect(() => {
     player.setVolume(volume / 100)
   }, [volume])
+
+  // 유튜브가 영상 제목을 알려주면 받아 적는다 — 손으로 안 써도 되게
+  useEffect(
+    () =>
+      onYtTitle((title) => {
+        const s = useSite.getState()
+        if (s.bgmKind === 'youtube' && s.ytTitle !== title) s.setYt(s.ytUrl, title)
+      }),
+    [],
+  )
 
   // 창을 닫거나 새로고침할 때 소리가 남지 않게
   useEffect(() => {
