@@ -1019,3 +1019,95 @@ html[data-viewing='1'] .ed:hover {
   opacity: 0.35;
   cursor: default;
 }
+
+/* ══ 무언가 터졌을 때 ══════════════════════════════════════ */
+.crash {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.crash-box {
+  width: min(430px, 100%);
+  padding: 24px 22px 20px;
+  text-align: center;
+  background: var(--paper);
+  border: 2px dotted var(--line-2);
+  border-radius: 16px;
+}
+.crash-box b {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--accent);
+}
+.crash-box p {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--dim);
+  word-break: keep-all;
+}
+.crash-box pre {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  font-size: 10.5px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--dim);
+  background: var(--paper-2, #f6fbfe);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.crash-btns {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── 눌러서 고치는 방문 숫자 ─────────────────────────────── */
+.counter-hit {
+  padding: 0 2px;
+  border-bottom: 1px dotted transparent;
+}
+.counter-hit:hover {
+  border-bottom-color: var(--accent);
+}
+.counter-in {
+  width: 74px;
+  padding: 0 4px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent);
+  background: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+}
+
+/* ── 단짝 손질하기 ───────────────────────────────────────── */
+.jjak-cell {
+  min-width: 0;
+}
+.jjak-hue {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+}
+.jjak-hue::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+.jjak-hue::-webkit-color-swatch {
+  border: 0;
+  border-radius: 999px;
+}
+.jjak-cell .jjak .ed {
+  display: block;
+  width: 100%;
+}

@@ -123,6 +123,8 @@ interface State {
   owned: string[]
   custom: Custom
   ink: number
+  /** 출석 도장을 마지막으로 찍은 날 — 하루 한 번만 받게 */
+  stampDate: string
 
   songId: string
   playing: boolean
@@ -167,7 +169,14 @@ interface State {
   setYt: (url: string, title: string) => void
   togglePlay: () => void
   setVolume: (v: number) => void
+  addJjak: () => void
+  setJjak: (id: string, patch: Partial<Jjak>) => void
+  delJjak: (id: string) => void
+  /** TODAY·TOTAL 을 손으로 고친다 */
+  setCount: (patch: { todayCount?: number; totalCount?: number }) => void
   addInk: (n: number) => void
+  /** 오늘 도장을 찍어 준다. 이미 찍었으면 'done' */
+  stamp: () => 'ok' | 'done'
   setShell: (s: 'web' | 'app') => void
   loadShared: (data: Partial<State>) => void
   countVisit: () => void
@@ -210,6 +219,9 @@ const seedGuest: GuestEntry[] = [
     secret: false,
   },
 ]
+
+/** 새 단짝에게 돌아가며 주는 색 */
+const JJAK_HUES = ['#ff9dbe', '#7ec4ee', '#9fe0cc', '#ffd97a', '#c9a8ff', '#ffb0a8']
 
 const seedJjak: Jjak[] = [
   { id: 'j1', nick: '단짝 1', title: '단짝 1의 기록장', hue: '#ff9dbe', memo: '견본 단짝' },
@@ -282,6 +294,7 @@ const initial = {
   todayCount: 0,
   totalCount: 20010605,
   visitDate: '',
+  stampDate: '',
   shell: 'web' as const,
   viewing: false,
 }
@@ -377,7 +390,37 @@ export const useSite = create<State>()(
       setYt: (ytUrl, ytTitle) => set({ ytUrl, ytTitle }),
       togglePlay: () => set((s) => ({ playing: !s.playing })),
       setVolume: (volume) => set({ volume }),
+      addJjak: () =>
+        set((s) => ({
+          jjak: [
+            ...s.jjak,
+            {
+              id: uid(),
+              nick: `단짝 ${s.jjak.length + 1}`,
+              title: `단짝 ${s.jjak.length + 1}의 기록장`,
+              hue: JJAK_HUES[s.jjak.length % JJAK_HUES.length],
+              memo: '',
+            },
+          ],
+        })),
+      setJjak: (id, patch) =>
+        set((s) => ({ jjak: s.jjak.map((j) => (j.id === id ? { ...j, ...patch } : j)) })),
+      delJjak: (id) => set((s) => ({ jjak: s.jjak.filter((j) => j.id !== id) })),
+
+      setCount: (patch) =>
+        set((s) => ({
+          todayCount: Math.max(0, Math.round(patch.todayCount ?? s.todayCount)),
+          totalCount: Math.max(0, Math.round(patch.totalCount ?? s.totalCount)),
+        })),
+
       addInk: (n) => set((s) => ({ ink: Math.max(0, s.ink + n) })),
+
+      stamp: () => {
+        const d = today()
+        if (get().stampDate === d) return 'done'
+        set((s) => ({ stampDate: d, ink: s.ink + 1 }))
+        return 'ok'
+      },
       setShell: (shell) => set({ shell }),
 
       /** 공유 주소로 들어왔을 때 — 남의 내용을 얹고 구경 모드로 */

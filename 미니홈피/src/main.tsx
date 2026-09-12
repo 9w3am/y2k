@@ -6,13 +6,17 @@ import './styles/site.css'
 import './styles/cute.css'
 import './styles/app.css'
 import './styles/responsive.css'
+import './styles/cursor.css'
 import { App } from './App'
+import { Boundary } from './ui/Boundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <HashRouter>
-      <App />
-    </HashRouter>
+    <Boundary>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </Boundary>
   </StrictMode>,
 )
 

@@ -69,6 +69,16 @@
 .win.min {
   display: none;
 }
+/* 최대화 — 바탕화면을 꽉 채운다. 작업표시줄 자리만 남긴다. */
+.win.max {
+  position: absolute;
+  inset: 0 0 36px;
+  width: auto;
+  max-width: none;
+  height: auto;
+  border-width: 0 0 2px;
+  box-shadow: none;
+}
 
 .win-tb {
   flex: none;
@@ -124,11 +134,47 @@
   font-size: 11.5px;
   color: #1b1b1b;
 }
-.win-mb span {
-  padding: 0 3px;
+.win-mb > span {
+  position: relative;
+  padding: 2px 5px;
   cursor: default;
+  user-select: none;
 }
-.win-mb span:hover {
+.win-mb > span:hover,
+.win-mb > span.on {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 눌러서 펼쳐지는 메뉴 */
+.mb-pop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 30;
+  min-width: 138px;
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  background: #ece9d8;
+  color: #1b1b1b;
+  border: 1px solid #f6f4ec;
+  border-right-color: #6e6a58;
+  border-bottom-color: #6e6a58;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.22);
+}
+.mb-pop button {
+  padding: 4px 10px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 11.5px;
+  color: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mb-pop button:hover {
   background: var(--accent);
   color: #fff;
 }

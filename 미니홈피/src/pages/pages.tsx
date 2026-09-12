@@ -178,7 +178,15 @@ export function Photo() {
                   label="사진 설명"
                 />
                 {!viewing && (
-                  <button className="btn-x" onClick={() => delPic(p.id)} aria-label="사진 지우기">
+                  <button
+                    className="btn-x"
+                    onClick={() =>
+                      void ask('이 사진을 뺄까요?', p.cap || '설명 없는 사진', '빼기').then(
+                        (yes) => yes && delPic(p.id),
+                      )
+                    }
+                    aria-label="사진 지우기"
+                  >
                     ✕
                   </button>
                 )}
@@ -267,7 +275,15 @@ export function Guest() {
               >
                 답글
               </button>
-              <button className="btn-x" onClick={() => delGuest(g.id)} aria-label="지우기">
+              <button
+                className="btn-x"
+                onClick={() =>
+                  void ask('이 방명록을 지울까요?', `${g.nick} 님이 남긴 글`, '지우기').then(
+                    (yes) => yes && delGuest(g.id),
+                  )
+                }
+                aria-label="지우기"
+              >
                 ✕
               </button>
             </div>
@@ -316,29 +332,100 @@ export function Guest() {
 
 /* ── 단짝 목록 ───────────────────────────────────────────── */
 export function JjakList() {
-  const jjak = useSite((s) => s.jjak)
+  const { jjak, addJjak, setJjak, delJjak } = useSite()
+  const viewing = useSite((s) => s.viewing)
+  /** 손질 모드 — 켜면 이름·색을 고치고 뺄 수 있다 */
+  const [fix, setFix] = useState(false)
+
   return (
     <>
       <div className="sect">
         <h2>Jjak</h2>
         <em>my close friends</em>
         <span className="sp" />
-        <small>{jjak.length}명 · 눌러서 놀러가기</small>
+        <small>{jjak.length}명</small>
+        {!viewing && (
+          <>
+            <button className="btn" onClick={() => setFix((v) => !v)}>
+              {fix ? '다 고쳤어요' : '손질하기'}
+            </button>
+            <button className="btn btn-main" onClick={addJjak}>
+              단짝 늘리기
+            </button>
+          </>
+        )}
       </div>
-      <div className="jjak-grid">
-        {jjak.map((j) => (
-          <Link className="jjak" key={j.id} to={`/jjak/${j.id}`} style={{ color: 'inherit' }}>
-            <i style={{ background: j.hue }} />
-            <span>
-              <b>{j.nick}</b>
-              <small>{j.title}</small>
-            </span>
-          </Link>
-        ))}
-      </div>
+
+      {jjak.length === 0 ? (
+        <div className="empty">
+          단짝이 없습니다.
+          <br />
+          위의 &lsquo;단짝 늘리기&rsquo; 로 이웃을 만들어 보세요.
+        </div>
+      ) : (
+        <div className="jjak-grid">
+          {jjak.map((j) => (
+            <div className="jjak-cell" key={j.id}>
+              {fix ? (
+                <div className="jjak">
+                  <input
+                    className="jjak-hue"
+                    type="color"
+                    value={j.hue}
+                    aria-label={`${j.nick} 색`}
+                    title="색 고르기"
+                    onChange={(e) => setJjak(j.id, { hue: e.target.value })}
+                  />
+                  <span>
+                    <Ed
+                      value={j.nick}
+                      onChange={(v) => setJjak(j.id, { nick: v })}
+                      multiline={false}
+                      maxChars={14}
+                      ph="이름"
+                      label="단짝 이름"
+                      style={{ fontWeight: 700 }}
+                    />
+                    <Ed
+                      value={j.title}
+                      onChange={(v) => setJjak(j.id, { title: v })}
+                      multiline={false}
+                      maxChars={22}
+                      ph="기록장 이름"
+                      label="단짝 기록장 이름"
+                      style={{ fontSize: 11, color: 'var(--ink-dim)' }}
+                    />
+                  </span>
+                  <button
+                    className="btn-x"
+                    aria-label={`${j.nick} 빼기`}
+                    onClick={() =>
+                      void ask('이 단짝을 뺄까요?', j.nick, '빼기').then(
+                        (yes) => yes && delJjak(j.id),
+                      )
+                    }
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <Link className="jjak" to={`/jjak/${j.id}`} style={{ color: 'inherit' }}>
+                  <i style={{ background: j.hue }} />
+                  <span>
+                    <b>{j.nick}</b>
+                    <small>{j.title}</small>
+                  </span>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <p style={{ color: 'var(--ink-dim)', fontSize: 11, marginTop: 10 }}>
-        단짝은 지금 이 브라우저 안에만 있는 이웃입니다. 여러 사람이 실제로 오가는 기능은 나중에
-        붙일 수 있도록 저장소를 따로 떼어 두었습니다.
+        {fix
+          ? '이름을 눌러 고치고, 동그라미를 눌러 색을 바꿉니다.'
+          : '단짝은 지금 이 브라우저 안에만 있는 이웃입니다. 여러 사람이 실제로 오가는 기능은 나중에 붙일 수 있도록 저장소를 따로 떼어 두었습니다.'}
       </p>
     </>
   )
@@ -413,7 +500,7 @@ export function JjakView() {
 
 /* ── 상점 ────────────────────────────────────────────────── */
 export function Shop() {
-  const { ink, owned, skin, buySkin, setSkin, addInk } = useSite()
+  const { ink, owned, skin, buySkin, setSkin, stamp } = useSite()
 
   const buy = (id: string) => {
     const r = buySkin(id)
@@ -473,7 +560,13 @@ export function Shop() {
             <li>사진첩에 사진 한 장 — <i>+1방울</i></li>
             <li>하루 한 번 출석 도장 — <i>+1방울</i></li>
           </ul>
-          <button className="btn btn-main" onClick={() => addInk(1)}>
+          <button
+            className="btn btn-main"
+            onClick={() => {
+              if (stamp() === 'done')
+                void say('오늘은 이미 찍었습니다', '도장은 하루에 한 번만 받을 수 있어요.')
+            }}
+          >
             출석 도장 찍기
           </button>
         </div>

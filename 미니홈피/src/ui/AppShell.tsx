@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { exportHompy } from '../lib/exportPng'
+import { say } from './dialog'
 
 const TOOL = [
   { to: '/home', label: '내 기록장' },
@@ -29,9 +30,49 @@ export function AppShell({ children }: { children: ReactNode }) {
   const nav = useNavigate()
   const [min, setMin] = useState(false)
   const [menu, setMenu] = useState(false)
+  const [max, setMax] = useState(false)
+  /** 지금 열려 있는 메뉴바 이름 — 없으면 빈 문자열 */
+  const [mb, setMb] = useState('')
+
+  /** 메뉴바 한 칸. 눌러서 열고, 한 번 열리면 지나가기만 해도 옮겨 열린다. */
+  const MbItem = ({ name, children }: { name: string; children: ReactNode }) => (
+    <span
+      className={mb === name ? 'on' : ''}
+      onClick={(e) => {
+        e.stopPropagation()
+        setMb((v) => (v === name ? '' : name))
+      }}
+      onMouseEnter={() => mb && setMb(name)}
+    >
+      {name}
+      {mb === name && (
+        <span className="mb-pop" onClick={(e) => e.stopPropagation()}>
+          {children}
+        </span>
+      )}
+    </span>
+  )
+
+  /** 메뉴 한 줄 */
+  const MbRow = ({ label, onPick }: { label: string; onPick: () => void }) => (
+    <button
+      onClick={() => {
+        setMb('')
+        onPick()
+      }}
+    >
+      {label}
+    </button>
+  )
 
   return (
-    <div className="desktop" onClick={() => menu && setMenu(false)}>
+    <div
+      className="desktop"
+      onClick={() => {
+        if (menu) setMenu(false)
+        if (mb) setMb('')
+      }}
+    >
       <div className="desk-icons">
         <button className="desk-ico" onClick={() => setMin(false)}>
           <i>✎</i>
@@ -47,7 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
       </div>
 
-      <div className={`win ${min ? 'min' : ''}`}>
+      <div className={`win ${min ? 'min' : ''} ${max ? 'max' : ''}`}>
         <div className="win-tb">
           <span aria-hidden="true">✎</span>
           <span>아이로그 — {me.homeTitle}</span>
@@ -55,8 +96,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button className="win-btn" onClick={() => setMin(true)} aria-label="최소화">
             －
           </button>
-          <button className="win-btn" aria-label="최대화">
-            □
+          <button
+            className="win-btn"
+            onClick={() => setMax((v) => !v)}
+            aria-label={max ? '이전 크기로' : '최대화'}
+            title={max ? '이전 크기로' : '최대화'}
+          >
+            {max ? '❐' : '□'}
           </button>
           <button
             className="win-btn close"
@@ -68,11 +114,41 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
 
         <div className="win-mb">
-          <span>파일(F)</span>
-          <span>편집(E)</span>
-          <span>보기(V)</span>
-          <span>단짝(B)</span>
-          <span>도움말(H)</span>
+          <MbItem name="파일(F)">
+            <MbRow label="내 기록장" onPick={() => nav('/home')} />
+            <MbRow
+              label="그림으로 저장"
+              onPick={() => {
+                const node = document.querySelector('.wrap')
+                if (node instanceof HTMLElement) void exportHompy(node)
+              }}
+            />
+            <MbRow label="웹으로 보기" onPick={() => setShell('web')} />
+          </MbItem>
+          <MbItem name="편집(E)">
+            <MbRow label="프로필 고치기" onPick={() => nav('/profile')} />
+            <MbRow label="설정" onPick={() => nav('/setting')} />
+          </MbItem>
+          <MbItem name="보기(V)">
+            <MbRow label="다이어리" onPick={() => nav('/diary')} />
+            <MbRow label="사진첩" onPick={() => nav('/photo')} />
+            <MbRow label="방명록" onPick={() => nav('/guest')} />
+            <MbRow label={max ? '이전 크기로' : '창 최대화'} onPick={() => setMax((v) => !v)} />
+          </MbItem>
+          <MbItem name="단짝(B)">
+            <MbRow label="단짝 모두 보기" onPick={() => nav('/jjak')} />
+          </MbItem>
+          <MbItem name="도움말(H)">
+            <MbRow
+              label="아이로그 정보"
+              onPick={() =>
+                void say(
+                  '아이로그',
+                  '2000년대 미니홈피를 되살려 본 개인 기록장입니다.\n쓴 글과 사진은 이 브라우저 안에만 저장됩니다.',
+                )
+              }
+            />
+          </MbItem>
         </div>
 
         <div className="win-tool">

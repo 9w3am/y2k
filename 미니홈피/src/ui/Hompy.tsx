@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { TRACKS, trackById } from '../lib/bgm'
-import { player, type Source } from '../lib/player'
+import { lastFailure, player, type Source } from '../lib/player'
 import { youtubeId } from '../lib/audioStore'
 import { pickImage } from '../lib/img'
 import { Ed } from './Ed'
@@ -169,7 +169,15 @@ export function Bgm() {
         <span className="bgm-name">
           {title} <em>{by}</em>
         </span>
-        {blocked && <span className="bgm-warn">눌러서 소리 켜기</span>}
+        {blocked && (
+          <span className="bgm-warn">
+            {lastFailure() === 'missing'
+              ? bgmKind === 'youtube'
+                ? '유튜브를 불러오지 못했습니다'
+                : '음악 파일을 찾지 못했습니다'
+              : '눌러서 소리 켜기'}
+          </span>
+        )}
         {bgmKind === 'builtin' && (
           <button onClick={() => go(-1)} aria-label="이전 곡" title="이전 곡">
             ◀◀
@@ -221,9 +229,74 @@ export function Bgm() {
   )
 }
 
+/** TODAY·TOTAL 숫자 한 칸 — 눌러서 직접 고친다 */
+function Counter({
+  label,
+  value,
+  onSet,
+}: {
+  label: string
+  value: number
+  onSet: (n: number) => void
+}) {
+  const viewing = useSite((s) => s.viewing)
+  const [fix, setFix] = useState(false)
+  const [draft, setDraft] = useState('')
+
+  const done = () => {
+    const n = Number(draft.replace(/[^\d]/g, ''))
+    if (Number.isFinite(n) && draft.trim() !== '') onSet(n)
+    setFix(false)
+  }
+
+  if (fix)
+    return (
+      <>
+        {label}{' '}
+        <input
+          className="counter-in"
+          value={draft}
+          autoFocus
+          inputMode="numeric"
+          aria-label={`${label} 숫자`}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={done}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') done()
+            if (e.key === 'Escape') setFix(false)
+          }}
+        />
+      </>
+    )
+
+  return (
+    <>
+      {label}{' '}
+      <b
+        className={viewing ? '' : 'counter-hit'}
+        role={viewing ? undefined : 'button'}
+        tabIndex={viewing ? undefined : 0}
+        title={viewing ? undefined : '눌러서 숫자 고치기'}
+        onClick={() => {
+          if (viewing) return
+          setDraft(String(value))
+          setFix(true)
+        }}
+        onKeyDown={(e) => {
+          if (viewing || e.key !== 'Enter') return
+          setDraft(String(value))
+          setFix(true)
+        }}
+      >
+        {value.toLocaleString()}
+      </b>
+    </>
+  )
+}
+
 /** 미니홈피 본체 — 왼쪽 프로필 / 링 / 오른쪽 내용 / 세로 탭 */
 export function Hompy() {
-  const { me, setMe, jjak, todayCount, totalCount, tabs } = useSite()
+  const { me, setMe, jjak, todayCount, totalCount, tabs, setCount } = useSite()
   const nav = useNavigate()
   const [target, setTarget] = useState(jjak[0]?.id ?? '')
 
@@ -237,8 +310,9 @@ export function Hompy() {
       </svg>
       <div className="hompy-top">
         <span className="counter">
-          TODAY <b>{todayCount}</b> <span className="bar">|</span> TOTAL{' '}
-          <b>{totalCount.toLocaleString()}</b>
+          <Counter label="TODAY" value={todayCount} onSet={(n) => setCount({ todayCount: n })} />{' '}
+          <span className="bar">|</span>{' '}
+          <Counter label="TOTAL" value={totalCount} onSet={(n) => setCount({ totalCount: n })} />
         </span>
         <span className="sp" />
         <h1 className="hompy-title">

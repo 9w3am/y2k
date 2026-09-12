@@ -1,0 +1,71 @@
+/* ══════════════════════════════════════════════════════════
+   도트 커서
+   그 시절 화면인데 커서만 매끈하면 어색하다. 계단진 하늘색
+   화살표를 쓰고, 누를 수 있는 것 위에서는 하트를 든 손으로,
+   글자를 고칠 수 있는 곳에서는 I 빔으로 바뀐다.
+
+   그림은 tools/make-cursors.mjs 가 점을 찍어 만든다.
+   못 불러오면 뒤에 적어둔 기본 커서로 알아서 돌아간다.
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  --cur-arrow: image-set(
+    url('../cursor/arrow.png') 1x,
+    url('../cursor/arrow@2x.png') 1.5x
+  );
+  --cur-hand: image-set(url('../cursor/hand.png') 1x, url('../cursor/hand@2x.png') 1.5x);
+  --cur-text: image-set(url('../cursor/text.png') 1x, url('../cursor/text@2x.png') 1.5x);
+}
+
+/* 손가락으로 쓰는 기기에는 커서가 없다 — 그림을 아예 받지 않게 */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body {
+    cursor: var(--cur-arrow) 0 0, default;
+  }
+
+  /* 누를 수 있는 것 */
+  a,
+  button,
+  summary,
+  label,
+  select,
+  [role='button'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range'],
+  input[type='color'],
+  input[type='file'],
+  .btn,
+  .btn-x,
+  .tabs a,
+  .jjak,
+  .side-pic,
+  .counter-hit,
+  .bgm-bar,
+  .desk-ico,
+  .task-btn,
+  .win-btn,
+  .win-mb > span {
+    cursor: var(--cur-hand) 9 0, pointer;
+  }
+
+  /* 글자를 고칠 수 있는 곳 */
+  input[type='text'],
+  input:not([type]),
+  input[type='search'],
+  input[type='url'],
+  input[type='number'],
+  textarea,
+  .ed,
+  [contenteditable='true'],
+  [contenteditable='plaintext-only'] {
+    cursor: var(--cur-text) 7 16, text;
+  }
+
+  /* 못 누르는 것은 원래대로 */
+  :disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+}
