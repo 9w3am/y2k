@@ -2,6 +2,24 @@ import { toPng } from 'html-to-image'
 import { say } from '../ui/dialog'
 
 const pad = (n: number) => String(n).padStart(2, '0')
+/**
+ * 바뀐 스타일이 그려질 때까지 기다린다.
+ * 다른 탭을 보고 있으면 requestAnimationFrame 이 아예 안 불려 저장이 멈춘다 —
+ * 짧은 타이머로도 풀리게 한다.
+ */
+function nextPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    requestAnimationFrame(() => requestAnimationFrame(finish))
+    setTimeout(finish, 120)
+  })
+}
+
 
 function stamp(): string {
   const d = new Date()
@@ -30,12 +48,24 @@ export function maxRatio(w: number, h: number, cap = 6): number {
   return Math.max(1, Math.min(cap, Math.floor(Math.sqrt(LIMIT / (w * h)))))
 }
 
+/**
+ * 지금 보는 모드 그대로 뽑는다.
+ *  웹       — 위 메뉴줄까지 달린 페이지 전체
+ *  프로그램 — 제목줄·메뉴·도구줄·상태줄이 달린 창 한 장. 창 안 내용은 끝까지 펼친다.
+ */
+export async function exportScreen(mode: 'web' | 'app'): Promise<void> {
+  const node = document.querySelector(mode === 'app' ? '.win' : '#root')
+  if (node instanceof HTMLElement) await exportHompy(node, undefined, mode)
+}
+
 export async function exportHompy(
   node: HTMLElement,
-  ratio = maxRatio(node.offsetWidth, node.offsetHeight),
+  ratio?: number,
+  mode: 'web' | 'app' = 'web',
 ): Promise<void> {
   const root = document.documentElement
-  root.dataset.exporting = '1'
+  // 'app' 이면 창을 끝까지 펼치는 규칙이 켜진다 (app.css)
+  root.dataset.exporting = mode
 
   const active = document.activeElement as HTMLElement | null
   active?.blur?.()
@@ -43,25 +73,37 @@ export async function exportHompy(
 
   try {
     if (document.fonts?.ready) await document.fonts.ready
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    await nextPaint()
+
+    // 펼쳐진 뒤의 크기로 재야 한다
+    const w = node.offsetWidth
+    const h = node.offsetHeight
+    if (!w || !h) throw new Error('보이지 않는 창')
+    const r = ratio ?? maxRatio(w, h)
 
     const bodyCs = getComputedStyle(document.body)
+    // 창은 제 바탕이 있으니 그대로 두고, 웹 페이지만 스킨 바탕을 깔아준다
+    const pageBg =
+      mode === 'web'
+        ? {
+            // body 는 background-attachment: fixed 라서 그대로 베끼면
+            // 복제본에서 무늬가 사라진다 — scroll 로 바꿔 붙인다.
+            backgroundColor: bodyCs.backgroundColor,
+            backgroundImage: bodyCs.backgroundImage,
+            backgroundSize: bodyCs.backgroundSize,
+            backgroundRepeat: bodyCs.backgroundRepeat,
+            backgroundPosition: '0 0',
+            backgroundAttachment: 'scroll',
+          }
+        : {}
 
     const url = await toPng(node, {
-      pixelRatio: ratio,
+      pixelRatio: r,
       cacheBust: true,
-      width: node.offsetWidth,
-      height: node.offsetHeight,
+      width: w,
+      height: h,
       style: {
-        // 화면에서 보이던 스킨 바탕을 그대로 깔아준다.
-        // body 는 background-attachment: fixed 라서 그대로 베끼면
-        // 복제본에서 무늬가 사라진다 — scroll 로 바꿔 붙인다.
-        backgroundColor: bodyCs.backgroundColor,
-        backgroundImage: bodyCs.backgroundImage,
-        backgroundSize: bodyCs.backgroundSize,
-        backgroundRepeat: bodyCs.backgroundRepeat,
-        backgroundPosition: '0 0',
-        backgroundAttachment: 'scroll',
+        ...pageBg,
         // 화면 높이에 맞춰 늘려둔 규칙은 저장할 때 방해가 된다
         minHeight: 'auto',
         margin: '0',
@@ -69,7 +111,7 @@ export async function exportHompy(
     })
 
     const a = document.createElement('a')
-    a.download = `ilog_${stamp()}.png`
+    a.download = `ilog_${mode === 'app' ? 'program' : 'web'}_${stamp()}.png`
     a.href = url
     a.click()
   } catch {

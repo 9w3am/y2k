@@ -1116,3 +1116,153 @@ html[data-viewing='1'] .ed:hover {
 .hompy-body {
   gap: 14px;
 }
+
+/* ══ 직접 꾸미기가 닿지 않던 곳 ═══════════════════════════
+   스킨 변수 대신 흰색(#fff)·점선을 박아둔 규칙이 많아서,
+   꾸밈새를 켜도 그 부분만 예전 모양으로 남았다. 전부 꾸밈 변수로 돌린다.
+   ══════════════════════════════════════════════════════════ */
+html[data-custom='1'] .wrap,
+html[data-custom='1'] .gnb,
+html[data-custom='1'] .dlg {
+  font-family: var(--my-body-font);
+  color: var(--ink);
+}
+html[data-custom='1'] .hompy-title,
+html[data-custom='1'] .hero-t {
+  font-family: var(--my-title-font);
+}
+
+/* 흰 바탕으로 박혀 있던 칸들 */
+html[data-custom='1'] .main,
+html[data-custom='1'] .side-intro,
+html[data-custom='1'] .wave,
+html[data-custom='1'] .panel,
+html[data-custom='1'] .jjak,
+html[data-custom='1'] .shop-card,
+html[data-custom='1'] .candy,
+html[data-custom='1'] .dlg,
+html[data-custom='1'] .pic .ph,
+html[data-custom='1'] .counter-in,
+html[data-custom='1'] .inp,
+html[data-custom='1'] .ta {
+  background-color: var(--paper);
+}
+html[data-custom='1'] .gnb {
+  background: linear-gradient(180deg, var(--paper), var(--tab));
+}
+html[data-custom='1'] .btn {
+  background: linear-gradient(180deg, var(--paper), var(--tab));
+}
+html[data-custom='1'] .btn:hover {
+  background: var(--paper);
+}
+html[data-custom='1'] .btn-main {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+html[data-custom='1'] .bgm {
+  background: linear-gradient(180deg, var(--paper), var(--tab));
+}
+html[data-custom='1'] .hero,
+html[data-custom='1'] .evt {
+  background: linear-gradient(160deg, var(--paper), var(--tab));
+}
+html[data-custom='1'] .side-pic,
+html[data-custom='1'] .room {
+  border-color: var(--paper);
+  background-color: var(--paper);
+}
+html[data-custom='1'] .jjak i,
+html[data-custom='1'] .jjak-mini i {
+  border-color: var(--paper);
+}
+
+/*
+   테두리 모양 — 점선 / 끊은 선 / 실선 / 없음
+   네 변을 한꺼번에 바꾸면 안 된다. 아랫변만 선이 있던 칸(.sect 등)의
+   나머지 세 변이 기본 굵기(3px)·글자색으로 튀어나와 검은 점선 상자가 된다.
+   선이 원래 있던 변만 바꾼다.
+*/
+html[data-custom='1'] .hompy::after,
+html[data-custom='1'] .side,
+html[data-custom='1'] .main,
+html[data-custom='1'] .tabs a:not(.on),
+html[data-custom='1'] .panel,
+html[data-custom='1'] .jjak,
+html[data-custom='1'] .shop-card,
+html[data-custom='1'] .hero,
+html[data-custom='1'] .side-intro,
+html[data-custom='1'] .bgm {
+  border-style: var(--my-border);
+}
+html[data-custom='1'] .tabs a:not(.on) {
+  border-left-style: none;
+}
+html[data-custom='1'] .hompy-top,
+html[data-custom='1'] .sect,
+html[data-custom='1'] .gnb {
+  border-bottom-style: var(--my-border);
+}
+html[data-custom='1'] .side-foot {
+  border-top-style: var(--my-border);
+}
+
+/* 직접 꾸미기 조작부 */
+.deco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  gap: 6px 8px;
+  margin-bottom: 10px;
+}
+.deco-color {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+.deco-color input[type='color'] {
+  flex: none;
+  width: 28px;
+  height: 24px;
+  padding: 1px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--paper);
+}
+.deco-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 8px;
+}
+.deco-line > span {
+  flex: none;
+  width: 64px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.deco-line > span i {
+  font-style: normal;
+  color: var(--accent);
+}
+.deco-line input[type='range'] {
+  flex: 1;
+  min-width: 120px;
+}
+.deco-line select.inp {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* 슬라이더가 브라우저 기본 파랑으로 튀지 않게 스킨 색을 따른다 */
+input[type='range'] {
+  accent-color: var(--accent);
+}
+.deco-grid {
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+}
+.deco-color span {
+  white-space: nowrap;
+}

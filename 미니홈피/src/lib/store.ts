@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { driverStorage } from './storage'
 import { TRACKS } from './bgm'
+import type { BorderKey, FontKey, PatternKey } from './deco'
 
 /* ══════════════════════════════════════════════════════════
    아이로그 iLOG — 오늘의 나를 기록하는 곳
@@ -96,6 +97,19 @@ export interface Custom {
   accent: string
   accent2: string
   paper: string
+  /** 글자색 */
+  ink: string
+  /** 테두리·점선색 */
+  line: string
+  /** 프로필 칸·탭 바탕색 */
+  tab: string
+  border: BorderKey
+  /** 모서리 둥글기(px) */
+  round: number
+  titleFont: FontKey
+  bodyFont: FontKey
+  /** 그림을 안 깔았을 때 바탕 무늬 */
+  pattern: PatternKey
 }
 
 export type PostKind = 'diary' | 'board' | 'paper'
@@ -285,6 +299,14 @@ const initial = {
     accent: '#3f9ede',
     accent2: '#7ec4ee',
     paper: '#ffffff',
+    ink: '#3a444f',
+    line: '#a5d2ec',
+    tab: '#f0f9fe',
+    border: 'dotted' as const,
+    round: 12,
+    titleFont: 'pen' as const,
+    bodyFont: 'dotum' as const,
+    pattern: 'heart' as const,
   },
   owned: ['sky', 'pink'],
   ink: 12,
@@ -448,6 +470,12 @@ export const useSite = create<State>()(
       storage: createJSONStorage(() => driverStorage),
       // 구경 모드는 저장하지 않는다 — 저장되면 다음 방문에 갇힌다
       partialize: ({ viewing: _viewing, ...rest }) => rest as State,
+      // 저장본에 새로 생긴 꾸밈 칸이 없으면 기본값으로 채운다.
+      // 기본 합치기는 얕아서 custom 이 통째로 덮이며 새 칸이 사라진다.
+      merge: (saved, current) => {
+        const s = (saved ?? {}) as Partial<State>
+        return { ...current, ...s, custom: { ...current.custom, ...(s.custom ?? {}) } }
+      },
     },
   ),
 )

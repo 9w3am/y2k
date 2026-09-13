@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSite } from '../lib/store'
-import { exportHompy } from '../lib/exportPng'
+import { exportScreen } from '../lib/exportPng'
 
 const MENU = [
   { to: '/', label: '아이로그 홈', end: true },
@@ -40,11 +40,7 @@ export function Gnb() {
             <button
               className="btn"
               style={{ padding: '2px 8px' }}
-              onClick={() => {
-                const node = document.querySelector('.wrap')
-                if (node instanceof HTMLElement) void exportHompy(node)
-              }}
-              title="보이는 그대로 큰 그림으로 저장합니다"
+              onClick={() => void exportScreen('web')}
             >
               PNG 저장
             </button>
@@ -52,7 +48,6 @@ export function Gnb() {
               className="btn"
               style={{ padding: '2px 8px' }}
               onClick={() => setShell(shell === 'web' ? 'app' : 'web')}
-              title="같은 내용을 옛날 프로그램 창 안에서 봅니다"
             >
               {shell === 'web' ? '프로그램으로 보기' : '웹으로 보기'}
             </button>

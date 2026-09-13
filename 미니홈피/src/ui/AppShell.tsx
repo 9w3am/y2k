@@ -1,8 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
-import { exportHompy } from '../lib/exportPng'
-import { say } from './dialog'
+import { exportScreen } from '../lib/exportPng'
 
 const TOOL = [
   { to: '/home', label: '내 기록장' },
@@ -65,6 +64,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     </button>
   )
 
+  // 메뉴가 닫힌 뒤에 찍어야 펼친 메뉴가 그림에 남지 않는다
+  const capture = () => {
+    setMb('')
+    requestAnimationFrame(() => void exportScreen('app'))
+  }
+
   return (
     <div
       className="desktop"
@@ -91,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className={`win ${min ? 'min' : ''} ${max ? 'max' : ''}`}>
         <div className="win-tb">
           <span aria-hidden="true">✎</span>
-          <span>아이로그 — {me.homeTitle}</span>
+          <span>아이로그</span>
           <span className="sp" />
           <button className="win-btn" onClick={() => setMin(true)} aria-label="최소화">
             －
@@ -100,15 +105,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             className="win-btn"
             onClick={() => setMax((v) => !v)}
             aria-label={max ? '이전 크기로' : '최대화'}
-            title={max ? '이전 크기로' : '최대화'}
           >
             {max ? '❐' : '□'}
           </button>
-          <button
-            className="win-btn close"
-            onClick={() => setShell('web')}
-            aria-label="닫기 — 웹으로 돌아가기"
-          >
+          <button className="win-btn close" onClick={() => setShell('web')} aria-label="닫기">
             ✕
           </button>
         </div>
@@ -116,17 +116,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="win-mb">
           <MbItem name="파일(F)">
             <MbRow label="내 기록장" onPick={() => nav('/home')} />
-            <MbRow
-              label="그림으로 저장"
-              onPick={() => {
-                const node = document.querySelector('.wrap')
-                if (node instanceof HTMLElement) void exportHompy(node)
-              }}
-            />
+            <MbRow label="그림으로 저장" onPick={capture} />
             <MbRow label="웹으로 보기" onPick={() => setShell('web')} />
           </MbItem>
           <MbItem name="편집(E)">
-            <MbRow label="프로필 고치기" onPick={() => nav('/profile')} />
+            <MbRow label="프로필" onPick={() => nav('/profile')} />
             <MbRow label="설정" onPick={() => nav('/setting')} />
           </MbItem>
           <MbItem name="보기(V)">
@@ -139,23 +133,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <MbRow label="단짝 모두 보기" onPick={() => nav('/jjak')} />
           </MbItem>
           <MbItem name="도움말(H)">
-            <MbRow
-              label="아이로그 정보"
-              onPick={() =>
-                void say(
-                  '아이로그',
-                  '2000년대 미니홈피를 되살려 본 개인 기록장입니다.\n쓴 글과 사진은 이 브라우저 안에만 저장됩니다.',
-                )
-              }
-            />
+            <MbRow label="아이로그 홈" onPick={() => nav('/')} />
           </MbItem>
         </div>
 
         <div className="win-tool">
-          <button onClick={() => nav(-1)} title="뒤로">
+          <button onClick={() => nav(-1)} aria-label="뒤로">
             ←
           </button>
-          <button onClick={() => nav(1)} title="앞으로">
+          <button onClick={() => nav(1)} aria-label="앞으로">
             →
           </button>
           <span className="div" />
@@ -165,15 +151,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
           <span className="div" />
-          <button
-            onClick={() => {
-              const node = document.querySelector('.wrap')
-              if (node instanceof HTMLElement) void exportHompy(node)
-            }}
-            title="보이는 그대로 큰 그림으로 저장합니다"
-          >
-            PNG 저장
-          </button>
+          <button onClick={capture}>PNG 저장</button>
           <span className="sp" />
           <span style={{ color: 'var(--accent)', fontWeight: 700 }}>잉크 {ink}방울</span>
         </div>

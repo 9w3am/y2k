@@ -145,12 +145,15 @@ export function App() {
               aria-label="되돌리기"
               onClick={() => useStore.getState().undo()}
             >
-              <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true">
+              {/* 동그라미로 보이지 않게 — 화살촉이 분명한 U턴 화살표 */}
+              <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true">
                 <path
-                  d="M4 4v3.2M4 4h3.2M4.2 4.2A5 5 0 1 1 3 8"
+                  d="M5.5 3 2.5 6l3 3M2.8 6h6.7a3.5 3.5 0 0 1 0 7H6"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="1.4"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
@@ -161,15 +164,15 @@ export function App() {
               aria-label="다시 실행"
               onClick={() => useStore.getState().redo()}
             >
-              <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true">
-                <g transform="translate(15,0) scale(-1,1)">
-                  <path
-                    d="M4 4v3.2M4 4h3.2M4.2 4.2A5 5 0 1 1 3 8"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                  />
-                </g>
+              <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M10.5 3l3 3-3 3M13.2 6H6.5a3.5 3.5 0 0 0 0 7H10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <button

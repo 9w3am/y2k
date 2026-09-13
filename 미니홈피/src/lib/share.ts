@@ -19,7 +19,12 @@ function strip(state: Json): { light: Json; dropped: string[] } {
     if (v && typeof v === 'object') {
       const out: Json = {}
       for (const [k, val] of Object.entries(v as Json)) {
-        if (HEAVY.includes(k) && typeof val === 'string' && val.startsWith('data:')) {
+        // 'idb:' 는 내 브라우저 보관소 안의 사진이라 받는 사람에게는 쓸모가 없다
+        if (
+          HEAVY.includes(k) &&
+          typeof val === 'string' &&
+          (val.startsWith('data:') || val.startsWith('idb:'))
+        ) {
           dropped.add(k)
           out[k] = ''
         } else {

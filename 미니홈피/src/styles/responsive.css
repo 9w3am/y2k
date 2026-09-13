@@ -349,3 +349,106 @@
     min-width: 30px;
   }
 }
+
+/* ══ 폰 다듬기 — 넘치지만 않으면 되는 게 아니라 폰답게 ═══════ */
+@media (max-width: 700px) {
+  /* 윗줄: 로고와 단추를 한 줄에, 메뉴는 그 아래 한 줄 */
+  .gnb-in {
+    row-gap: 4px;
+  }
+  .logo i {
+    display: none;
+  }
+  .gnb-user {
+    gap: 5px;
+  }
+  .gnb-user > span:first-child {
+    display: none; /* "myid 님" — 폰에서는 자리만 먹는다 */
+  }
+  .gnb-user .btn,
+  .gnb-user .candy {
+    min-height: 30px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  /* 프로그램 창 모드는 폰에서 의미가 없다 */
+  .gnb-user .btn:last-child {
+    display: none;
+  }
+  /* 파란 두 번째 메뉴줄은 아래 탭과 똑같은 것을 한 번 더 보여줄 뿐이라 접는다 */
+  .gnb-sub {
+    display: none;
+  }
+
+  /* 기록장 머리: 숫자는 왼쪽, 제목·EDIT 은 오른쪽 한 줄 */
+  .hompy-top {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+  }
+  .hompy-title {
+    order: 0;
+    width: auto;
+    min-width: 0;
+    font-size: 26px;
+    text-align: right;
+  }
+  .hompy-title .ed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .editmark {
+    order: 0;
+    flex: none;
+  }
+  .counter {
+    flex: none;
+    font-size: 10.5px;
+  }
+
+  /* 탭: 한 칸만 외톨이로 떨어지지 않게 네 칸 격자로 */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .tabs a {
+    justify-content: center;
+    text-align: center;
+    padding: 7px 4px;
+  }
+
+  /* 프로필 사진 칸이 화면을 다 먹지 않게 */
+  .side-pic {
+    height: 150px;
+  }
+}
+
+/* 제목이 길거나 글꼴이 넓어도 EDIT 을 덮지 않게 — 줄어들다 말줄임 */
+@media (max-width: 700px) {
+  .hompy-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .hompy-title .ed {
+    display: block;
+  }
+}
+
+/* 섹션 머리가 폰에서 오른쪽으로 잘리지 않게 — 영문 부제는 접고, 오른쪽 글은 말줄임 */
+@media (max-width: 700px) {
+  .sect {
+    min-width: 0;
+  }
+  .sect em {
+    display: none;
+  }
+  .sect > small,
+  .sect > a {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

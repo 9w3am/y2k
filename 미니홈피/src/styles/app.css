@@ -367,3 +367,21 @@
   width: 100%;
   max-width: 900px;
 }
+
+/* ── 프로그램 창을 그림으로 뽑을 때 — 창 안 내용을 끝까지 펼친다 ── */
+html[data-exporting='app'] .win {
+  position: relative !important;
+  inset: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  box-shadow: none;
+}
+html[data-exporting='app'] .win-body {
+  flex: none !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+html[data-exporting='app'] .mb-pop {
+  display: none !important;
+}

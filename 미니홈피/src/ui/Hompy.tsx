@@ -5,6 +5,7 @@ import { TRACKS, trackById } from '../lib/bgm'
 import { lastFailure, onYtTitle, player, type Source } from '../lib/player'
 import { youtubeId } from '../lib/audioStore'
 import { pickImage } from '../lib/img'
+import { deleteImage, putImage, useImg } from '../lib/imageStore'
 import { Ed } from './Ed'
 
 /** 탭 id 가 어떤 주소로 가는지 — 이름과 표시 여부는 쓰는 사람이 정한다 */
@@ -169,53 +170,72 @@ export function Bgm() {
 
   return (
     <div className={`bgm ${sounding ? 'on' : ''}`}>
-      <div className="bgm-row">
-        <span className="bgm-eq" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
+      {/* 도는 CD — 소리가 날 때만 돈다 */}
+      <span className="bgm-disc" aria-hidden="true" />
+      <div className="bgm-meta">
+        <b className="bgm-name">{title}</b>
+        <em className="bgm-by">{by}</em>
+      </div>
+      {blocked && (
+        <span className="bgm-warn">
+          {lastFailure() === 'missing'
+            ? bgmKind === 'youtube'
+              ? '유튜브를 불러오지 못했습니다'
+              : '음악 파일을 찾지 못했습니다'
+            : '눌러서 소리 켜기'}
         </span>
-        <span className="bgm-name">
-          {title} <em>{by}</em>
-        </span>
-        {blocked && (
-          <span className="bgm-warn">
-            {lastFailure() === 'missing'
-              ? bgmKind === 'youtube'
-                ? '유튜브를 불러오지 못했습니다'
-                : '음악 파일을 찾지 못했습니다'
-              : '눌러서 소리 켜기'}
-          </span>
-        )}
+      )}
+
+      {/* 글자 기호(◀◀ ❚❚)는 폰마다 모양·높이가 달라 삐뚤어 보인다 — 그림으로 그린다 */}
+      <div className="bgm-ctl">
         {bgmKind === 'builtin' && (
-          <button onClick={() => go(-1)} aria-label="이전 곡" title="이전 곡">
-            ◀◀
+          <button className="bgm-btn" onClick={() => go(-1)} aria-label="이전 곡">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2.6 2.4v7.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M10 2.6 4.4 6 10 9.4z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+            </svg>
           </button>
         )}
         <button
+          className="bgm-btn bgm-play"
           onClick={onPlay}
           disabled={!src}
           aria-label={sounding ? '일시정지' : '재생'}
-          title={sounding ? '일시정지' : '재생'}
         >
-          {sounding ? '❚❚' : '▶'}
+          {sounding ? (
+            <svg width="13" height="13" viewBox="0 0 12 12" aria-hidden="true">
+              <rect x="2.6" y="2.2" width="2.4" height="7.6" rx="1" fill="currentColor" />
+              <rect x="7" y="2.2" width="2.4" height="7.6" rx="1" fill="currentColor" />
+            </svg>
+          ) : (
+            <svg width="13" height="13" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3.8 2.2v7.6L10 6z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+            </svg>
+          )}
         </button>
         {bgmKind === 'builtin' && (
-          <button onClick={() => go(1)} aria-label="다음 곡" title="다음 곡">
-            ▶▶
+          <button className="bgm-btn" onClick={() => go(1)} aria-label="다음 곡">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M9.4 2.4v7.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M2 2.6 7.6 6 2 9.4z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+            </svg>
           </button>
         )}
-        <input
-          className="bgm-vol"
-          type="range"
-          min={0}
-          max={100}
-          value={volume}
-          aria-label="소리 크기"
-          title="소리 크기"
-          onChange={(e) => setVolume(Number(e.target.value))}
-        />
+        <label className="bgm-volw">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M2 5.2h2.2L7.4 2.6v8.8L4.2 8.8H2z" fill="currentColor" />
+            <path d="M9.6 4.8a3 3 0 0 1 0 4.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+          <input
+            className="bgm-vol"
+            type="range"
+            min={0}
+            max={100}
+            value={volume}
+            aria-label="소리 크기"
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+        </label>
       </div>
 
       <div
@@ -309,6 +329,14 @@ export function Hompy() {
   const { me, setMe, jjak, todayCount, totalCount, tabs, setCount } = useSite()
   const nav = useNavigate()
   const loc = useLocation()
+  const photoUrl = useImg(me.photo)
+  // 새 사진은 보관소에 넣고, 밀려난 사진은 보관소에서 지운다
+  const pickPhoto = () =>
+    pickImage(async (src) => {
+      const old = useSite.getState().me.photo
+      setMe({ photo: await putImage(src) })
+      void deleteImage(old)
+    })
   const [target, setTarget] = useState(jjak[0]?.id ?? '')
 
   // 폰에서는 대문이 아닌 곳이면 누른 페이지를 프로필보다 먼저 보여준다 (responsive.css)
@@ -344,11 +372,11 @@ export function Hompy() {
         <aside className="side">
           <div
             className="side-pic"
-            style={{ backgroundImage: me.photo ? `url(${me.photo})` : undefined }}
+            style={{ backgroundImage: photoUrl ? `url(${photoUrl})` : undefined }}
             role="button"
             tabIndex={0}
-            onClick={() => pickImage((src) => setMe({ photo: src }))}
-            onKeyDown={(e) => e.key === 'Enter' && pickImage((src) => setMe({ photo: src }))}
+            onClick={pickPhoto}
+            onKeyDown={(e) => e.key === 'Enter' && pickPhoto()}
             title="눌러서 사진 바꾸기"
           >
             {!me.photo && (

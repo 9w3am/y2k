@@ -2,6 +2,24 @@ import { toPng } from 'html-to-image'
 import { say } from '../ui/dialog'
 
 const pad = (n: number) => String(n).padStart(2, '0')
+/**
+ * 바뀐 스타일이 그려질 때까지 기다린다.
+ * 다른 탭을 보고 있으면 requestAnimationFrame 이 아예 안 불려 저장이 멈춘다 —
+ * 짧은 타이머로도 풀리게 한다.
+ */
+function nextPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    requestAnimationFrame(() => requestAnimationFrame(finish))
+    setTimeout(finish, 120)
+  })
+}
+
 
 function stamp(): string {
   const d = new Date()
@@ -79,7 +97,7 @@ export async function exportPng(
   try {
     if (document.fonts?.ready) await document.fonts.ready
     // 플래그 적용된 스타일이 실제로 그려질 때까지 두 프레임 대기
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    await nextPaint()
 
     const url = await toPng(node, {
       pixelRatio: ratio,

@@ -11,10 +11,26 @@ import { InkJar } from '../ui/InkJar'
 import { clearAudio, saveAudio, youtubeId } from '../lib/audioStore'
 import { resetAudio } from '../lib/player'
 import { makeShareLink } from '../lib/share'
+import { deleteImage, inlineImages, moveInlineImages, putImage, useImg } from '../lib/imageStore'
+import { BORDERS, FONTS, PATTERNS, toHex6, type FontKey } from '../lib/deco'
 
 /* ── 대문 ────────────────────────────────────────────────── */
+/** 사진 보관소('idb:')든 예전 data: 든 바탕 그림으로 깔아주는 칸 */
+function ImgBg({ value, className }: { value: string; className: string }) {
+  const url = useImg(value)
+  return <div className={className} style={{ backgroundImage: url ? `url(${url})` : undefined }} />
+}
+
 export function Home() {
   const { me, setMe, diary, guest, photo, jjak } = useSite()
+  const roomUrl = useImg(me.room)
+  // 새 사진은 보관소에 넣고, 밀려난 사진은 보관소에서 지운다
+  const pickRoom = () =>
+    pickImage(async (src) => {
+      const old = useSite.getState().me.room
+      setMe({ room: await putImage(src) })
+      void deleteImage(old)
+    })
   const recent = diary.slice(0, 3)
   const lastGuest = guest[0]
 
@@ -69,11 +85,11 @@ export function Home() {
       </div>
       <div
         className="room"
-        style={{ backgroundImage: me.room ? `url(${me.room})` : undefined }}
+        style={{ backgroundImage: roomUrl ? `url(${roomUrl})` : undefined }}
         role="button"
         tabIndex={0}
-        onClick={() => pickImage((src) => setMe({ room: src }))}
-        onKeyDown={(e) => e.key === 'Enter' && pickImage((src) => setMe({ room: src }))}
+        onClick={pickRoom}
+        onKeyDown={(e) => e.key === 'Enter' && pickRoom()}
       >
         {!me.room && <span>내 방을 꾸며보세요 — 눌러서 사진 넣기</span>}
       </div>
@@ -148,8 +164,8 @@ export function Photo() {
         <button
           className="btn btn-main"
           onClick={() =>
-            pickImage((src) => {
-              addPic(src, '')
+            pickImage(async (src) => {
+              addPic(await putImage(src), '')
               addInk(1)
             })
           }
@@ -168,7 +184,7 @@ export function Photo() {
         <div className="grid-pic">
           {photo.map((p) => (
             <figure className="pic" key={p.id} style={{ margin: 0 }}>
-              <div className="ph" style={{ backgroundImage: `url(${p.src})` }} />
+              <ImgBg className="ph" value={p.src} />
               <figcaption className="cap">
                 <Ed
                   value={p.cap}
@@ -183,7 +199,11 @@ export function Photo() {
                     className="btn-x"
                     onClick={() =>
                       void ask('이 사진을 뺄까요?', p.cap || '설명 없는 사진', '빼기').then(
-                        (yes) => yes && delPic(p.id),
+                        (yes) => {
+                          if (!yes) return
+                          void deleteImage(p.src)
+                          delPic(p.id)
+                        },
                       )
                     }
                     aria-label="사진 지우기"
@@ -423,11 +443,6 @@ export function JjakList() {
         </div>
       )}
 
-      <p style={{ color: 'var(--ink-dim)', fontSize: 11, marginTop: 10 }}>
-        {fix
-          ? '이름을 눌러 고치고, 동그라미를 눌러 색을 바꿉니다.'
-          : '단짝은 지금 이 브라우저 안에만 있는 이웃입니다. 여러 사람이 실제로 오가는 기능은 나중에 붙일 수 있도록 저장소를 따로 떼어 두었습니다.'}
-      </p>
     </>
   )
 }
@@ -595,9 +610,6 @@ export function JjakView() {
         </div>
       )}
 
-      <p style={{ color: 'var(--ink-dim)', fontSize: 11, marginTop: 10 }}>
-        이름·소개·숫자·글 제목·날짜를 눌러서 고치고, 네모를 눌러 색을 바꿉니다.
-      </p>
     </>
   )
 }
@@ -757,9 +769,11 @@ export function Setting() {
           const data = JSON.parse(String(fr.result)) as Record<string, unknown>
           if (!data.me) throw new Error('bad')
           void ask('이 파일로 바꿀까요?', '지금 쓰던 내용은 덮어써집니다.', '불러오기').then(
-            (yes) => {
+            async (yes) => {
               if (!yes) return
-              useSite.setState({ ...(data as Record<string, unknown>), viewing: false } as never)
+              // 파일 안의 사진은 보관소로 옮긴 뒤 넣는다 — 설정에 통째로 넣으면 금방 꽉 찬다
+              const { value } = await moveInlineImages(data)
+              useSite.setState({ ...(value as Record<string, unknown>), viewing: false } as never)
             },
           )
         } catch {
@@ -771,8 +785,10 @@ export function Setting() {
     input.click()
   }
 
-  const exportJson = () => {
-    const blob = new Blob([JSON.stringify(useSite.getState(), null, 2)], {
+  const exportJson = async () => {
+    // 보관소 사진을 파일 안에 풀어 넣어야 다른 기기에서도 사진이 따라온다
+    const full = await inlineImages(useSite.getState())
+    const blob = new Blob([JSON.stringify(full, null, 2)], {
       type: 'application/json',
     })
     const a = document.createElement('a')
@@ -869,11 +885,6 @@ export function Setting() {
               </div>
             ))}
           </div>
-          <p className="hint">
-            이름을 바꾸고, 순서를 옮기고, 안 쓰는 탭은 숨길 수 있습니다.
-            <br />
-            숨겨도 안에 쓴 글은 지워지지 않습니다.
-          </p>
         </div>
       </div>
 
@@ -901,11 +912,6 @@ export function Setting() {
               onFocus={(e) => e.currentTarget.select()}
             />
           )}
-          <p className="hint">
-            링크는 글·설정만 담고 <b>사진은 빠집니다</b> (주소에 담기엔 너무 큽니다).
-            <br />
-            사진까지 그대로 옮기려면 <b>파일로 내보내기</b>를 쓰세요.
-          </p>
         </div>
       </div>
 
@@ -923,46 +929,161 @@ export function Setting() {
 
           {custom.on && (
             <div className="deco-box">
-              <div className="deco-row">
-                <span>바탕색</span>
+              <div className="pickrow" style={{ marginBottom: 8 }}>
+                <button
+                  className="btn"
+                  title="지금 보이는 스킨의 색을 꾸밈 칸에 옮겨 담고 거기서부터 고칩니다"
+                  onClick={() => {
+                    // 꾸밈을 잠깐 끄고 스킨 색을 읽은 뒤 다시 켠다
+                    const el = document.documentElement
+                    const was = el.dataset.custom
+                    el.dataset.custom = ''
+                    const saved = [...el.style].filter((k) => k.startsWith('--'))
+                    const keep = saved.map((k) => [k, el.style.getPropertyValue(k)] as const)
+                    saved.forEach((k) => el.style.removeProperty(k))
+                    const cs = getComputedStyle(el)
+                    const pick = (k: string) => toHex6(cs.getPropertyValue(k)) ?? undefined
+                    const patch = {
+                      accent: pick('--accent'),
+                      accent2: pick('--accent-2'),
+                      paper: pick('--paper'),
+                      ink: pick('--ink'),
+                      line: pick('--line-2'),
+                      tab: pick('--tab'),
+                      bgColor: pick('--bg-2'),
+                    }
+                    keep.forEach(([k, v]) => el.style.setProperty(k, v))
+                    el.dataset.custom = was
+                    setCustom(Object.fromEntries(Object.entries(patch).filter(([, v]) => v)))
+                  }}
+                >
+                  지금 스킨 색 가져오기
+                </button>
+              </div>
+
+              <div className="deco-grid">
+                {(
+                  [
+                    ['bgColor', '바탕색'],
+                    ['paper', '종이색'],
+                    ['tab', '칸 바탕'],
+                    ['accent', '포인트'],
+                    ['accent2', '연한 포인트'],
+                    ['line', '테두리'],
+                    ['ink', '글자'],
+                  ] as const
+                ).map(([k, label]) => (
+                  <label className="deco-color" key={k}>
+                    <input
+                      type="color"
+                      value={custom[k]}
+                      aria-label={label}
+                      onChange={(e) => setCustom({ [k]: e.target.value })}
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div className="deco-line">
+                <span>테두리</span>
+                <div className="pickrow">
+                  {BORDERS.map((b) => (
+                    <button
+                      key={b.id}
+                      className={`btn ${custom.border === b.id ? 'btn-main' : ''}`}
+                      onClick={() => setCustom({ border: b.id })}
+                    >
+                      {b.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="deco-line">
+                <span>
+                  모서리 <i>{custom.round}px</i>
+                </span>
                 <input
-                  type="color"
-                  value={custom.bgColor}
-                  aria-label="바탕색"
-                  onChange={(e) => setCustom({ bgColor: e.target.value })}
-                />
-                <span>포인트색</span>
-                <input
-                  type="color"
-                  value={custom.accent}
-                  aria-label="포인트색"
-                  onChange={(e) => setCustom({ accent: e.target.value })}
-                />
-                <span>연한 포인트</span>
-                <input
-                  type="color"
-                  value={custom.accent2}
-                  aria-label="연한 포인트색"
-                  onChange={(e) => setCustom({ accent2: e.target.value })}
-                />
-                <span>종이색</span>
-                <input
-                  type="color"
-                  value={custom.paper}
-                  aria-label="종이색"
-                  onChange={(e) => setCustom({ paper: e.target.value })}
+                  type="range"
+                  min={0}
+                  max={24}
+                  value={custom.round}
+                  aria-label="모서리 둥글기"
+                  onChange={(e) => setCustom({ round: Number(e.target.value) })}
                 />
               </div>
+
+              <div className="deco-line">
+                <span>제목 글꼴</span>
+                <select
+                  className="inp"
+                  value={custom.titleFont}
+                  aria-label="제목 글꼴"
+                  onChange={(e) => setCustom({ titleFont: e.target.value as FontKey })}
+                >
+                  {FONTS.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="deco-line">
+                <span>본문 글꼴</span>
+                <select
+                  className="inp"
+                  value={custom.bodyFont}
+                  aria-label="본문 글꼴"
+                  onChange={(e) => setCustom({ bodyFont: e.target.value as FontKey })}
+                >
+                  {FONTS.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {!custom.bgImage && (
+                <div className="deco-line">
+                  <span>바탕 무늬</span>
+                  <div className="pickrow">
+                    {PATTERNS.map((p) => (
+                      <button
+                        key={p.id}
+                        className={`btn ${custom.pattern === p.id ? 'btn-main' : ''}`}
+                        onClick={() => setCustom({ pattern: p.id })}
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="pickrow" style={{ marginTop: 8 }}>
                 <button
                   className="btn"
-                  onClick={() => pickImage((src) => setCustom({ bgImage: src }), 1400)}
+                  onClick={() =>
+                    pickImage(async (src) => {
+                      const old = useSite.getState().custom.bgImage
+                      setCustom({ bgImage: await putImage(src) })
+                      void deleteImage(old)
+                    }, 1400)
+                  }
                 >
                   {custom.bgImage ? '바탕 그림 바꾸기' : '바탕 그림 넣기'}
                 </button>
                 {custom.bgImage && (
-                  <button className="btn" onClick={() => setCustom({ bgImage: '' })}>
+                  <button
+                    className="btn"
+                    onClick={() => {
+                      void deleteImage(custom.bgImage)
+                      setCustom({ bgImage: '' })
+                    }}
+                  >
                     그림 빼기
                   </button>
                 )}
@@ -1004,9 +1125,6 @@ export function Setting() {
                 </>
               )}
 
-              <p className="hint">
-                상점 스킨을 고르면 내 꾸밈새는 잠시 꺼집니다. 다시 켜면 고른 색이 그대로 돌아옵니다.
-              </p>
             </div>
           )}
         </div>
@@ -1067,11 +1185,7 @@ export function Setting() {
                   </button>
                 )}
               </div>
-              <p className="hint">
-                {fileName ? `지금 올린 파일 — ${fileName}` : 'mp3 · m4a · wav 같은 음악 파일'}
-                <br />
-                파일은 이 브라우저 안에만 저장되고 어디로도 전송되지 않습니다.
-              </p>
+              {fileName && <p className="hint">{fileName}</p>}
             </div>
           )}
 
@@ -1091,13 +1205,7 @@ export function Setting() {
                 onChange={(e) => setYt(ytUrl, e.target.value)}
                 maxLength={40}
               />
-              <p className="hint">
-                {ytUrl
-                  ? youtubeId(ytUrl)
-                    ? '주소를 읽었습니다. 대문에서 ▶ 를 눌러 재생하세요.'
-                    : '주소를 읽지 못했습니다. 영상 주소인지 확인해 주세요.'
-                  : '예) https://www.youtube.com/watch?v=... 또는 https://youtu.be/...'}
-              </p>
+              {ytUrl && !youtubeId(ytUrl) && <p className="hint">유튜브 영상 주소가 아닙니다</p>}
             </div>
           )}
         </div>
@@ -1156,11 +1264,6 @@ export function Setting() {
         </div>
       </div>
 
-      <p style={{ fontSize: 11, color: 'var(--ink-dim)', marginTop: 10 }}>
-        아이로그는 지금 이 브라우저에만 자료를 저장합니다. 다른 기기에서 이어 쓰려면 백업 파일을
-        옮겨 주세요.
-      </p>
-      <p className="buildmark">판 {__BUILD__}</p>
     </>
   )
 }
