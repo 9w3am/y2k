@@ -6,7 +6,6 @@ import './styles/site.css'
 import './styles/cute.css'
 import './styles/app.css'
 import './styles/responsive.css'
-import './styles/cursor.css'
 import { App } from './App'
 import { Boundary } from './ui/Boundary'
 

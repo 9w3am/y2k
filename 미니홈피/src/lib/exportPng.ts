@@ -20,7 +20,20 @@ function stamp(): string {
  * 스킨 바탕까지 같이 담아야 화면과 같아 보이므로,
  * 본문 아래에 body 의 배경을 그대로 깔아준다.
  */
-export async function exportHompy(node: HTMLElement, ratio = 3): Promise<void> {
+/**
+ * 뽑을 수 있는 가장 큰 배율.
+ * 브라우저 캔버스는 넓이 한도가 있다(아이폰 사파리가 제일 빡빡해 약 1,670만 화소).
+ * 한도 안에서 최대 6배까지 키워, 확대해서 봐도 글자가 뭉개지지 않게 한다.
+ */
+export function maxRatio(w: number, h: number, cap = 6): number {
+  const LIMIT = 16_000_000
+  return Math.max(1, Math.min(cap, Math.floor(Math.sqrt(LIMIT / (w * h)))))
+}
+
+export async function exportHompy(
+  node: HTMLElement,
+  ratio = maxRatio(node.offsetWidth, node.offsetHeight),
+): Promise<void> {
   const root = document.documentElement
   root.dataset.exporting = '1'
 

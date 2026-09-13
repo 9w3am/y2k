@@ -1111,3 +1111,8 @@ html[data-viewing='1'] .ed:hover {
   display: block;
   width: 100%;
 }
+
+/* 가운데 링 클립을 뺀 자리 — 두 칸 사이를 여백으로만 가른다 */
+.hompy-body {
+  gap: 14px;
+}

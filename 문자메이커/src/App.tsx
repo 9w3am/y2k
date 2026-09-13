@@ -40,7 +40,8 @@ export function App() {
 
   const save = () => {
     // 저장은 2배 고정 — 고르게 해봤자 뭘 고르는지 알기 어렵다
-    if (canvasRef.current) void exportPng(canvasRef.current, theme.id, 2, round)
+    // 배율은 넘기지 않는다 — 캔버스 한도 안에서 가장 크게 알아서 고른다
+    if (canvasRef.current) void exportPng(canvasRef.current, theme.id, undefined, round)
   }
 
   useEffect(() => {

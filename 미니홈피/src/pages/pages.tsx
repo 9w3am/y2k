@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { SKINS, useSite } from '../lib/store'
+import { SKINS, jjakToday, jjakTotal, today as todayDate, uid, useSite } from '../lib/store'
 import { TRACKS } from '../lib/bgm'
 import { pickImage } from '../lib/img'
-import { Bgm } from '../ui/Hompy'
+import { Bgm, Counter } from '../ui/Hompy'
 import { Ed } from '../ui/Ed'
 import { Posts } from './Posts'
 import { ask, say } from '../ui/dialog'
@@ -99,7 +99,7 @@ export function Home() {
 
 /* ── 프로필 ──────────────────────────────────────────────── */
 export function Profile() {
-  const { me, setMe, jjak, totalCount } = useSite()
+  const { me, setMe, jjak, todayCount, totalCount, setCount } = useSite()
   const row = (label: string, node: React.ReactNode) => (
     <div className="form-row">
       <label>{label}</label>
@@ -122,8 +122,9 @@ export function Profile() {
       {row('생일', <Ed value={me.birth} onChange={(v) => setMe({ birth: v })} multiline={false} maxChars={12} ph="00.00.00" />)}
       {row('좌우명', <Ed value={me.motto} onChange={(v) => setMe({ motto: v })} multiline={false} maxChars={30} ph="한 줄로" />)}
       {row('자기소개', <Ed value={me.intro} onChange={(v) => setMe({ intro: v })} ph="자기소개" />)}
-      {row('단짝', `${jjak.length}명`)}
-      {row('총 방문', `${totalCount.toLocaleString()}회`)}
+      {row('단짝', <Link to="/jjak">{jjak.length}명 · 단짝 고치기</Link>)}
+      {row('오늘 방문', <Counter label="" value={todayCount} onSet={(n) => setCount({ todayCount: n })} />)}
+      {row('총 방문', <Counter label="" value={totalCount} onSet={(n) => setCount({ totalCount: n })} />)}
     </>
   )
 }
@@ -432,25 +433,35 @@ export function JjakList() {
 }
 
 /* ── 단짝네 놀러가기 (읽기 전용) ─────────────────────────── */
+/* ── 단짝네 기록장 — 이름·소개·숫자·글까지 전부 고칠 수 있다 ── */
+const digits = (v: string) => Math.max(0, Number(v.replace(/[^\d]/g, '')) || 0)
+
 export function JjakView() {
   const { id = '' } = useParams()
-  const jjak = useSite((s) => s.jjak)
+  const { jjak, setJjak } = useSite()
+  const viewing = useSite((s) => s.viewing)
   const j = jjak.find((x) => x.id === id)
   if (!j) return <div className="empty">없는 단짝입니다.</div>
 
-  const seed = [...id].reduce((n, c) => n + c.charCodeAt(0), 0)
-  const lines = [
-    '단짝네 기록장 견본 글 1',
-    '단짝네 기록장 견본 글 2',
-    '단짝네 기록장 견본 글 3',
-    '단짝네 기록장 견본 글 4',
-    '단짝네 기록장 견본 글 5',
-  ]
+  // 아직 한 번도 안 고친 단짝은 견본 숫자·글로 시작한다
+  const todayN = jjakToday(j)
+  const totalN = jjakTotal(j)
+  const posts = j.posts ?? [1, 2, 3].map((n) => ({ id: `s${n}`, title: `단짝네 기록장 견본 글 ${n}`, date: todayDate() }))
+  const setPosts = (next: typeof posts) => setJjak(j.id, { posts: next })
 
   return (
     <>
       <div className="sect">
-        <h2>{j.title}</h2>
+        <h2>
+          <Ed
+            value={j.title}
+            onChange={(v) => setJjak(j.id, { title: v })}
+            multiline={false}
+            maxChars={22}
+            ph="기록장 이름"
+            label="단짝 기록장 이름"
+          />
+        </h2>
         <span className="sp" />
         <Link to="/jjak" style={{ fontSize: 11 }}>
           ← 단짝 목록
@@ -458,41 +469,134 @@ export function JjakView() {
       </div>
 
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <i
+        <label
+          title={viewing ? undefined : '눌러서 색 바꾸기'}
           style={{
+            position: 'relative',
             width: 62,
             height: 62,
             background: j.hue,
             border: '1px solid rgba(0,0,0,.12)',
+            borderRadius: 10,
             flex: 'none',
           }}
-        />
-        <div>
-          <b style={{ fontSize: 13 }}>{j.nick}</b>
-          <div style={{ color: 'var(--ink-dim)', fontSize: 11.5 }}>{j.memo}</div>
-          <div style={{ fontSize: 11, color: 'var(--accent)' }}>
-            TODAY {(seed % 90) + 3} · TOTAL {(seed * 137).toLocaleString()}
+        >
+          {!viewing && (
+            <input
+              type="color"
+              value={j.hue}
+              aria-label={`${j.nick} 색`}
+              onChange={(e) => setJjak(j.id, { hue: e.target.value })}
+              style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%' }}
+            />
+          )}
+        </label>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <b style={{ fontSize: 13 }}>
+            <Ed
+              value={j.nick}
+              onChange={(v) => setJjak(j.id, { nick: v })}
+              multiline={false}
+              maxChars={14}
+              ph="이름"
+              label="단짝 이름"
+            />
+          </b>
+          <div style={{ color: 'var(--ink-dim)', fontSize: 11.5 }}>
+            <Ed
+              value={j.memo}
+              onChange={(v) => setJjak(j.id, { memo: v })}
+              multiline={false}
+              maxChars={40}
+              ph="한 줄 소개"
+              label="단짝 소개"
+            />
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--accent)', display: 'flex', gap: 4 }}>
+            TODAY
+            <Ed
+              value={String(todayN)}
+              onChange={(v) => setJjak(j.id, { today: digits(v) })}
+              multiline={false}
+              maxChars={7}
+              label="단짝 TODAY"
+            />
+            · TOTAL
+            <Ed
+              value={String(totalN)}
+              onChange={(v) => setJjak(j.id, { total: digits(v) })}
+              multiline={false}
+              maxChars={10}
+              label="단짝 TOTAL"
+            />
           </div>
         </div>
       </div>
 
       <div className="sect" style={{ marginTop: 8 }}>
         <h2>DIARY</h2>
-      </div>
-      <div className="list">
-        {lines.slice(0, 3 + (seed % 3)).map((t, i) => (
-          <div className="item" key={i}>
-            <div className="item-h">
-              <b>{t}</b>
-              <span className="sp" />
-              <small>2026.0{(seed + i) % 9}.1{(seed + i) % 9}</small>
-            </div>
-          </div>
-        ))}
+        <span className="sp" />
+        {!viewing && (
+          <button
+            className="btn btn-main"
+            onClick={() => setPosts([{ id: uid(), title: '', date: todayDate() }, ...posts])}
+          >
+            글 늘리기
+          </button>
+        )}
       </div>
 
+      {posts.length === 0 ? (
+        <div className="empty">아직 글이 없습니다.</div>
+      ) : (
+        <div className="list">
+          {posts.map((p) => (
+            <div className="item" key={p.id}>
+              <div className="item-h">
+                <b style={{ flex: 1, minWidth: 0 }}>
+                  <Ed
+                    value={p.title}
+                    onChange={(v) =>
+                      setPosts(posts.map((x) => (x.id === p.id ? { ...x, title: v } : x)))
+                    }
+                    multiline={false}
+                    maxChars={40}
+                    ph="글 제목"
+                    label="단짝 글 제목"
+                  />
+                </b>
+                <small>
+                  <Ed
+                    value={p.date}
+                    onChange={(v) =>
+                      setPosts(posts.map((x) => (x.id === p.id ? { ...x, date: v } : x)))
+                    }
+                    multiline={false}
+                    maxChars={12}
+                    label="단짝 글 날짜"
+                  />
+                </small>
+                {!viewing && (
+                  <button
+                    className="btn-x"
+                    aria-label="글 지우기"
+                    onClick={() =>
+                      void ask('이 글을 지울까요?', p.title || '제목 없는 글', '지우기').then(
+                        (yes) => yes && setPosts(posts.filter((x) => x.id !== p.id)),
+                      )
+                    }
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <p style={{ color: 'var(--ink-dim)', fontSize: 11, marginTop: 10 }}>
-        방명록을 남기려면 주인의 허락이 필요합니다. 지금은 구경만 할 수 있어요.
+        이름·소개·숫자·글 제목·날짜를 눌러서 고치고, 네모를 눌러 색을 바꿉니다.
       </p>
     </>
   )

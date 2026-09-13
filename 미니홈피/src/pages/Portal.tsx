@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSite } from '../lib/store'
+import { jjakToday, useSite } from '../lib/store'
 import { InkJar } from '../ui/InkJar'
 
 const NOTICES: [string, string, boolean][] = [
@@ -36,7 +36,8 @@ export function Portal() {
   const nav = useNavigate()
   const [id, setId] = useState(me.nick)
 
-  const ranks = jjak.slice(0, 5)
+  // 오늘 방문이 많은 단짝부터 — 숫자는 단짝네 기록장에서 고칠 수 있다
+  const ranks = [...jjak].sort((a, b) => jjakToday(b) - jjakToday(a)).slice(0, 5)
 
   return (
     <div className="portal">
@@ -115,7 +116,7 @@ export function Portal() {
                   <i style={{ background: j.hue }} />
                   <Link to={`/jjak/${j.id}`}>{j.title}</Link>
                   <span className="sp" />
-                  <small>{(5 - n) * 137 + 42}</small>
+                  <small>{jjakToday(j).toLocaleString()}</small>
                 </li>
               ))}
             </ol>

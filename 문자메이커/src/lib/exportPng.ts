@@ -51,10 +51,20 @@ async function clipCorners(dataUrl: string, radius: number): Promise<string> {
   return c.toDataURL('image/png')
 }
 
+/**
+ * 뽑을 수 있는 가장 큰 배율.
+ * 브라우저 캔버스는 넓이 한도가 있다(아이폰 사파리가 제일 빡빡해 약 1,670만 화소).
+ * 한도 안에서 최대 6배까지 키워, 확대해서 봐도 글자와 주사선이 뭉개지지 않게 한다.
+ */
+export function maxRatio(w: number, h: number, cap = 6): number {
+  const LIMIT = 16_000_000
+  return Math.max(1, Math.min(cap, Math.floor(Math.sqrt(LIMIT / (w * h)))))
+}
+
 export async function exportPng(
   node: HTMLElement,
   themeId: string,
-  ratio = 2,
+  ratio = maxRatio(node.offsetWidth, node.offsetHeight),
   /** 화면 모서리 둥글기(CSS 픽셀). 0 이면 각진 화면 */
   radius = 0,
 ): Promise<void> {

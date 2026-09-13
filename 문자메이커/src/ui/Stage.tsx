@@ -34,8 +34,13 @@ export function Stage({
     const el = box.current
     if (!el) return
     const measure = () => {
-      const pad = 56
-      const s = Math.min((el.clientWidth - pad) / w, (el.clientHeight - pad) / h)
+      // 넓은 화면에서는 여백을 넉넉히, 폰에서는 아껴 쓴다.
+      // 폰에서 56px 을 떼면 가뜩이나 좁은 화면이 더 작아진다.
+      // 세로로는 아래 확대 단추가 앉을 자리를 따로 빼둔다.
+      const narrow = el.clientWidth < 620
+      const padX = narrow ? 18 : 56
+      const padY = narrow ? 78 : 56
+      const s = Math.min((el.clientWidth - padX) / w, (el.clientHeight - padY) / h)
       setFit(Math.max(0.12, Math.min(2.2, s)))
     }
     measure()

@@ -39,6 +39,10 @@ export interface Jjak {
   title: string
   hue: string
   memo: string
+  /** 단짝네 기록장 글 — 비어 있으면 견본 글을 보여준다 */
+  posts?: { id: string; title: string; date: string }[]
+  today?: number
+  total?: number
 }
 
 export interface Skin {
@@ -447,3 +451,11 @@ export const useSite = create<State>()(
     },
   ),
 )
+
+/*
+   단짝의 방문 숫자 — 한 번도 안 고친 단짝은 이름에서 뽑은 견본 숫자를 쓴다.
+   대문 순위표와 단짝네 기록장이 같은 숫자를 보이도록 한 군데에 둔다.
+*/
+const jjakSeed = (id: string) => [...id].reduce((n, c) => n + c.charCodeAt(0), 0)
+export const jjakToday = (j: Jjak) => j.today ?? (jjakSeed(j.id) % 90) + 3
+export const jjakTotal = (j: Jjak) => j.total ?? jjakSeed(j.id) * 137

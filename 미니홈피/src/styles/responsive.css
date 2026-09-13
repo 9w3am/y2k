@@ -304,3 +304,48 @@
     font-size: 16px; /* iOS 에서 입력할 때 화면이 확대되지 않게 */
   }
 }
+
+/* ── 폰 — 누른 페이지를 먼저, 탭은 다 보이게, 누르기 쉽게 ── */
+@media (max-width: 700px) {
+  /*
+     대문이 아닌 곳(다이어리·단짝·설정…)을 눌렀는데 프로필 칸이 화면을 다 먹고
+     있으면, 한참 내려야 누른 페이지가 나온다. 내용을 프로필보다 위로 올린다.
+  */
+  .hompy:not(.is-home) .main {
+    order: 0;
+  }
+  .hompy:not(.is-home) .side {
+    order: 1;
+  }
+
+  /* 탭이 옆으로 밀려 방명록이 화면 밖에 숨지 않게 두 줄로 접는다 */
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  /* 손가락으로 누르기엔 너무 낮은 글자 링크·단추를 키운다 */
+  .gnb-menu a,
+  .gnb-user .btn,
+  .gnb-sub-in a,
+  .side-foot a,
+  .sect a,
+  .rank a,
+  .login-box a,
+  .wave button,
+  .bgm-row button,
+  .hero-btns .btn,
+  .inkbox .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+  }
+}
+
+/* 설정의 탭 순서·보임 단추도 손가락 크기로 */
+@media (max-width: 700px) {
+  .form-row button {
+    min-height: 30px;
+    min-width: 30px;
+  }
+}

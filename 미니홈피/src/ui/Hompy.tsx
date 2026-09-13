@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { TRACKS, trackById } from '../lib/bgm'
 import { lastFailure, onYtTitle, player, type Source } from '../lib/player'
@@ -240,7 +240,7 @@ export function Bgm() {
 }
 
 /** TODAY·TOTAL 숫자 한 칸 — 눌러서 직접 고친다 */
-function Counter({
+export function Counter({
   label,
   value,
   onSet,
@@ -308,10 +308,12 @@ function Counter({
 export function Hompy() {
   const { me, setMe, jjak, todayCount, totalCount, tabs, setCount } = useSite()
   const nav = useNavigate()
+  const loc = useLocation()
   const [target, setTarget] = useState(jjak[0]?.id ?? '')
 
+  // 폰에서는 대문이 아닌 곳이면 누른 페이지를 프로필보다 먼저 보여준다 (responsive.css)
   return (
-    <div className="hompy">
+    <div className={`hompy ${loc.pathname === '/home' ? 'is-home' : ''}`}>
       <svg className="hompy-ribbon" width="92" height="26" viewBox="0 0 92 26" aria-hidden="true">
         <path d="M6 4 L30 13 L6 22 Z" fill="var(--accent)" />
         <path d="M86 4 L62 13 L86 22 Z" fill="var(--accent)" />
@@ -424,11 +426,6 @@ export function Hompy() {
             단짝 <b>{jjak.length}</b>명 · <NavLink to="/jjak">모두 보기</NavLink>
           </div>
         </aside>
-
-        <div className="rings" aria-hidden="true">
-          <i />
-          <i />
-        </div>
 
         <main className="main">
           <Outlet />
