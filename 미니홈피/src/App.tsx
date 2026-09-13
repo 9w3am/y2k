@@ -19,6 +19,7 @@ import { AppShell } from './ui/AppShell'
 import { DialogHost } from './ui/dialog'
 import { SharedLoader, ViewingBar, useRestoreShared } from './ui/Shared'
 import { Portal } from './pages/Portal'
+import { PostView } from './pages/Posts'
 import {
   Board,
   Diary,
@@ -42,6 +43,7 @@ function Pages() {
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/diary" element={<Diary />} />
+        <Route path="/post/:kind/:id" element={<PostView />} />
         <Route path="/photo" element={<Photo />} />
         <Route path="/board" element={<Board />} />
         <Route path="/paper" element={<Paper />} />

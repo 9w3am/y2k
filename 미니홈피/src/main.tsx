@@ -7,6 +7,7 @@ import './styles/cute.css'
 import './styles/app.css'
 import './styles/responsive.css'
 import './styles/player.css'
+import './styles/blog.css'
 import { App } from './App'
 import { Boundary } from './ui/Boundary'
 

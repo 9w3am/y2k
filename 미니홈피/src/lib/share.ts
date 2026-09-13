@@ -27,6 +27,10 @@ function strip(state: Json): { light: Json; dropped: string[] } {
         ) {
           dropped.add(k)
           out[k] = ''
+        } else if (k === 'images' && Array.isArray(val)) {
+          // 글 안에 넣은 사진들도 주소에 담기엔 너무 크다
+          if (val.length) dropped.add(k)
+          out[k] = []
         } else {
           out[k] = walk(val)
         }

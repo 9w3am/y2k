@@ -49,9 +49,18 @@ export function Home() {
             <span style={{ color: 'var(--ink-dim)' }}>아직 올린 글이 없습니다.</span>
           ) : (
             recent.map((d) => (
-              <div key={d.id} style={{ borderBottom: '1px dotted var(--line)', padding: '2px 0' }}>
+              <Link
+                key={d.id}
+                to={`/post/diary/${d.id}`}
+                style={{
+                  display: 'block',
+                  borderBottom: '1px dotted var(--line)',
+                  padding: '2px 0',
+                  color: 'inherit',
+                }}
+              >
                 <span className="mood">{d.mood}</span> {d.title}
-              </div>
+              </Link>
             ))
           )}
         </div>
@@ -697,8 +706,8 @@ const pv = (id: string): React.CSSProperties => {
     pink: 'linear-gradient(175deg,#ffe6f0,#ffc6dd 52%,#ff9fc5)',
     lemon: 'linear-gradient(175deg,#fff5cf,#ffe79a 52%,#ffd75e)',
     grid: 'linear-gradient(175deg,#f2f4f7,#e4e8ee 52%,#d3d9e2)',
-    night: 'linear-gradient(175deg,#2b3158,#1d2242 52%,#12162e)',
-    mint: 'linear-gradient(175deg,#cdeee3,#9fdcc9 52%,#62c0a7)',
+    night: 'radial-gradient(circle at 80% 22%,#fff4cf 0 9px,transparent 10px),linear-gradient(180deg,#34357f,#7466c4 60%,#eab8d8)',
+    mint: 'radial-gradient(ellipse 5px 3px at 30% 35%,#7b5340 98%,transparent),radial-gradient(ellipse 4px 3px at 68% 62%,#5e3d2e 98%,transparent),radial-gradient(ellipse 4px 3px at 45% 78%,#7b5340 98%,transparent),linear-gradient(175deg,#e6f9f1,#bfeedd 55%,#93dcc5)',
   }
   return { background: map[id] ?? map.sky }
 }

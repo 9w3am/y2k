@@ -9,6 +9,13 @@ import type { BorderKey, FontKey, PatternKey } from './deco'
    화폐 잉크 · 관계 단짝 · 순회 로그타기 · 꾸미기 내방
    ══════════════════════════════════════════════════════════ */
 
+export interface Comment {
+  id: string
+  nick: string
+  body: string
+  date: string
+}
+
 export interface Post {
   id: string
   title: string
@@ -16,6 +23,12 @@ export interface Post {
   date: string
   mood: string
   weather: string
+  /** 카테고리 — 비어 있으면 '전체'에서만 보인다 */
+  category?: string
+  /** 글 안에 넣은 사진 ('idb:' 또는 data:) */
+  images?: string[]
+  likes?: number
+  comments?: Comment[]
 }
 
 export interface GuestEntry {
@@ -59,7 +72,7 @@ export const SKINS: Skin[] = [
   { id: 'lemon', name: '레몬사탕', price: 3, desc: '노랗고 시고 달다' },
   { id: 'grid', name: '체크노트', price: 3, desc: '모눈종이 위에 쓰는 하루' },
   { id: 'night', name: '밤하늘 별자리', price: 5, desc: '새벽 세시에 어울리는' },
-  { id: 'mint', name: '블랙민트', price: 8, desc: '치약 아니고 민트' },
+  { id: 'mint', name: '민트초코', price: 8, desc: '민트 반 초코 반' },
 ]
 
 export const MOODS = ['^ㅡ^', 'ㅠ_ㅠ', '-_-+', '*^^*', '>_<', '^0^', 'ㅇ_ㅇ', 'ㅡ,.ㅡ']
@@ -172,6 +185,9 @@ interface State {
   addPost: (kind: PostKind, p: Omit<Post, 'id' | 'date'>) => void
   editPost: (kind: PostKind, id: string, patch: Partial<Post>) => void
   delPost: (kind: PostKind, id: string) => void
+  likePost: (kind: PostKind, id: string, delta: 1 | -1) => void
+  addComment: (kind: PostKind, id: string, nick: string, body: string) => void
+  delComment: (kind: PostKind, id: string, commentId: string) => void
   addGuest: (nick: string, body: string, secret: boolean) => void
   replyGuest: (id: string, reply: string) => void
   delGuest: (id: string) => void
@@ -416,6 +432,38 @@ export const useSite = create<State>()(
       setYt: (ytUrl, ytTitle) => set({ ytUrl, ytTitle }),
       togglePlay: () => set((s) => ({ playing: !s.playing })),
       setVolume: (volume) => set({ volume }),
+      likePost: (kind, id, delta) =>
+        set(
+          (s) =>
+            ({
+              [kind]: s[kind].map((p) =>
+                p.id === id ? { ...p, likes: Math.max(0, (p.likes ?? 0) + delta) } : p,
+              ),
+            }) as Partial<State>,
+        ),
+      addComment: (kind, id, nick, body) =>
+        set(
+          (s) =>
+            ({
+              [kind]: s[kind].map((p) =>
+                p.id === id
+                  ? { ...p, comments: [...(p.comments ?? []), { id: uid(), nick, body, date: today() }] }
+                  : p,
+              ),
+            }) as Partial<State>,
+        ),
+      delComment: (kind, id, commentId) =>
+        set(
+          (s) =>
+            ({
+              [kind]: s[kind].map((p) =>
+                p.id === id
+                  ? { ...p, comments: (p.comments ?? []).filter((c) => c.id !== commentId) }
+                  : p,
+              ),
+            }) as Partial<State>,
+        ),
+
       addJjak: () =>
         set((s) => ({
           jjak: [

@@ -1,0 +1,347 @@
+/* ══ 블로그처럼 — 글 카드 / 글 보기 / 공감 / 댓글 ═════════════ */
+.cat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+.cat {
+  padding: 4px 11px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  background: var(--paper, #fff);
+  border: 1.5px solid var(--line-2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.cat i {
+  margin-left: 3px;
+  font-style: normal;
+  color: var(--accent);
+}
+.cat.on {
+  color: #fff;
+  border-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+.cat.on i {
+  color: #fff;
+}
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 8px;
+}
+.post-card {
+  display: flex;
+  gap: 11px;
+  padding: 11px 12px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--paper, #fff);
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+  transition:
+    transform 0.1s ease,
+    border-color 0.12s ease;
+}
+.post-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.post-thumb {
+  flex: none;
+  width: 78px;
+  height: 78px;
+  background: var(--tab) center / cover no-repeat;
+  border: 1px solid var(--line);
+  border-radius: var(--round-sm);
+}
+.post-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+.chip {
+  padding: 1px 7px;
+  font-size: 10px;
+  color: var(--accent);
+  background: var(--tab);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+}
+.post-title {
+  font-size: 13.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.post-excerpt {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-stats {
+  display: flex;
+  gap: 10px;
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+.writer-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.writer-row .inp {
+  flex: 1;
+  min-width: 0;
+}
+.writer-row .writer-pick {
+  flex: none;
+  width: 78px;
+}
+.writer-ta {
+  min-height: 140px;
+}
+.writer-imgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 8px;
+}
+.writer-img {
+  position: relative;
+}
+.writer-img .post-thumb {
+  width: 64px;
+  height: 64px;
+}
+.writer-img .btn-x {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}
+.writer-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.writer-foot .sp {
+  flex: 1;
+}
+
+.post-view {
+  margin-top: 8px;
+  padding: 14px 15px 12px;
+  background: var(--paper, #fff);
+  border: 2px dotted var(--line-2);
+  border-radius: var(--round);
+}
+.post-view-title {
+  margin: 6px 0 10px;
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--ink);
+  word-break: keep-all;
+}
+.post-img {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  margin: 0 0 10px;
+  object-fit: contain;
+  background: var(--tab);
+  border-radius: var(--round-sm);
+}
+.post-img-wait {
+  height: 160px;
+}
+.post-body {
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line-2);
+}
+.post-actions .sp {
+  flex: 1;
+}
+.like {
+  padding: 5px 13px;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--paper, #fff);
+  border: 1.5px solid var(--accent-2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.like b {
+  margin-left: 2px;
+}
+.like.on {
+  color: #fff;
+  border-color: var(--accent);
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+.cmt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+.cmt-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 10px;
+  font-size: 12px;
+  background: var(--tab);
+  border-radius: var(--round-sm);
+}
+.cmt-list b {
+  flex: none;
+  color: var(--accent);
+}
+.cmt-body {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  word-break: break-word;
+}
+.cmt-list small {
+  flex: none;
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+.cmt-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.cmt-form .inp:first-child {
+  flex: none;
+  width: 90px;
+}
+.cmt-form .inp:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 11px;
+}
+.post-nav a {
+  max-width: 48%;
+  color: var(--ink-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.post-nav a b {
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .post-thumb {
+    width: 64px;
+    height: 64px;
+  }
+  .writer-row {
+    flex-wrap: wrap;
+  }
+  .cmt-form {
+    flex-wrap: wrap;
+  }
+  .cmt-form .inp:first-child {
+    width: 100%;
+  }
+}
+
+/* ══ 밤하늘 별자리 — 다시 그림 ═════════════════════════════
+   납작한 남색 한 판이던 것을, 보라에서 분홍으로 번지는 밤하늘에
+   반짝이는 별과 초승달을 띄운 것으로.
+   꾸밈새를 켜면 이 바탕은 물러난다.
+   ══════════════════════════════════════════════════════════ */
+html[data-skin='night'] {
+  --accent: #7b6fe0;
+  --accent-2: #b8aff7;
+  --bg-1: #34357f;
+  --bg-2: #7466c4;
+  --bg-3: #eab8d8;
+  --ink: #403a6b;
+  --ink-dim: #8a84b0;
+  --line: #ece8fc;
+  --line-2: #cbc3f2;
+  --tab: #f7f5ff;
+}
+html[data-skin='night']:not([data-custom='1']) body {
+  background-color: #34357f;
+  background-image:
+    /* 달은 책에 가리지 않게 오른쪽 가장자리 바탕에 걸친다 */
+    radial-gradient(circle at calc(100% - 20px) 118px, #3a3a87 0 21px, transparent 22px),
+    radial-gradient(circle at calc(100% - 32px) 128px, #fff4cf 0 24px, rgba(255, 244, 207, 0.32) 25px 38px, transparent 60px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cpath d='M26 18l1.6 4.4 4.4 1.6-4.4 1.6L26 30l-1.6-4.4L20 24l4.4-1.6z' fill='%23fff' fill-opacity='.9'/%3E%3Cpath d='M104 86l1.1 3 3 1.1-3 1.1-1.1 3-1.1-3-3-1.1 3-1.1z' fill='%23fff3c4'/%3E%3Cpath d='M50 64l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z' fill='%23ffd9ef'/%3E%3Ccircle cx='70' cy='40' r='1.6' fill='%23fff' fill-opacity='.8'/%3E%3Ccircle cx='118' cy='22' r='1.1' fill='%23fff' fill-opacity='.6'/%3E%3Ccircle cx='16' cy='92' r='1.3' fill='%23fff' fill-opacity='.7'/%3E%3Ccircle cx='58' cy='118' r='1' fill='%23fff' fill-opacity='.5'/%3E%3Ccircle cx='88' cy='128' r='1.5' fill='%23fff' fill-opacity='.6'/%3E%3C/svg%3E"),
+    radial-gradient(90% 55% at 50% 100%, rgba(255, 210, 236, 0.55), transparent 70%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-2) 58%, var(--bg-3));
+  background-size: auto, auto, 140px 140px, auto, auto;
+  background-repeat: no-repeat, no-repeat, repeat, no-repeat, no-repeat;
+  background-attachment: fixed;
+}
+
+/* ══ 민트초코 (예전 블랙민트) — 다시 그림 ═══════════════════
+   검은 사선 줄무늬가 무겁고 칙칙했다. 민트 바탕에 초코칩을 흩뿌리고
+   포인트는 초콜릿색으로.
+   ══════════════════════════════════════════════════════════ */
+html[data-skin='mint'] {
+  --accent: #7b5340;
+  --accent-2: #a9826c;
+  --bg-1: #e6f9f1;
+  --bg-2: #bfeedd;
+  --bg-3: #93dcc5;
+  --ink: #4b362c;
+  --ink-dim: #8f786b;
+  --line: #d8f2e8;
+  --line-2: #94d7c0;
+  --tab: #edfbf5;
+}
+html[data-skin='mint']:not([data-custom='1']) body {
+  background-color: #bfeedd;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect x='10' y='12' width='7' height='5' rx='2' fill='%237b5340' transform='rotate(25 13 14)'/%3E%3Crect x='40' y='8' width='5' height='4' rx='1.6' fill='%235e3d2e' transform='rotate(-30 42 10)'/%3E%3Crect x='30' y='38' width='8' height='5' rx='2' fill='%237b5340' transform='rotate(-15 34 40)'/%3E%3Crect x='52' y='46' width='5' height='4' rx='1.5' fill='%239a6c55' transform='rotate(40 54 48)'/%3E%3Crect x='8' y='48' width='5' height='3.5' rx='1.4' fill='%235e3d2e' transform='rotate(10 10 50)'/%3E%3Ccircle cx='24' cy='26' r='1.6' fill='%23fff' fill-opacity='.7'/%3E%3Ccircle cx='56' cy='26' r='1.3' fill='%23fff' fill-opacity='.6'/%3E%3C/svg%3E"),
+    linear-gradient(175deg, var(--bg-1), var(--bg-2) 55%, var(--bg-3));
+  background-size: 64px 64px, auto;
+}
