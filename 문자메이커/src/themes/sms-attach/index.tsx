@@ -8,8 +8,8 @@ import { Section, Slider } from '../../ui/controls'
 function CameraOff() {
   return (
     <svg width="22" height="18" viewBox="0 0 11 9" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M0 2h3l1-1h3l1 1h3v7H0z" fill="currentColor" />
-      <circle cx="5.5" cy="5" r="2" fill="var(--status)" />
+      {/* 렌즈는 칠하지 않고 구멍으로 — PNG 저장본에서도 똑같이 */}
+      <path d="M0 2h3l1-1h3l1 1h3v7H0zM3.5 5a2 2 0 1 0 4 0a2 2 0 1 0-4 0z" fill="currentColor" fillRule="evenodd" />
       <path d="M0 0h1v1H0zM1 1h1v1H1zM2 2h1v1H2zM3 3h1v1H3zM4 4h1v1H4zM5 5h1v1H5zM6 6h1v1H6zM7 7h1v1H7zM8 8h1v1H8z" fill="#e2413f" />
     </svg>
   )

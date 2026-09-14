@@ -101,7 +101,8 @@ export async function exportPng(
 
     const url = await toPng(node, {
       pixelRatio: ratio,
-      cacheBust: true,
+      // ?숫자 를 붙이면 blob: 주소가 깨진다
+      cacheBust: false,
       width: node.offsetWidth,
       height: node.offsetHeight,
       style: { transform: 'none', transformOrigin: 'top left', margin: '0' },

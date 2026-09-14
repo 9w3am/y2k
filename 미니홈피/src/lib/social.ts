@@ -312,8 +312,9 @@ export async function deleteGuest(homeId: string, id: string): Promise<Result> {
 /* ══ 요즘 쓰는 기록장 (대문) ════════════════════════════ */
 export type HomeCard = { handle: string; title: string; photo: string; updated: string }
 
-export function useRecentHomes(limit = 5): HomeCard[] {
-  const [list, setList] = useState<HomeCard[]>([])
+/** 불러오기 전에는 null — 빈 목록 문구가 먼저 번쩍 뜨지 않게 */
+export function useRecentHomes(limit = 5): HomeCard[] | null {
+  const [list, setList] = useState<HomeCard[] | null>(null)
   useEffect(() => {
     let alive = true
     void supabase
@@ -322,7 +323,8 @@ export function useRecentHomes(limit = 5): HomeCard[] {
       .order('updated_at', { ascending: false })
       .limit(limit)
       .then(({ data, error }) => {
-        if (!alive || error || !data) return
+        if (!alive) return
+        if (error || !data) return setList([])
         type Row = { handle: string; updated_at: string; me: MeLite }
         setList(
           (data as unknown as Row[]).map((r) => ({

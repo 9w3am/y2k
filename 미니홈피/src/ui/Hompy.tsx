@@ -227,15 +227,22 @@ export function Bgm() {
             <path d="M2 5.2h2.2L7.4 2.6v8.8L4.2 8.8H2z" fill="currentColor" />
             <path d="M9.6 4.8a3 3 0 0 1 0 4.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
-          <input
-            className="bgm-vol"
-            type="range"
-            min={0}
-            max={100}
-            value={volume}
-            aria-label="소리 크기"
-            onChange={(e) => setVolume(Number(e.target.value))}
-          />
+          {/* 막대는 보통 칸으로 그린다 — 브라우저 슬라이더 모양은 PNG 저장에 안 담긴다 */}
+          <span className="bgm-volbox">
+            <i className="bgm-vol-track">
+              <b style={{ width: `${volume}%` }} />
+            </i>
+            <i className="bgm-vol-knob" style={{ left: `calc((100% - 14px) * ${volume / 100})` }} />
+            <input
+              className="bgm-vol"
+              type="range"
+              min={0}
+              max={100}
+              value={volume}
+              aria-label="소리 크기"
+              onChange={(e) => setVolume(Number(e.target.value))}
+            />
+          </span>
         </label>
       </div>
 
@@ -347,9 +354,9 @@ export function Hompy() {
   return (
     <div className={`hompy ${loc.pathname === '/home' ? 'is-home' : ''}`}>
       <svg className="hompy-ribbon" width="92" height="26" viewBox="0 0 92 26" aria-hidden="true">
-        <path d="M6 4 L30 13 L6 22 Z" fill="var(--accent)" />
-        <path d="M86 4 L62 13 L86 22 Z" fill="var(--accent)" />
-        <rect x="28" y="3" width="36" height="20" rx="9" fill="var(--accent-2)" />
+        <path d="M6 4 L30 13 L6 22 Z" style={{ fill: 'var(--accent)' }} />
+        <path d="M86 4 L62 13 L86 22 Z" style={{ fill: 'var(--accent)' }} />
+        <rect x="28" y="3" width="36" height="20" rx="9" style={{ fill: 'var(--accent-2)' }} />
         <circle cx="46" cy="13" r="4" fill="#fff" />
       </svg>
       <div className="hompy-top">

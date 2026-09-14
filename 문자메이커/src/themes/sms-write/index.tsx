@@ -7,8 +7,9 @@ import { ColorField, ImageField, Section, Seg, Slider, SwitchField } from '../..
 function Envelope() {
   return (
     <svg width="22" height="16" viewBox="0 0 11 8" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M0 0h11v8H0z" fill="currentColor" />
-      <path d="M1 1h9v6H1z" fill="var(--lcd-1)" />
+      {/* 속을 색으로 칠하지 않고 테두리만 — 칠한 색(var)은 PNG 저장본에서 새까맣게 나온다.
+          속이 비어 있으니 뒤의 화면 색이 그대로 비친다. */}
+      <path d="M0 0h11v8H0zM1 1v6h9V1z" fill="currentColor" fillRule="evenodd" />
       <path d="M1 1h9v1H1zM2 2h7v1H2zM3 3h5v1H3zM4 4h3v1H4z" fill="currentColor" />
     </svg>
   )

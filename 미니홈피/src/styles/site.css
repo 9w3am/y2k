@@ -217,6 +217,8 @@ select {
   overflow: hidden;
   white-space: nowrap;
   max-width: 330px;
+  /* 옆 링크들에 눌려 폭이 0 이 되면 '[' 한 글자만 보인다 */
+  flex: 0 0 320px;
 }
 .marquee span {
   display: inline-block;

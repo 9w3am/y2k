@@ -9,14 +9,13 @@ import { Section, Seg, Slider } from '../../ui/controls'
 function Mail({ read }: { read: boolean }) {
   return read ? (
     <svg width="22" height="16" viewBox="0 0 11 8" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M0 2h11v6H0z" fill="currentColor" opacity=".45" />
-      <path d="M1 3h9v4H1z" fill="var(--paper)" />
+      {/* 속은 칠하지 않고 구멍으로 — 칠한 색(var)은 PNG 저장본에서 새까맣게 나온다 */}
+      <path d="M0 2h11v6H0zM1 3v4h9V3z" fill="currentColor" fillRule="evenodd" opacity=".45" />
       <path d="M0 2h11v1H0zM1 1h9v1H1zM2 0h7v1H2z" fill="currentColor" opacity=".45" />
     </svg>
   ) : (
     <svg width="22" height="16" viewBox="0 0 11 8" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M0 0h11v8H0z" fill="currentColor" />
-      <path d="M1 1h9v6H1z" fill="var(--paper)" />
+      <path d="M0 0h11v8H0zM1 1v6h9V1z" fill="currentColor" fillRule="evenodd" />
       <path d="M1 1h9v1H1zM2 2h7v1H2zM3 3h5v1H3zM4 4h3v1H4z" fill="currentColor" />
     </svg>
   )

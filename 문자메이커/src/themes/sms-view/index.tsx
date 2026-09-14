@@ -18,8 +18,8 @@ function BellOff() {
 function Lock() {
   return (
     <svg width="13" height="16" viewBox="0 0 6 8" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M1 0h4v1H1zM1 1h1v2H1zM4 1h1v2H4zM0 3h6v5H0z" fill="currentColor" />
-      <path d="M2 5h2v2H2z" fill="var(--status)" />
+      {/* 열쇠구멍은 칠하지 않고 구멍으로 — PNG 저장본에서도 똑같이 */}
+      <path d="M1 0h4v1H1zM1 1h1v2H1zM4 1h1v2H4zM0 3h6v5H0zM2 5v2h2V5z" fill="currentColor" fillRule="evenodd" />
     </svg>
   )
 }

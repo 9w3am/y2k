@@ -14,18 +14,18 @@ export function InkJar({ amount, size = 1 }: { amount: number; size?: number }) 
           <path d="M11 22h32v30a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6z" />
         </clipPath>
       </defs>
-      <rect x="20" y="4" width="14" height="10" rx="3" fill="var(--line-2)" />
+      <rect x="20" y="4" width="14" height="10" rx="3" style={{ fill: 'var(--line-2)' }} />
       <path
         d="M11 22h32v30a6 6 0 0 1-6 6H17a6 6 0 0 1-6-6z"
         fill="#fff"
-        stroke="var(--line-2)"
+        style={{ stroke: 'var(--line-2)' }}
         strokeWidth="2"
       />
       <g clipPath={`url(#jarClip${size})`}>
-        <rect x="9" y={58 - 36 * level} width="36" height="40" fill="var(--accent-2)" />
-        <rect x="9" y={58 - 36 * level} width="36" height="4" fill="var(--accent)" />
+        <rect x="9" y={58 - 36 * level} width="36" height="40" style={{ fill: 'var(--accent-2)' }} />
+        <rect x="9" y={58 - 36 * level} width="36" height="4" style={{ fill: 'var(--accent)' }} />
       </g>
-      <path d="M14 16h26v7H14z" fill="var(--accent)" />
+      <path d="M14 16h26v7H14z" style={{ fill: 'var(--accent)' }} />
       <circle cx="36" cy="31" r="3" fill="#fff" opacity=".7" />
     </svg>
   )

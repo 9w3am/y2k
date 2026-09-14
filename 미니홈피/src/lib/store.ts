@@ -221,7 +221,7 @@ const seedDiary: Post[] = [
   {
     id: 'd1',
     title: '첫 번째 글',
-    body: '글쓰기를 누르면 새 글이 올라갑니다.\n제목 옆 ✕ 를 누르면 지워집니다.',
+    body: '글쓰기를 누르면 새 글이 올라갑니다.',
     date: today(),
     mood: '^ㅡ^',
     weather: '맑음',

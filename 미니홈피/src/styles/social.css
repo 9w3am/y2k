@@ -125,3 +125,107 @@
   font-size: 11.5px;
   color: var(--ink-dim);
 }
+.rank .rank-id {
+  margin-left: 5px;
+  font-style: normal;
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+/* 대문 — 내 기록장 칸: 잉크 상자는 제 크기, 아래에 최근 글 */
+.portal-2col .inkbox {
+  flex: none;
+}
+.my-latest {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.my-latest li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 2px;
+  font-size: 11.5px;
+  border-bottom: 1px dashed var(--line);
+}
+.my-latest li::before {
+  content: '♥';
+  font-size: 9px;
+  color: var(--accent-2);
+}
+.my-latest a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+  text-decoration: none;
+}
+.my-latest a:hover {
+  color: var(--accent);
+}
+.my-latest small {
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+/* 폰에서 '답글' 이 세로로 쪼개지지 않게 */
+.btn-x.wide {
+  width: auto !important;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+/* ══ 음악 소리 크기 막대 — 보이는 그대로 PNG 에 담기게 칸으로 그린다 ══ */
+.bgm-volbox {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+.bgm-vol-track {
+  position: relative;
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--line-2);
+  overflow: hidden;
+}
+.bgm-vol-track b {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent-2);
+}
+.bgm-vol-knob {
+  position: absolute;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper, #fff);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+/* 진짜 슬라이더는 위에 투명하게 겹쳐 조작만 받는다 */
+.bgm-volbox .bgm-vol {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 한국어 문장이 낱글자로 끊기지 않게 */
+.hero p,
+.evt span,
+.inkbox p {
+  word-break: keep-all;
+}

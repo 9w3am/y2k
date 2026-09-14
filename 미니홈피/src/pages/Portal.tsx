@@ -15,17 +15,17 @@ const NOTICES: [string, string, boolean][] = [
 function Mascot() {
   return (
     <svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true">
-      <ellipse cx="56" cy="101" rx="34" ry="6" fill="var(--accent)" opacity=".14" />
-      <rect x="22" y="20" width="62" height="74" rx="8" fill="#fff" stroke="var(--accent)" strokeWidth="3" />
-      <rect x="22" y="20" width="16" height="74" rx="8" fill="var(--accent-2)" />
+      <ellipse cx="56" cy="101" rx="34" ry="6" style={{ fill: 'var(--accent)' }} opacity=".14" />
+      <rect x="22" y="20" width="62" height="74" rx="8" fill="#fff" style={{ stroke: 'var(--accent)' }} strokeWidth="3" />
+      <rect x="22" y="20" width="16" height="74" rx="8" style={{ fill: 'var(--accent-2)' }} />
       {[38, 52, 66, 80].map((y) => (
-        <rect key={y} x="46" y={y} width="28" height="4" rx="2" fill="var(--line-2)" />
+        <rect key={y} x="46" y={y} width="28" height="4" rx="2" style={{ fill: 'var(--line-2)' }} />
       ))}
       {[32, 50, 68].map((y) => (
-        <circle key={y} cx="30" cy={y} r="4" fill="#fff" stroke="var(--accent)" strokeWidth="2" />
+        <circle key={y} cx="30" cy={y} r="4" fill="#fff" style={{ stroke: 'var(--accent)' }} strokeWidth="2" />
       ))}
       <g transform="rotate(24 86 34)">
-        <rect x="82" y="14" width="9" height="42" rx="3" fill="var(--accent)" />
+        <rect x="82" y="14" width="9" height="42" rx="3" style={{ fill: 'var(--accent)' }} />
         <path d="M82 56h9l-4.5 10z" fill="#3a444f" />
       </g>
     </svg>
@@ -106,11 +106,21 @@ export function Portal() {
                 </Link>
               </div>
             </div>
+            {diary.length > 0 && (
+              <ul className="my-latest">
+                {diary.slice(0, 3).map((d) => (
+                  <li key={d.id}>
+                    <Link to={`/post/diary/${d.id}`}>{d.title}</Link>
+                    <small>{d.date.slice(5)}</small>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="panel">
             <h3>요즘 쓰는 기록장</h3>
-            {recent.length === 0 ? (
+            {recent === null ? null : recent.length === 0 ? (
               <p className="rank-empty">아직 가입한 기록장이 없습니다.</p>
             ) : (
               <ol className="rank">
@@ -124,7 +134,10 @@ export function Portal() {
                           : { background: 'var(--accent-2)' }
                       }
                     />
-                    <Link to={`/u/${h.handle}`}>{h.title}</Link>
+                    <Link to={`/u/${h.handle}`}>
+                      {h.title}
+                      <em className="rank-id">{h.handle}</em>
+                    </Link>
                     <span className="sp" />
                     <small>{h.updated}</small>
                   </li>

@@ -99,7 +99,9 @@ export async function exportHompy(
 
     const url = await toPng(node, {
       pixelRatio: r,
-      cacheBust: true,
+      // 사진은 보관소에서 꺼낸 blob: 주소다. 캐시를 깨려고 ?숫자 를 붙이면
+      // 그 주소를 못 찾아 저장본에서 사진이 빠진다.
+      cacheBust: false,
       width: w,
       height: h,
       style: {
