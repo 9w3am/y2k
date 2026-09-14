@@ -122,6 +122,11 @@ const list = [
   { name: 'inbox-view', url: `${S}#/sms-view`, w: 1440, h: 900, setup: seen },
   { name: 'inbox-write-m', url: `${S}#/sms-write`, w: 390, h: 844, dpr: 3, mobile: true, setup: seen },
   { name: 'landing', url: pathToFileURL(join(ROOT, 'landing/index.html')).href, w: 1200, h: 630 },
+  // 배포된 사이트 확인용
+  { name: 'live-landing', url: 'https://netizen324.github.io/y2k/', w: 1280, h: 800 },
+  { name: 'live-landing-m', url: 'https://netizen324.github.io/y2k/', w: 390, h: 844, dpr: 2, mobile: true },
+  { name: 'live-inbox-notice-m', url: 'https://netizen324.github.io/y2k/inbox/', w: 375, h: 667, dpr: 2, mobile: true },
+  { name: 'live-inbox-m', url: 'https://netizen324.github.io/y2k/inbox/', w: 390, h: 844, dpr: 2, mobile: true, setup: seen },
   { name: 'ilog-diary-m', url: `${I}#/diary`, w: 390, h: 844, dpr: 3, mobile: true },
   { name: 'ilog-guest-m', url: `${I}#/guest`, w: 390, h: 844, dpr: 3, mobile: true },
   { name: 'ilog-portal-m', url: `${I}#/`, w: 390, h: 844, dpr: 3, mobile: true },
