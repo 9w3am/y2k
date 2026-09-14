@@ -257,9 +257,13 @@ async function attach(user: User) {
       await save()
     } else {
       if (owner !== user.id && !ls.get(BEFORE)) ls.set(BEFORE, ls.get(LOCAL) ?? '')
-      const d = (row.data ?? {}) as Record<string, unknown>
+      const d = { ...((row.data ?? {}) as Record<string, unknown>) }
+      // 예전 저장본에 들어간 방명록·가짜 단짝은 받지 않고, 서버에서도 치운다
+      const stale = [...LOCAL_ONLY].some((k) => k in d)
+      for (const k of LOCAL_ONLY) delete d[k]
       const me = { ...useSite.getState().me, ...((d.me as object) ?? {}), nick: row.handle }
       useSite.setState({ ...d, me, viewing: false } as never)
+      if (stale) await save()
     }
   } else {
     // 처음 로그인 — 이 브라우저에서 쓰던 기록장을 계정의 첫 기록장으로
