@@ -3,6 +3,8 @@ import { Navigate, useParams } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { readShareCode } from '../lib/share'
 import { pauseWrites } from '../lib/storage'
+import { setHomeOwner } from '../lib/social'
+import { FriendButton } from '../pages/Friends'
 
 const KEY = 'ilog:share'
 
@@ -28,6 +30,8 @@ export function SharedLoader() {
       }
       pauseWrites(true)
       loadShared(data as never)
+      // 공유 링크는 누구 계정인지 모른다 — 방명록·단짝은 링크에 담긴 것만
+      setHomeOwner(null)
       setDone('ok')
     })
     return () => {
@@ -65,6 +69,7 @@ export function useRestoreShared() {
       if (!data) return
       pauseWrites(true)
       loadShared(data as never)
+      setHomeOwner(null)
     })
   }, [viewing, loadShared])
 }
@@ -78,6 +83,7 @@ export function ViewingBar() {
     <div className="viewing-bar">
       <b>구경 중</b>
       <span>{nick} 님의 기록장</span>
+      <FriendButton />
       <button
         className="btn"
         onClick={() => {

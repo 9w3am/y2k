@@ -3,6 +3,7 @@ import type { User } from '@supabase/supabase-js'
 import { currentUser, onSession, siteBase, supabase } from './supabase'
 import { useSite } from './store'
 import { getImageBlob, isInline, isRef, uploadBlob } from './imageStore'
+import { setHomeOwner } from './social'
 
 /* ══════════════════════════════════════════════════════════
    계정과 기록장 저장
@@ -145,12 +146,29 @@ const ls = {
   },
 }
 
-/** 서버에 올릴 몫 — 함수와 구경 표시는 뺀다 */
+/**
+ * 기록장 안에 넣으면 안 되는 것.
+ * 기록장(homes.data)은 구경 온 사람 누구나 읽는다 —
+ * 방명록(비밀글 포함)과 예전 가짜 단짝은 여기 들어가면 안 된다. 따로 저장한다.
+ */
+const LOCAL_ONLY = new Set(['viewing', 'guest', 'jjak'])
+
+/** 서버에 올릴 몫 */
 function snapshot(): Record<string, unknown> {
   const out: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(useSite.getState()))
-    if (typeof v !== 'function' && k !== 'viewing') out[k] = v
+    if (typeof v !== 'function' && !LOCAL_ONLY.has(k)) out[k] = v
   return out
+}
+
+/** 남의 기록장(아이디 주소·공유 링크)을 구경하는 중인지 */
+function isVisiting(): boolean {
+  if (useSite.getState().viewing) return true
+  try {
+    return !!sessionStorage.getItem('ilog:visit') || !!sessionStorage.getItem('ilog:share')
+  } catch {
+    return false
+  }
 }
 
 /** 이 브라우저에만 있는 사진('idb:', data:)을 사진 보관함에 올리고 주소로 바꾼다 */
@@ -217,6 +235,9 @@ async function attach(user: User) {
   if (activeUid === user.id) return
   detach()
   activeUid = user.id
+  // 남의 기록장을 구경하는 중이면 내 것을 불러와 덮어씌우지 않는다.
+  // '내 기록장으로'를 누르면 새로 열리면서 다시 붙는다.
+  if (isVisiting()) return setStatus('off')
   setStatus('loading')
 
   const { data: row, error } = await supabase
@@ -226,6 +247,8 @@ async function attach(user: User) {
     .maybeSingle()
   if (activeUid !== user.id) return
   if (error) return setStatus(noTable(error) ? 'nosetup' : 'error')
+  // 불러오는 사이 구경이 시작됐으면 손대지 않는다
+  if (isVisiting()) return setStatus('off')
 
   const owner = ls.get(OWNER)
   if (row) {
@@ -260,6 +283,8 @@ async function attach(user: User) {
 
   ls.set(OWNER, user.id)
   ls.del(DIRTY)
+  // 지금 떠 있는 기록장은 내 것 — 방명록·단짝을 내 계정 기준으로
+  setHomeOwner({ id: user.id, handle: useSite.getState().me.nick })
   setStatus('saved')
   unsub = useSite.subscribe((s) => {
     if (!s.viewing) schedule()
@@ -271,6 +296,7 @@ function detach() {
   unsub = null
   window.clearTimeout(timer)
   activeUid = ''
+  setHomeOwner(null)
 }
 
 /** 로그아웃 — 계정 기록장을 이 브라우저에서 치우고 로그인 전 것으로 돌린다 */
@@ -307,10 +333,10 @@ export function startCloudSync() {
 /* ── 남의 기록장 구경 ────────────────────────────────────── */
 export async function fetchHomeByHandle(
   handle: string,
-): Promise<Record<string, unknown> | null | 'nosetup'> {
+): Promise<{ id: string; handle: string; data: Record<string, unknown> } | null | 'nosetup'> {
   const { data, error } = await supabase
     .from('homes')
-    .select('handle,data')
+    .select('user_id,handle,data')
     .eq('handle', handle)
     .maybeSingle()
   if (error) return noTable(error) ? 'nosetup' : null
@@ -319,6 +345,9 @@ export async function fetchHomeByHandle(
   // 보는 사람 기기 설정은 그 사람 것을 따르지 않는다
   delete d.shell
   delete d.volume
+  // 예전 저장본에 남은 방명록·가짜 단짝은 쓰지 않는다 — 진짜는 따로 불러온다
+  delete d.guest
+  delete d.jjak
   d.me = { ...((d.me as object) ?? {}), nick: data.handle }
-  return d
+  return { id: data.user_id as string, handle: data.handle as string, data: d }
 }

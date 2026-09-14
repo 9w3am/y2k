@@ -22,13 +22,12 @@ import { VisitLoader, useRestoreVisit } from './ui/Account'
 import { startCloudSync } from './lib/cloud'
 import { Portal } from './pages/Portal'
 import { PostView } from './pages/Posts'
+import { FriendsPage } from './pages/Friends'
 import {
   Board,
   Diary,
   Guest,
   Home,
-  JjakList,
-  JjakView,
   Paper,
   Photo,
   Profile,
@@ -51,8 +50,7 @@ function Pages() {
         <Route path="/board" element={<Board />} />
         <Route path="/paper" element={<Paper />} />
         <Route path="/guest" element={<Guest />} />
-        <Route path="/jjak" element={<JjakList />} />
-        <Route path="/jjak/:id" element={<JjakView />} />
+        <Route path="/jjak" element={<FriendsPage />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/setting" element={<Setting />} />
       </Route>

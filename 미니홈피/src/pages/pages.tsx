@@ -1,6 +1,16 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { SKINS, jjakToday, jjakTotal, today as todayDate, uid, useSite } from '../lib/store'
+import { Link, useNavigate } from 'react-router-dom'
+import { useSession } from '../lib/supabase'
+import {
+  deleteGuest as delCloudGuest,
+  replyGuest as replyCloudGuest,
+  useFriendCount,
+  useGuestbook,
+  useHomeOwner,
+  writeGuest,
+  type HomeOwner,
+} from '../lib/social'
+import { SKINS, useSite } from '../lib/store'
 import { TRACKS } from '../lib/bgm'
 import { pickImage } from '../lib/img'
 import { Bgm, Counter } from '../ui/Hompy'
@@ -22,7 +32,10 @@ function ImgBg({ value, className }: { value: string; className: string }) {
 }
 
 export function Home() {
-  const { me, setMe, diary, guest, photo, jjak } = useSite()
+  const { me, setMe, diary, guest, photo, viewing } = useSite()
+  const owner = useHomeOwner()
+  const friendCount = useFriendCount(owner?.id ?? null)
+  const gb = useGuestbook(owner?.id ?? null)
   const roomUrl = useImg(me.room)
   // 새 사진은 보관소에 넣고, 밀려난 사진은 보관소에서 지운다
   const pickRoom = () =>
@@ -32,7 +45,13 @@ export function Home() {
       void deleteImage(old)
     })
   const recent = diary.slice(0, 3)
-  const lastGuest = guest[0]
+  // 가입한 기록장이면 서버 방명록에서 — 비밀글은 대문에 올리지 않는다
+  const cloudLast = gb.rows.find((r) => !r.secret)
+  const lastGuest = owner
+    ? cloudLast
+      ? { body: cloudLast.body, nick: cloudLast.writerHandle || '떠난 사람' }
+      : undefined
+    : guest[0]
 
   return (
     <>
@@ -71,7 +90,7 @@ export function Home() {
           </span>
           <span>
             <b>방명록</b>
-            {guest.length}
+            {owner ? gb.rows.length : guest.length}
           </span>
           <span>
             <b>사진첩</b>
@@ -79,7 +98,7 @@ export function Home() {
           </span>
           <span>
             <b>단짝</b>
-            {jjak.length}
+            {friendCount}
           </span>
         </div>
       </div>
@@ -90,17 +109,17 @@ export function Home() {
         <h2>Mini Room</h2>
         <em>express yourself</em>
         <span className="sp" />
-        <small>눌러서 사진 바꾸기</small>
+        {!viewing && <small>눌러서 사진 바꾸기</small>}
       </div>
       <div
         className="room"
         style={{ backgroundImage: roomUrl ? `url(${roomUrl})` : undefined }}
-        role="button"
-        tabIndex={0}
-        onClick={pickRoom}
-        onKeyDown={(e) => e.key === 'Enter' && pickRoom()}
+        role={viewing ? undefined : 'button'}
+        tabIndex={viewing ? undefined : 0}
+        onClick={viewing ? undefined : pickRoom}
+        onKeyDown={(e) => !viewing && e.key === 'Enter' && pickRoom()}
       >
-        {!me.room && <span>내 방을 꾸며보세요 — 눌러서 사진 넣기</span>}
+        {!me.room && !viewing && <span>내 방을 꾸며보세요 — 눌러서 사진 넣기</span>}
       </div>
 
       <div className="sect">
@@ -124,7 +143,9 @@ export function Home() {
 
 /* ── 프로필 ──────────────────────────────────────────────── */
 export function Profile() {
-  const { me, setMe, jjak, todayCount, totalCount, setCount } = useSite()
+  const { me, setMe, todayCount, totalCount, setCount } = useSite()
+  const profileOwner = useHomeOwner()
+  const friendCount = useFriendCount(profileOwner?.id ?? null)
   const row = (label: string, node: React.ReactNode) => (
     <div className="form-row">
       <label>{label}</label>
@@ -147,7 +168,7 @@ export function Profile() {
       {row('생일', <Ed value={me.birth} onChange={(v) => setMe({ birth: v })} multiline={false} maxChars={12} ph="00.00.00" />)}
       {row('좌우명', <Ed value={me.motto} onChange={(v) => setMe({ motto: v })} multiline={false} maxChars={30} ph="한 줄로" />)}
       {row('자기소개', <Ed value={me.intro} onChange={(v) => setMe({ intro: v })} ph="자기소개" />)}
-      {row('단짝', <Link to="/jjak">{jjak.length}명 · 단짝 고치기</Link>)}
+      {row('단짝', <Link to="/jjak">{friendCount}명</Link>)}
       {row('오늘 방문', <Counter label="" value={todayCount} onSet={(n) => setCount({ todayCount: n })} />)}
       {row('총 방문', <Counter label="" value={totalCount} onSet={(n) => setCount({ totalCount: n })} />)}
     </>
@@ -170,24 +191,30 @@ export function Photo() {
         <em>my album</em>
         <span className="sp" />
         <small>{photo.length}장</small>
-        <button
-          className="btn btn-main"
-          onClick={() =>
-            pickImage(async (src) => {
-              addPic(await putImage(src), '')
-              addInk(1)
-            })
-          }
-        >
-          사진 올리기
-        </button>
+        {!viewing && (
+          <button
+            className="btn btn-main"
+            onClick={() =>
+              pickImage(async (src) => {
+                addPic(await putImage(src), '')
+                addInk(1)
+              })
+            }
+          >
+            사진 올리기
+          </button>
+        )}
       </div>
 
       {photo.length === 0 ? (
         <div className="empty">
           아직 올린 사진이 없습니다.
-          <br />
-          사진을 올리면 잉크가 한 방울 모입니다.
+          {!viewing && (
+            <>
+              <br />
+              사진을 올리면 잉크가 한 방울 모입니다.
+            </>
+          )}
         </div>
       ) : (
         <div className="grid-pic">
@@ -231,7 +258,164 @@ export function Photo() {
 }
 
 /* ── 방명록 ──────────────────────────────────────────────── */
+/* ── 방명록 ──
+   가입한 기록장이면 서버 방명록(비밀글은 주인·쓴 사람만 보임),
+   가입 없이 쓰거나 공유 링크로 보는 중이면 이 브라우저 방명록. */
 export function Guest() {
+  const owner = useHomeOwner()
+  return owner ? <CloudGuest owner={owner} /> : <LocalGuest />
+}
+
+function CloudGuest({ owner }: { owner: HomeOwner }) {
+  const { session } = useSession()
+  const myId = session?.user.id ?? ''
+  const isOwner = myId === owner.id
+  const nav = useNavigate()
+  const { rows, loading, nosetup, reload } = useGuestbook(owner.id)
+  const [body, setBody] = useState('')
+  const [secret, setSecret] = useState(false)
+  const [replyTo, setReplyTo] = useState('')
+  const [replyText, setReplyText] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const submit = async () => {
+    if (!body.trim()) return void say('남길 말을 적어 주세요')
+    setBusy(true)
+    const r = await writeGuest(owner.id, body.trim(), secret)
+    setBusy(false)
+    if (!r.ok) return void say('남기지 못했습니다', r.msg)
+    setBody('')
+    setSecret(false)
+  }
+
+  const sendReply = async (id: string) => {
+    if (!replyText.trim()) return
+    const r = await replyCloudGuest(owner.id, id, replyText.trim())
+    if (!r.ok) return void say('답글을 달지 못했습니다', r.msg)
+    setReplyText('')
+    setReplyTo('')
+  }
+
+  return (
+    <>
+      <div className="sect">
+        <h2>Guest book</h2>
+        <em>leave a word</em>
+        <span className="sp" />
+        <small>{rows.length}개</small>
+      </div>
+
+      {nosetup ? (
+        <div className="empty">방명록을 준비하는 중입니다.</div>
+      ) : session ? (
+        <div className="gb-write">
+          <textarea
+            className="ta"
+            placeholder={isOwner ? '남기고 싶은 말' : `${owner.handle} 님에게 남기고 싶은 말`}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            maxLength={1000}
+          />
+          <div className="gb-write-foot">
+            <label className="chk">
+              <input type="checkbox" checked={secret} onChange={(e) => setSecret(e.target.checked)} />
+              비밀글
+            </label>
+            <span className="sp" />
+            <button className="btn btn-main" disabled={busy} onClick={() => void submit()}>
+              남기기
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="gb-login">
+          <span>로그인하면 방명록을 남길 수 있어요</span>
+          <button className="btn" onClick={() => nav('/')}>
+            로그인
+          </button>
+        </div>
+      )}
+
+      {!nosetup &&
+        (loading ? (
+          <div className="empty">불러오는 중…</div>
+        ) : rows.length === 0 ? (
+          <div className="empty">아직 남겨진 글이 없습니다.</div>
+        ) : (
+          <div className="list">
+            {rows.map((g) => (
+              <article className="item" key={g.id}>
+                <div className="item-h">
+                  <b>
+                    {g.secret && (
+                      <span className="lockmark" title="비밀글">
+                        [비밀]
+                      </span>
+                    )}
+                    {g.writerHandle ? <Link to={`/u/${g.writerHandle}`}>{g.writerHandle}</Link> : '떠난 사람'}
+                  </b>
+                  <span className="sp" />
+                  <small>{g.date}</small>
+                  {isOwner && (
+                    <button
+                      className="btn-x wide"
+                      onClick={() => {
+                        setReplyTo(replyTo === g.id ? '' : g.id)
+                        setReplyText(g.reply)
+                      }}
+                    >
+                      답글
+                    </button>
+                  )}
+                  {(isOwner || (myId && g.writerId === myId)) && (
+                    <button
+                      className="btn-x"
+                      aria-label="지우기"
+                      onClick={() =>
+                        void ask('이 방명록을 지울까요?', `${g.writerHandle || '떠난 사람'} 님이 남긴 글`, '지우기').then(
+                          async (yes) => {
+                            if (!yes) return
+                            const r = await delCloudGuest(owner.id, g.id)
+                            if (!r.ok) void say('지우지 못했습니다', r.msg)
+                            reload()
+                          },
+                        )
+                      }
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                <div className="item-b">{g.body}</div>
+                {g.reply && (
+                  <div className="reply">
+                    <b>{owner.handle}</b> — {g.reply}
+                  </div>
+                )}
+                {replyTo === g.id && (
+                  <div className="rowform" style={{ marginTop: 6 }}>
+                    <input
+                      className="inp"
+                      placeholder="답글 달기"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && void sendReply(g.id)}
+                      maxLength={1000}
+                    />
+                    <button className="btn" onClick={() => void sendReply(g.id)}>
+                      등록
+                    </button>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        ))}
+    </>
+  )
+}
+
+function LocalGuest() {
   const { guest, addGuest, delGuest, replyGuest, me } = useSite()
   const [nick, setNick] = useState('')
   const [body, setBody] = useState('')
@@ -356,269 +540,6 @@ export function Guest() {
           </article>
         ))}
       </div>
-    </>
-  )
-}
-
-/* ── 단짝 목록 ───────────────────────────────────────────── */
-export function JjakList() {
-  const { jjak, addJjak, setJjak, delJjak } = useSite()
-  const viewing = useSite((s) => s.viewing)
-  /** 손질 모드 — 켜면 이름·색을 고치고 뺄 수 있다 */
-  const [fix, setFix] = useState(false)
-
-  return (
-    <>
-      <div className="sect">
-        <h2>Jjak</h2>
-        <em>my close friends</em>
-        <span className="sp" />
-        <small>{jjak.length}명</small>
-        {!viewing && (
-          <>
-            <button className="btn" onClick={() => setFix((v) => !v)}>
-              {fix ? '다 고쳤어요' : '손질하기'}
-            </button>
-            <button className="btn btn-main" onClick={addJjak}>
-              단짝 늘리기
-            </button>
-          </>
-        )}
-      </div>
-
-      {jjak.length === 0 ? (
-        <div className="empty">
-          단짝이 없습니다.
-          <br />
-          위의 &lsquo;단짝 늘리기&rsquo; 로 이웃을 만들어 보세요.
-        </div>
-      ) : (
-        <div className="jjak-grid">
-          {jjak.map((j) => (
-            <div className="jjak-cell" key={j.id}>
-              {fix ? (
-                <div className="jjak">
-                  <input
-                    className="jjak-hue"
-                    type="color"
-                    value={j.hue}
-                    aria-label={`${j.nick} 색`}
-                    title="색 고르기"
-                    onChange={(e) => setJjak(j.id, { hue: e.target.value })}
-                  />
-                  <span>
-                    <Ed
-                      value={j.nick}
-                      onChange={(v) => setJjak(j.id, { nick: v })}
-                      multiline={false}
-                      maxChars={14}
-                      ph="이름"
-                      label="단짝 이름"
-                      style={{ fontWeight: 700 }}
-                    />
-                    <Ed
-                      value={j.title}
-                      onChange={(v) => setJjak(j.id, { title: v })}
-                      multiline={false}
-                      maxChars={22}
-                      ph="기록장 이름"
-                      label="단짝 기록장 이름"
-                      style={{ fontSize: 11, color: 'var(--ink-dim)' }}
-                    />
-                  </span>
-                  <button
-                    className="btn-x"
-                    aria-label={`${j.nick} 빼기`}
-                    onClick={() =>
-                      void ask('이 단짝을 뺄까요?', j.nick, '빼기').then(
-                        (yes) => yes && delJjak(j.id),
-                      )
-                    }
-                  >
-                    ✕
-                  </button>
-                </div>
-              ) : (
-                <Link className="jjak" to={`/jjak/${j.id}`} style={{ color: 'inherit' }}>
-                  <i style={{ background: j.hue }} />
-                  <span>
-                    <b>{j.nick}</b>
-                    <small>{j.title}</small>
-                  </span>
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-    </>
-  )
-}
-
-/* ── 단짝네 놀러가기 (읽기 전용) ─────────────────────────── */
-/* ── 단짝네 기록장 — 이름·소개·숫자·글까지 전부 고칠 수 있다 ── */
-const digits = (v: string) => Math.max(0, Number(v.replace(/[^\d]/g, '')) || 0)
-
-export function JjakView() {
-  const { id = '' } = useParams()
-  const { jjak, setJjak } = useSite()
-  const viewing = useSite((s) => s.viewing)
-  const j = jjak.find((x) => x.id === id)
-  if (!j) return <div className="empty">없는 단짝입니다.</div>
-
-  // 아직 한 번도 안 고친 단짝은 견본 숫자·글로 시작한다
-  const todayN = jjakToday(j)
-  const totalN = jjakTotal(j)
-  const posts = j.posts ?? [1, 2, 3].map((n) => ({ id: `s${n}`, title: `단짝네 기록장 견본 글 ${n}`, date: todayDate() }))
-  const setPosts = (next: typeof posts) => setJjak(j.id, { posts: next })
-
-  return (
-    <>
-      <div className="sect">
-        <h2>
-          <Ed
-            value={j.title}
-            onChange={(v) => setJjak(j.id, { title: v })}
-            multiline={false}
-            maxChars={22}
-            ph="기록장 이름"
-            label="단짝 기록장 이름"
-          />
-        </h2>
-        <span className="sp" />
-        <Link to="/jjak" style={{ fontSize: 11 }}>
-          ← 단짝 목록
-        </Link>
-      </div>
-
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <label
-          title={viewing ? undefined : '눌러서 색 바꾸기'}
-          style={{
-            position: 'relative',
-            width: 62,
-            height: 62,
-            background: j.hue,
-            border: '1px solid rgba(0,0,0,.12)',
-            borderRadius: 10,
-            flex: 'none',
-          }}
-        >
-          {!viewing && (
-            <input
-              type="color"
-              value={j.hue}
-              aria-label={`${j.nick} 색`}
-              onChange={(e) => setJjak(j.id, { hue: e.target.value })}
-              style={{ position: 'absolute', inset: 0, opacity: 0, width: '100%', height: '100%' }}
-            />
-          )}
-        </label>
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <b style={{ fontSize: 13 }}>
-            <Ed
-              value={j.nick}
-              onChange={(v) => setJjak(j.id, { nick: v })}
-              multiline={false}
-              maxChars={14}
-              ph="이름"
-              label="단짝 이름"
-            />
-          </b>
-          <div style={{ color: 'var(--ink-dim)', fontSize: 11.5 }}>
-            <Ed
-              value={j.memo}
-              onChange={(v) => setJjak(j.id, { memo: v })}
-              multiline={false}
-              maxChars={40}
-              ph="한 줄 소개"
-              label="단짝 소개"
-            />
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--accent)', display: 'flex', gap: 4 }}>
-            TODAY
-            <Ed
-              value={String(todayN)}
-              onChange={(v) => setJjak(j.id, { today: digits(v) })}
-              multiline={false}
-              maxChars={7}
-              label="단짝 TODAY"
-            />
-            · TOTAL
-            <Ed
-              value={String(totalN)}
-              onChange={(v) => setJjak(j.id, { total: digits(v) })}
-              multiline={false}
-              maxChars={10}
-              label="단짝 TOTAL"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="sect" style={{ marginTop: 8 }}>
-        <h2>DIARY</h2>
-        <span className="sp" />
-        {!viewing && (
-          <button
-            className="btn btn-main"
-            onClick={() => setPosts([{ id: uid(), title: '', date: todayDate() }, ...posts])}
-          >
-            글 늘리기
-          </button>
-        )}
-      </div>
-
-      {posts.length === 0 ? (
-        <div className="empty">아직 글이 없습니다.</div>
-      ) : (
-        <div className="list">
-          {posts.map((p) => (
-            <div className="item" key={p.id}>
-              <div className="item-h">
-                <b style={{ flex: 1, minWidth: 0 }}>
-                  <Ed
-                    value={p.title}
-                    onChange={(v) =>
-                      setPosts(posts.map((x) => (x.id === p.id ? { ...x, title: v } : x)))
-                    }
-                    multiline={false}
-                    maxChars={40}
-                    ph="글 제목"
-                    label="단짝 글 제목"
-                  />
-                </b>
-                <small>
-                  <Ed
-                    value={p.date}
-                    onChange={(v) =>
-                      setPosts(posts.map((x) => (x.id === p.id ? { ...x, date: v } : x)))
-                    }
-                    multiline={false}
-                    maxChars={12}
-                    label="단짝 글 날짜"
-                  />
-                </small>
-                {!viewing && (
-                  <button
-                    className="btn-x"
-                    aria-label="글 지우기"
-                    onClick={() =>
-                      void ask('이 글을 지울까요?', p.title || '제목 없는 글', '지우기').then(
-                        (yes) => yes && setPosts(posts.filter((x) => x.id !== p.id)),
-                      )
-                    }
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
     </>
   )
 }

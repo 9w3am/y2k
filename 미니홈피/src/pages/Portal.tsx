@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { AuthBox } from '../ui/Account'
-import { jjakToday, useSite } from '../lib/store'
+import { useSite } from '../lib/store'
+import { useFriends, useGuestbook, useHomeOwner, useRecentHomes } from '../lib/social'
 import { InkJar } from '../ui/InkJar'
 
 const NOTICES: [string, string, boolean][] = [
@@ -32,10 +33,12 @@ function Mascot() {
 }
 
 export function Portal() {
-  const { diary, jjak, ink, guest, photo } = useSite()
-
-  // 오늘 방문이 많은 단짝부터 — 숫자는 단짝네 기록장에서 고칠 수 있다
-  const ranks = [...jjak].sort((a, b) => jjakToday(b) - jjakToday(a)).slice(0, 5)
+  const { diary, ink, guest, photo } = useSite()
+  const owner = useHomeOwner()
+  const friends = useFriends(owner?.id ?? null).list.filter((f) => f.status === 'accepted')
+  const cloudGuest = useGuestbook(owner?.id ?? null).rows
+  // 실제로 가입한 사람들의 기록장 — 최근에 고친 순서
+  const recent = useRecentHomes(5)
 
   return (
     <div className="portal">
@@ -82,13 +85,13 @@ export function Portal() {
                 다이어리 <b>{diary.length}</b>
               </span>
               <span>
-                방명록 <b>{guest.length}</b>
+                방명록 <b>{owner ? cloudGuest.length : guest.length}</b>
               </span>
               <span>
                 사진첩 <b>{photo.length}</b>
               </span>
               <span>
-                단짝 <b>{jjak.length}</b>
+                단짝 <b>{friends.length}</b>
               </span>
             </div>
             <div className="inkbox">
@@ -106,18 +109,28 @@ export function Portal() {
           </div>
 
           <div className="panel">
-            <h3>오늘 많이 찾은 기록장</h3>
-            <ol className="rank">
-              {ranks.map((j, n) => (
-                <li key={j.id}>
-                  <b className={n < 3 ? 'top' : ''}>{n + 1}</b>
-                  <i style={{ background: j.hue }} />
-                  <Link to={`/jjak/${j.id}`}>{j.title}</Link>
-                  <span className="sp" />
-                  <small>{jjakToday(j).toLocaleString()}</small>
-                </li>
-              ))}
-            </ol>
+            <h3>요즘 쓰는 기록장</h3>
+            {recent.length === 0 ? (
+              <p className="rank-empty">아직 가입한 기록장이 없습니다.</p>
+            ) : (
+              <ol className="rank">
+                {recent.map((h, n) => (
+                  <li key={h.handle}>
+                    <b className={n < 3 ? 'top' : ''}>{n + 1}</b>
+                    <i
+                      style={
+                        h.photo
+                          ? { backgroundImage: `url(${h.photo})`, backgroundSize: 'cover' }
+                          : { background: 'var(--accent-2)' }
+                      }
+                    />
+                    <Link to={`/u/${h.handle}`}>{h.title}</Link>
+                    <span className="sp" />
+                    <small>{h.updated}</small>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       </div>
@@ -133,13 +146,23 @@ export function Portal() {
 
         <h3 style={{ marginTop: 14 }}>단짝 바로가기</h3>
         <div className="jjak-mini">
-          {jjak.slice(0, 4).map((j) => (
-            <Link key={j.id} to={`/jjak/${j.id}`}>
-              <i style={{ background: j.hue }} />
-              <span>{j.nick}</span>
-              <small>놀러가기 →</small>
-            </Link>
-          ))}
+          {friends.length === 0 ? (
+            <span className="jjak-mini-empty">아직 단짝이 없습니다</span>
+          ) : (
+            friends.slice(0, 4).map((f) => (
+              <Link key={f.id} to={`/u/${f.handle}`}>
+                <i
+                  style={
+                    f.photo
+                      ? { backgroundImage: `url(${f.photo})`, backgroundSize: 'cover' }
+                      : { background: 'var(--accent-2)' }
+                  }
+                />
+                <span>{f.handle}</span>
+                <small>놀러가기 →</small>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </div>

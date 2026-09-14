@@ -6,6 +6,7 @@ import { lastFailure, onYtTitle, player, type Source } from '../lib/player'
 import { youtubeId } from '../lib/audioStore'
 import { pickImage } from '../lib/img'
 import { deleteImage, putImage, useImg } from '../lib/imageStore'
+import { useFriends, useHomeOwner } from '../lib/social'
 import { Ed } from './Ed'
 
 /** 탭 id 가 어떤 주소로 가는지 — 이름과 표시 여부는 쓰는 사람이 정한다 */
@@ -326,7 +327,10 @@ export function Counter({
 
 /** 미니홈피 본체 — 왼쪽 프로필 / 링 / 오른쪽 내용 / 세로 탭 */
 export function Hompy() {
-  const { me, setMe, jjak, todayCount, totalCount, tabs, setCount } = useSite()
+  const { me, setMe, todayCount, totalCount, tabs, setCount, viewing } = useSite()
+  // 로그타기는 이 기록장 주인의 진짜 단짝에게로
+  const homeOwner = useHomeOwner()
+  const friends = useFriends(homeOwner?.id ?? null).list.filter((f) => f.status === 'accepted')
   const nav = useNavigate()
   const loc = useLocation()
   const photoUrl = useImg(me.photo)
@@ -337,7 +341,7 @@ export function Hompy() {
       setMe({ photo: await putImage(src) })
       void deleteImage(old)
     })
-  const [target, setTarget] = useState(jjak[0]?.id ?? '')
+  const [target, setTarget] = useState('')
 
   // 폰에서는 대문이 아닌 곳이면 누른 페이지를 프로필보다 먼저 보여준다 (responsive.css)
   return (
@@ -365,7 +369,7 @@ export function Hompy() {
             label="기록장 이름"
           />
         </h1>
-        <span className="editmark">EDIT</span>
+        {!viewing && <span className="editmark">EDIT</span>}
       </div>
 
       <div className="hompy-body">
@@ -373,13 +377,13 @@ export function Hompy() {
           <div
             className="side-pic"
             style={{ backgroundImage: photoUrl ? `url(${photoUrl})` : undefined }}
-            role="button"
-            tabIndex={0}
-            onClick={pickPhoto}
-            onKeyDown={(e) => e.key === 'Enter' && pickPhoto()}
-            title="눌러서 사진 바꾸기"
+            role={viewing ? undefined : 'button'}
+            tabIndex={viewing ? undefined : 0}
+            onClick={viewing ? undefined : pickPhoto}
+            onKeyDown={(e) => !viewing && e.key === 'Enter' && pickPhoto()}
+            title={viewing ? undefined : '눌러서 사진 바꾸기'}
           >
-            {!me.photo && (
+            {!me.photo && !viewing && (
               <span>
                 눌러서 사진 넣기
                 <br />
@@ -432,26 +436,39 @@ export function Hompy() {
               {')'}
             </em>
             <span className="sp" />
-            <span className="side-edit">▶EDIT ▶HISTORY</span>
+            {!viewing && <span className="side-edit">▶EDIT ▶HISTORY</span>}
           </div>
 
           <div className="wave">
             <select
-              value={target}
+              value={target || friends[0]?.handle || ''}
               onChange={(e) => setTarget(e.target.value)}
               aria-label="로그타기로 갈 단짝"
+              disabled={friends.length === 0}
             >
-              {jjak.map((j) => (
-                <option key={j.id} value={j.id}>
-                  {j.nick} — {j.title}
-                </option>
-              ))}
+              {friends.length === 0 ? (
+                <option value="">단짝이 없습니다</option>
+              ) : (
+                friends.map((f) => (
+                  <option key={f.id} value={f.handle}>
+                    {f.handle} — {f.title}
+                  </option>
+                ))
+              )}
             </select>
-            <button onClick={() => target && nav(`/jjak/${target}`)}>로그타기</button>
+            <button
+              disabled={friends.length === 0}
+              onClick={() => {
+                const h = target || friends[0]?.handle
+                if (h) nav(`/u/${h}`)
+              }}
+            >
+              로그타기
+            </button>
           </div>
 
           <div className="side-foot">
-            단짝 <b>{jjak.length}</b>명 · <NavLink to="/jjak">모두 보기</NavLink>
+            단짝 <b>{friends.length}</b>명 · <NavLink to="/jjak">모두 보기</NavLink>
           </div>
         </aside>
 

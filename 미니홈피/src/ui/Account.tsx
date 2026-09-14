@@ -14,6 +14,7 @@ import {
   useSyncStatus,
   type SyncStatus,
 } from '../lib/cloud'
+import { setHomeOwner } from '../lib/social'
 
 const VISIT = 'ilog:visit'
 
@@ -326,7 +327,8 @@ export function VisitLoader() {
         /* 못 기억해도 이번 방문은 된다 */
       }
       pauseWrites(true)
-      loadShared(r as never)
+      loadShared(r.data as never)
+      setHomeOwner({ id: r.id, handle: r.handle })
       setState('ok')
     })
     return () => {
@@ -356,7 +358,8 @@ export function useRestoreVisit() {
     void fetchHomeByHandle(h).then((r) => {
       if (!r || r === 'nosetup') return
       pauseWrites(true)
-      loadShared(r as never)
+      loadShared(r.data as never)
+      setHomeOwner({ id: r.id, handle: r.handle })
     })
   }, [viewing, loadShared])
 }
