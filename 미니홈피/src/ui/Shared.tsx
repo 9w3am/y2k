@@ -72,16 +72,18 @@ export function useRestoreShared() {
 /** 구경 중이라는 표시 */
 export function ViewingBar() {
   const viewing = useSite((s) => s.viewing)
+  const nick = useSite((s) => s.me.nick)
   if (!viewing) return null
   return (
     <div className="viewing-bar">
       <b>구경 중</b>
-      <span>남이 공유한 기록장입니다. 여기서 고친 것은 저장되지 않습니다.</span>
+      <span>{nick} 님의 기록장</span>
       <button
         className="btn"
         onClick={() => {
           try {
             sessionStorage.removeItem(KEY)
+            sessionStorage.removeItem('ilog:visit')
           } catch {
             /* 무시 */
           }

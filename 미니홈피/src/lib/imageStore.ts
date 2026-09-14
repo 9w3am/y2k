@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { SUPABASE_URL, currentUser, supabase } from './supabase'
 
 /* ══════════════════════════════════════════════════════════
    사진 보관소
@@ -11,8 +12,10 @@ const DB = 'ilog-images'
 const STORE = 'images'
 const PREFIX = 'idb:'
 
-export const isRef = (s: string | undefined | null): s is string => !!s && s.startsWith(PREFIX)
-export const isInline = (s: string | undefined | null): s is string => !!s && s.startsWith('data:')
+// 판별 결과를 모양(idb:… / data:… / https://…)으로만 좁힌다. 그냥 string 으로 좁히면
+// '아니다' 쪽에서 글자가 아예 없는 것(never)으로 취급돼 다음 검사를 못 한다.
+export const isRef = (s: string | undefined | null): s is `idb:${string}` => !!s && s.startsWith(PREFIX)
+export const isInline = (s: string | undefined | null): s is `data:${string}` => !!s && s.startsWith('data:')
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -51,10 +54,36 @@ const blobToDataUrl = (blob: Blob) =>
     fr.readAsDataURL(blob)
   })
 
-/** 사진(data: 주소)을 보관소에 넣고 'idb:아이디' 를 돌려준다 */
+/* ── 서버 사진 보관함 (로그인했을 때) ─────────────────────── */
+const PUBLIC = `${SUPABASE_URL}/storage/v1/object/public/photos/`
+export const isRemote = (s: string | undefined | null): s is `https://${string}` => !!s && s.startsWith(PUBLIC)
+
+/** 사진을 내 폴더(계정 아이디)에 올리고, 누구나 볼 수 있는 주소를 돌려준다 */
+export async function uploadBlob(uid: string, blob: Blob): Promise<string> {
+  const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg'
+  const path = `${uid}/${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}.${ext}`
+  const { error } = await supabase.storage
+    .from('photos')
+    .upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: false })
+  if (error) throw error
+  return PUBLIC + path
+}
+
+/**
+ * 사진을 넣고 가리킬 값을 돌려준다.
+ * 로그인했으면 서버 보관함 주소, 아니면 이 브라우저 보관소의 'idb:아이디'.
+ */
 export async function putImage(dataUrl: string): Promise<string> {
-  const id = Math.random().toString(36).slice(2, 12) + Date.now().toString(36)
   const blob = await dataUrlToBlob(dataUrl)
+  const user = currentUser()
+  if (user) {
+    try {
+      return await uploadBlob(user.id, blob)
+    } catch {
+      /* 서버에 못 올리면 일단 이 브라우저에 둔다 — 다음 로그인 때 올라간다 */
+    }
+  }
+  const id = Math.random().toString(36).slice(2, 12) + Date.now().toString(36)
   await run('readwrite', (s) => s.put(blob, id))
   return PREFIX + id
 }
@@ -70,6 +99,14 @@ export async function getImageBlob(ref: string): Promise<Blob | null> {
 
 /** 더 이상 쓰지 않는 사진을 보관소에서 지운다 */
 export async function deleteImage(ref: string | undefined | null): Promise<void> {
+  if (isRemote(ref)) {
+    try {
+      await supabase.storage.from('photos').remove([ref.slice(PUBLIC.length)])
+    } catch {
+      /* 못 지우면 보관함에 남을 뿐 */
+    }
+    return
+  }
   if (!isRef(ref)) return
   const url = urls.get(ref)
   if (url) URL.revokeObjectURL(url)

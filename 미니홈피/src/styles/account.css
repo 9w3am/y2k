@@ -1,0 +1,123 @@
+/* ══ 로그인·회원가입 칸 ═══════════════════════════════════ */
+.auth {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.auth-wait {
+  padding: 18px 0;
+  text-align: center;
+  color: var(--ink-dim);
+}
+.auth-title {
+  font-size: 13px;
+  color: var(--accent);
+}
+.auth-tabs {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--tab);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+}
+.auth-tabs button {
+  flex: 1;
+  padding: 6px 0;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink-dim);
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.auth-tabs button.on {
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+.auth .inp {
+  width: 100%;
+}
+.auth-wide {
+  width: 100%;
+}
+.auth-msg {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.auth-msg.err {
+  color: #d94b6a;
+}
+.auth-msg.ok {
+  color: var(--accent);
+}
+.auth-me {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 11px;
+  font-size: 12px;
+  background: var(--tab);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--round-sm);
+}
+.auth-me b {
+  font-size: 15px;
+  color: var(--accent);
+}
+.auth-me small {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  word-break: break-all;
+}
+.auth-sync {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+.auth-sync::before,
+.btn.acct::before {
+  content: '●';
+  margin-right: 4px;
+  font-size: 8px;
+  vertical-align: 1px;
+  color: var(--line-2);
+}
+.s-saved::before {
+  color: #3cb878 !important;
+}
+.s-saving::before,
+.s-loading::before {
+  color: #f0a830 !important;
+}
+.s-error::before,
+.s-nosetup::before {
+  color: #d94b6a !important;
+}
+.login-links .link-btn {
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.login-links .link-btn:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.auth-visit {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--line-2);
+}
+.auth-visit .inp {
+  flex: 1;
+  min-width: 0;
+}

@@ -18,6 +18,8 @@ import { BgmHost, Hompy } from './ui/Hompy'
 import { AppShell } from './ui/AppShell'
 import { DialogHost } from './ui/dialog'
 import { SharedLoader, ViewingBar, useRestoreShared } from './ui/Shared'
+import { VisitLoader, useRestoreVisit } from './ui/Account'
+import { startCloudSync } from './lib/cloud'
 import { Portal } from './pages/Portal'
 import { PostView } from './pages/Posts'
 import {
@@ -39,6 +41,7 @@ function Pages() {
     <Routes>
       <Route path="/" element={<Portal />} />
       <Route path="/v/:code" element={<SharedLoader />} />
+      <Route path="/u/:handle" element={<VisitLoader />} />
       <Route element={<Hompy />}>
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
@@ -63,6 +66,9 @@ export function App() {
   const shell = useSite((s) => s.shell)
   const countVisit = useSite((s) => s.countVisit)
   useRestoreShared()
+  useRestoreVisit()
+  // 로그인하면 기록장을 서버와 맞추고, 고칠 때마다 알아서 저장한다
+  useEffect(() => startCloudSync(), [])
 
   useEffect(() => {
     document.documentElement.dataset.skin = skin

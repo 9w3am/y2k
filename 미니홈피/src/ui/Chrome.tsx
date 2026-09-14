@@ -1,6 +1,7 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { exportScreen } from '../lib/exportPng'
+import { AccountChip } from './Account'
 
 const MENU = [
   { to: '/', label: '아이로그 홈', end: true },
@@ -34,6 +35,7 @@ export function Gnb() {
             <span>
               <b style={{ color: 'var(--ink)' }}>{me.nick}</b> 님
             </span>
+            <AccountChip />
             <span className="candy" title="잉크 — 아이로그에서 쓰는 알맹이">
               잉크 <b>{ink}</b>방울
             </span>

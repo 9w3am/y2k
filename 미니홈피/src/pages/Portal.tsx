@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { AuthBox } from '../ui/Account'
 import { jjakToday, useSite } from '../lib/store'
 import { InkJar } from '../ui/InkJar'
 
@@ -32,9 +32,7 @@ function Mascot() {
 }
 
 export function Portal() {
-  const { me, diary, jjak, ink, guest, photo } = useSite()
-  const nav = useNavigate()
-  const [id, setId] = useState(me.nick)
+  const { diary, jjak, ink, guest, photo } = useSite()
 
   // 오늘 방문이 많은 단짝부터 — 숫자는 단짝네 기록장에서 고칠 수 있다
   const ranks = [...jjak].sort((a, b) => jjakToday(b) - jjakToday(a)).slice(0, 5)
@@ -126,30 +124,7 @@ export function Portal() {
 
       <div className="login-box panel">
         <h3>로그인</h3>
-        <input
-          className="inp"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-          placeholder="아이디"
-          aria-label="아이디"
-        />
-        <input className="inp" type="password" placeholder="비밀번호" aria-label="비밀번호" />
-        <label className="chk" style={{ margin: '2px 0 8px' }}>
-          <input type="checkbox" /> 아이디 저장
-        </label>
-        <button className="btn btn-main" style={{ width: '100%' }} onClick={() => nav('/home')}>
-          들어가기
-        </button>
-        <div className="login-links">
-          <a href="#/">회원가입</a>
-          <span>·</span>
-          <a href="#/">아이디 찾기</a>
-          <span>·</span>
-          <a href="#/">비밀번호 찾기</a>
-        </div>
-        <p className="login-note">
-          연습용 화면이라 비밀번호는 확인하지 않습니다. 어떤 값도 전송되지 않아요.
-        </p>
+        <AuthBox />
 
         <div className="evt">
           <b>잉크 두 배 이벤트</b>
