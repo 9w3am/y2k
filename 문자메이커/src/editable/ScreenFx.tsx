@@ -60,11 +60,7 @@ const PRESETS = [
 export function ScreenFxPanel({ n }: { n: string }) {
   const shape = useValue("screenShape")
   return (
-    <Section
-      n={n}
-      title="화면 효과"
-      note="그 시절 화면은 늘 '찍은 사진'으로 남았습니다. 색조와 서브픽셀 결, 유리 반사를 얹으면 훨씬 그럴듯해집니다."
-    >
+    <Section n={n} title="화면 효과">
       <Seg k="fxTint" label="색조 고르기" options={PRESETS} />
       <ColorField k="fxTint" label="색조 직접 고르기" />
       <Slider k="fxTintAmt" label="색 입히기" min={0} max={60} suffix="%" />

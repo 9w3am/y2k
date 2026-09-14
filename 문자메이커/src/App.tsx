@@ -101,7 +101,6 @@ export function App() {
       <header className="topbar">
         <span className="brand">
           <b>수신함</b>
-          <span>그 시절 화면을 그대로</span>
         </span>
 
         <button className="theme-switch" onClick={() => setPicker(true)}>
