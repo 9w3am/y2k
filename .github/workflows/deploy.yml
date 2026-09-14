@@ -42,6 +42,7 @@ jobs:
         run: |
           mkdir -p _site
           cp landing/index.html _site/index.html
+          cp landing/*.png landing/*.svg _site/
           cp -r 미니홈피/dist  _site/ilog
           cp -r 문자메이커/dist _site/inbox
 

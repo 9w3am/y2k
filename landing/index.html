@@ -3,8 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>그 시절</title>
-    <meta name="description" content="2000년대 한국 화면을 되살린 두 사이트 — 아이로그와 수신함" />
+    <title>Y2K</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Y2K" />
+    <meta property="og:title" content="Y2K" />
+    <meta property="og:url" content="https://netizen324.github.io/y2k/" />
+    <meta property="og:image" content="https://netizen324.github.io/y2k/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Y2K" />
+    <meta name="twitter:image" content="https://netizen324.github.io/y2k/og.png" />
     <meta name="theme-color" content="#3f9ede" />
     <style>
       :root {
@@ -29,12 +41,11 @@
       }
       main { width: min(680px, 100%); text-align: center; }
       h1 {
-        margin: 0 0 6px;
+        margin: 0 0 22px;
         font-size: 34px;
         letter-spacing: -0.04em;
         color: var(--sky);
       }
-      .lead { margin: 0 0 26px; font-size: 13px; line-height: 1.8; color: var(--dim); word-break: keep-all; }
       .cards { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
       a.card {
         flex: 1 1 260px;
@@ -56,9 +67,8 @@
         letter-spacing: .22em;
         text-transform: uppercase;
         color: var(--dim);
-        margin-bottom: 12px;
+        margin-bottom: 0;
       }
-      .card p { margin: 0; font-size: 12px; line-height: 1.8; color: var(--dim); word-break: keep-all; }
       /* 카드 위 작은 그림 — 각 사이트를 축소해 그려 둔 것 */
       .shot {
         display: block;
@@ -70,16 +80,11 @@
         background: #fff;
       }
       .shot.inbox { background: #dceaf6; }
-      footer { margin-top: 22px; font-size: 11px; line-height: 1.9; color: var(--dim); }
     </style>
   </head>
   <body>
     <main>
-      <h1>그 시절</h1>
-      <p class="lead">
-        2000년대 한국 화면을 되살린 두 사이트입니다.<br />
-        만든 것은 이 브라우저 안에만 저장되고, 어디로도 전송되지 않습니다.
-      </p>
+      <h1>Y2K</h1>
 
       <div class="cards">
         <a class="card" href="./ilog/">
@@ -109,10 +114,6 @@
           </svg>
           <b>아이로그</b>
           <span class="en">ilog</span>
-          <p>
-            미니홈피를 그대로 되살린 개인 기록장.<br />
-            다이어리·사진첩·방명록·내방 꾸미기, 스킨과 BGM까지.
-          </p>
         </a>
 
         <a class="card" href="./inbox/">
@@ -148,17 +149,8 @@
           </svg>
           <b>수신함</b>
           <span class="en">inbox</span>
-          <p>
-            그 시절 폰·PC 화면을 만들어 PNG 로 저장.<br />
-            화면 속 글자를 바로 눌러 고치면 됩니다.
-          </p>
         </a>
       </div>
-
-      <footer>
-        이 사이트는 2000년대 화면을 되살려 본 것으로, 실제 회사·서비스와 관계가 없습니다.<br />
-        화면 속 통신사·서비스 이름은 전부 직접 만든 가짜 이름입니다.
-      </footer>
     </main>
   </body>
 </html>

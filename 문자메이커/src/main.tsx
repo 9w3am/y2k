@@ -4,6 +4,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './styles/fonts.css'
 import './styles/base.css'
 import './editable/editable.css'
+import './styles/tools.css'
 import { App } from './App'
 
 createRoot(document.getElementById('root')!).render(

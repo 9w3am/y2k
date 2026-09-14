@@ -1,0 +1,119 @@
+/* ══ 되돌리기·확대 단추 — 한 줄짜리 알약 막대 ═══════════════
+   동그라미 다섯 개가 따로 떠 있으면 꺼진 되돌리기 단추가
+   빈 동그라미처럼 보인다. 하나의 막대로 묶고,
+   꺼진 단추는 막대째 흐려지지 않게 아이콘 색만 연하게 한다.
+   ══════════════════════════════════════════════════════════ */
+.floaters {
+  align-items: center;
+  gap: 0;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--ui-line-2);
+  border-radius: 999px;
+  box-shadow: 0 6px 16px -8px rgba(39, 51, 61, 0.28);
+  backdrop-filter: blur(6px);
+}
+.floaters .fbtn {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: var(--ui-fg-dim);
+}
+.floaters .fbtn:hover:not(:disabled) {
+  background: var(--ui-soft);
+  color: var(--ui-accent);
+}
+.floaters .fbtn:disabled {
+  opacity: 1;
+  color: #c5d3dd;
+}
+.floaters .fbtn-w {
+  width: auto;
+  min-width: 46px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ui-fg);
+}
+/* 되돌리기 두 개와 확대 셋 사이 칸막이 */
+.floaters .fbtn:nth-child(2) {
+  margin-right: 4px;
+}
+.floaters .fbtn:nth-child(3) {
+  margin-left: 4px;
+  position: relative;
+}
+.floaters .fbtn:nth-child(3)::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 7px;
+  bottom: 7px;
+  width: 1px;
+  background: var(--ui-line-2);
+}
+
+@media (pointer: coarse) {
+  .floaters .fbtn {
+    width: 34px;
+    height: 34px;
+  }
+  .floaters .fbtn:nth-child(3)::before {
+    top: 9px;
+    bottom: 9px;
+  }
+}
+
+/* 폰 — 만든 화면 바로 밑 가운데에 */
+@media (max-width: 900px) {
+  .floaters {
+    left: 50%;
+    right: auto;
+    bottom: 10px;
+    transform: translateX(-50%);
+  }
+}
+
+/* ══ 첫 안내창 — 폰에서 스크롤 없이 한 번에 다 보이게 ═════════
+   화면 높이에 맞춰 글자와 여백을 줄인다. */
+@media (max-width: 560px) {
+  .overlay {
+    padding: 12px;
+  }
+  .modal {
+    max-height: none;
+    overflow: visible;
+  }
+  .modal-h {
+    padding: 14px 16px 10px;
+  }
+  .modal-h h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+  .modal-b {
+    padding: 11px 16px 4px;
+    font-size: clamp(10.5px, 1.7dvh, 12.5px);
+    line-height: 1.6;
+  }
+  .modal-b h3 {
+    margin: 0 0 4px;
+    font-size: 1em;
+  }
+  .modal-b ol,
+  .modal-b ul {
+    margin: 0 0 11px;
+    padding-left: 16px;
+  }
+  .modal-b li + li {
+    margin-top: 2px;
+  }
+  .modal-f {
+    padding: 8px 16px 14px;
+  }
+  .modal-f .btn {
+    height: 38px;
+  }
+}
