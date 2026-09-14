@@ -33,6 +33,26 @@ async function saveAndMatch(api, selector, label, wait = 20000) {
 }
 
 export const SCENARIOS = {
+  /** PC 한 화면 — 페이지 자체가 세로로 넘치는지 (넘치면 안 됨) */
+  async fit(api, step) {
+    for (const [w, h] of [
+      [1280, 860],
+      [1920, 969],
+      [1366, 657],
+    ]) {
+      await api.viewport(w, h)
+      for (const p of ILOG_PAGES) {
+        await step(`${w}×${h} #/${p}`, async () => {
+          await api.go(`${api.ILOG}#/${p}`, 2200)
+          const over = await api.eval('document.documentElement.scrollHeight - innerHeight')
+          if (w === 1366) await api.shot(`fit-${w}-${p || 'portal'}`)
+          if (over > 1) throw new Error(`세로로 ${over}px 넘침`)
+          return over
+        })
+      }
+    }
+  },
+
   /** 한 바퀴 — 페이지마다 화면·단추 목록·가로 넘침 */
   async tour(api, step) {
     for (const [tag, w, h, mobile] of [

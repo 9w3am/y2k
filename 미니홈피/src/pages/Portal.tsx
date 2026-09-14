@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { AuthBox } from '../ui/Account'
 import { useSite } from '../lib/store'
-import { useFriends, useGuestbook, useHomeOwner, useRecentHomes } from '../lib/social'
+import { useFriends, useGuestbook, useHomeOwner } from '../lib/social'
 import { InkJar } from '../ui/InkJar'
 
 const NOTICES: [string, string, boolean][] = [
@@ -37,8 +37,6 @@ export function Portal() {
   const owner = useHomeOwner()
   const friends = useFriends(owner?.id ?? null).list.filter((f) => f.status === 'accepted')
   const cloudGuest = useGuestbook(owner?.id ?? null).rows
-  // 실제로 가입한 사람들의 기록장 — 최근에 고친 순서
-  const recent = useRecentHomes(5)
 
   return (
     <div className="portal">
@@ -115,34 +113,6 @@ export function Portal() {
                   </li>
                 ))}
               </ul>
-            )}
-          </div>
-
-          <div className="panel">
-            <h3>요즘 쓰는 기록장</h3>
-            {recent === null ? null : recent.length === 0 ? (
-              <p className="rank-empty">아직 가입한 기록장이 없습니다.</p>
-            ) : (
-              <ol className="rank">
-                {recent.map((h, n) => (
-                  <li key={h.handle}>
-                    <b className={n < 3 ? 'top' : ''}>{n + 1}</b>
-                    <i
-                      style={
-                        h.photo
-                          ? { backgroundImage: `url(${h.photo})`, backgroundSize: 'cover' }
-                          : { background: 'var(--accent-2)' }
-                      }
-                    />
-                    <Link to={`/u/${h.handle}`}>
-                      {h.title}
-                      <em className="rank-id">{h.handle}</em>
-                    </Link>
-                    <span className="sp" />
-                    <small>{h.updated}</small>
-                  </li>
-                ))}
-              </ol>
             )}
           </div>
         </div>

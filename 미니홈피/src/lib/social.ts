@@ -309,35 +309,3 @@ export async function deleteGuest(homeId: string, id: string): Promise<Result> {
   return { ok: true }
 }
 
-/* ══ 요즘 쓰는 기록장 (대문) ════════════════════════════ */
-export type HomeCard = { handle: string; title: string; photo: string; updated: string }
-
-/** 불러오기 전에는 null — 빈 목록 문구가 먼저 번쩍 뜨지 않게 */
-export function useRecentHomes(limit = 5): HomeCard[] | null {
-  const [list, setList] = useState<HomeCard[] | null>(null)
-  useEffect(() => {
-    let alive = true
-    void supabase
-      .from('homes')
-      .select('handle,updated_at,me:data->me')
-      .order('updated_at', { ascending: false })
-      .limit(limit)
-      .then(({ data, error }) => {
-        if (!alive) return
-        if (error || !data) return setList([])
-        type Row = { handle: string; updated_at: string; me: MeLite }
-        setList(
-          (data as unknown as Row[]).map((r) => ({
-            handle: r.handle,
-            title: r.me?.homeTitle || `${r.handle}의 기록장`,
-            photo: photoOf(r.me),
-            updated: ymd(r.updated_at).slice(5),
-          })),
-        )
-      })
-    return () => {
-      alive = false
-    }
-  }, [limit])
-  return list
-}

@@ -118,17 +118,10 @@
   border-radius: var(--round-sm);
 }
 
-/* ══ 대문 — 요즘 쓰는 기록장 · 단짝 바로가기 비었을 때 ══════ */
-.rank-empty,
+/* ══ 대문 — 단짝 바로가기 비었을 때 ══════ */
 .jjak-mini-empty {
   margin: 6px 0;
   font-size: 11.5px;
-  color: var(--ink-dim);
-}
-.rank .rank-id {
-  margin-left: 5px;
-  font-style: normal;
-  font-size: 10px;
   color: var(--ink-dim);
 }
 
@@ -228,4 +221,44 @@
 .evt span,
 .inkbox p {
   word-break: keep-all;
+}
+
+/* ══ PC — 기록장은 한 화면. 페이지는 안 넘치고, 넘치는 글만 칸 안에서 내린다 ══
+   그 시절 미니홈피도 창 크기가 정해져 있었다. */
+@media (min-width: 861px) {
+  .wrap {
+    height: calc(100vh - 74px);
+    min-height: 560px;
+    box-sizing: border-box;
+  }
+  .wrap > .hompy {
+    min-height: 0;
+  }
+  .hompy-body {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .hompy-body > .side,
+  .hompy-body > .main {
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-2) transparent;
+  }
+  /* 대문도 한 화면 */
+  .wrap > .portal {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .portal-main,
+  .login-box {
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  /* 프로그램 창 안에서는 창이 높이를 정한다 */
+  .win-body .wrap {
+    height: auto;
+    min-height: 0;
+  }
 }
