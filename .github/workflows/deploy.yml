@@ -60,6 +60,12 @@ jobs:
           sed "s|__BASE__|$BASE|g" landing/404.html > _site/404.html
           echo "404 링크 기준 주소: $BASE"
 
+          # 링크 미리보기(og:image)는 전체 주소여야 한다.
+          # 계정 이름을 바꿔도 다시 배포하면 새 주소가 들어가도록 여기서 채운다.
+          SITE="https://$OWNER.github.io$BASE"
+          sed -i "s|__SITE__|$SITE|g" _site/index.html _site/ilog/index.html _site/inbox/index.html
+          echo "미리보기 기준 주소: $SITE"
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
