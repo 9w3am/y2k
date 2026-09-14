@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { pauseWrites } from '../lib/storage'
-import { endRecovery, useRecovery, useSession } from '../lib/supabase'
+import { currentUser, endRecovery, useRecovery, useSession } from '../lib/supabase'
 import {
   HANDLE_RE,
   fetchHomeByHandle,
@@ -321,6 +321,20 @@ export function VisitLoader() {
       if (!alive) return
       if (r === 'nosetup') return setState('nosetup')
       if (!r) return setState('none')
+      // 내 아이디 주소면 구경이 아니라 그냥 내 기록장
+      if (currentUser()?.id === r.id) {
+        try {
+          sessionStorage.removeItem(VISIT)
+          sessionStorage.removeItem('ilog:share')
+        } catch {
+          /* 무시 */
+        }
+        if (!useSite.getState().viewing) return setState('ok')
+        pauseWrites(false)
+        location.hash = '#/home'
+        location.reload()
+        return
+      }
       try {
         sessionStorage.setItem(VISIT, h)
       } catch {
