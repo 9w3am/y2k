@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { driverStorage } from './storage'
-import { TRACKS } from './bgm'
 import type { BorderKey, FontKey, PatternKey } from './deco'
 
 /* ══════════════════════════════════════════════════════════
@@ -157,14 +156,15 @@ interface State {
   /** 출석 도장을 마지막으로 찍은 날 — 하루 한 번만 받게 */
   stampDate: string
 
-  songId: string
   playing: boolean
   volume: number
-  /** 무엇으로 소리를 낼지 — 내장곡 / 내 파일 / 유튜브 */
-  bgmKind: 'builtin' | 'file' | 'youtube'
+  /** 무엇으로 소리를 낼지 — 내 파일 / 유튜브 */
+  bgmKind: 'file' | 'youtube'
   fileName: string
   ytUrl: string
   ytTitle: string
+  /** 음악 칸 제목 밑 작은 글씨 — 비워두면 '내 파일 · 유튜브' */
+  bgmTag: Partial<Record<'file' | 'youtube', string>>
 
   todayCount: number
   totalCount: number
@@ -197,10 +197,10 @@ interface State {
   setSkin: (id: string) => void
   setCustom: (patch: Partial<Custom>) => void
   buySkin: (id: string) => 'ok' | 'poor' | 'owned'
-  setSong: (id: string) => void
-  setBgmKind: (k: 'builtin' | 'file' | 'youtube') => void
+  setBgmKind: (k: 'file' | 'youtube') => void
   setFileName: (n: string) => void
   setYt: (url: string, title: string) => void
+  setBgmTag: (kind: 'file' | 'youtube', tag: string) => void
   togglePlay: () => void
   setVolume: (v: number) => void
   addJjak: () => void
@@ -326,11 +326,11 @@ const initial = {
   },
   owned: ['sky', 'pink'],
   ink: 12,
-  songId: TRACKS[0].id,
-  bgmKind: 'builtin' as const,
+  bgmKind: 'file' as 'file' | 'youtube',
   fileName: '',
   ytUrl: '',
   ytTitle: '',
+  bgmTag: {},
   playing: true,
   volume: 60,
   todayCount: 0,
@@ -426,10 +426,10 @@ export const useSite = create<State>()(
         return 'ok'
       },
 
-      setSong: (id) => set({ songId: id, playing: true }),
       setBgmKind: (bgmKind) => set({ bgmKind }),
       setFileName: (fileName) => set({ fileName }),
       setYt: (ytUrl, ytTitle) => set({ ytUrl, ytTitle }),
+      setBgmTag: (kind, tag) => set((s) => ({ bgmTag: { ...(s.bgmTag ?? {}), [kind]: tag } })),
       togglePlay: () => set((s) => ({ playing: !s.playing })),
       setVolume: (volume) => set({ volume }),
       likePost: (kind, id, delta) =>
@@ -521,7 +521,10 @@ export const useSite = create<State>()(
       // 저장본에 새로 생긴 꾸밈 칸이 없으면 기본값으로 채운다.
       // 기본 합치기는 얕아서 custom 이 통째로 덮이며 새 칸이 사라진다.
       merge: (saved, current) => {
-        const s = (saved ?? {}) as Partial<State>
+        const s = { ...((saved ?? {}) as Partial<State> & { songId?: string }) }
+        // 내장곡은 뺐다 — 예전 저장본은 내 파일 칸으로 옮긴다
+        if ((s.bgmKind as string | undefined) === 'builtin') s.bgmKind = 'file'
+        delete s.songId
         return { ...current, ...s, custom: { ...current.custom, ...(s.custom ?? {}) } }
       },
     },

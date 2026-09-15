@@ -3,13 +3,7 @@ import { AuthBox } from '../ui/Account'
 import { useSite } from '../lib/store'
 import { useFriends, useGuestbook, useHomeOwner } from '../lib/social'
 import { InkJar } from '../ui/InkJar'
-
-const NOTICES: [string, string, boolean][] = [
-  ['스킨 6종 신규 입고 안내', '공지', true],
-  ['잉크 충전 이벤트 — 글 한 개당 한 방울', '이벤트', true],
-  ['정기점검 안내 (매주 화요일 새벽 4시)', '공지', false],
-  ['단짝 신청 하루 20명 제한 안내', '공지', false],
-]
+import { useSiteText } from '../lib/admin'
 
 /** 대문에 세워둘 간단한 마스코트 — 공책과 펜 */
 function Mascot() {
@@ -37,6 +31,8 @@ export function Portal() {
   const owner = useHomeOwner()
   const friends = useFriends(owner?.id ?? null).list.filter((f) => f.status === 'accepted')
   const cloudGuest = useGuestbook(owner?.id ?? null).rows
+  // 공지·이벤트 글은 운영자가 운영 페이지에서 고친다
+  const site = useSiteText()
 
   return (
     <div className="portal">
@@ -64,12 +60,12 @@ export function Portal() {
         <div className="panel">
           <h3>공지사항</h3>
           <ul className="notice-list">
-            {NOTICES.map(([t, tag, isNew]) => (
-              <li key={t}>
-                <span className={`ntag ${tag === '이벤트' ? 'ev' : ''}`}>{tag}</span>
-                <span>{t}</span>
+            {site.notices.map((n, i) => (
+              <li key={i}>
+                <span className={`ntag ${n.tag === '이벤트' ? 'ev' : ''}`}>{n.tag}</span>
+                <span>{n.title}</span>
                 <span className="sp" />
-                {isNew && <b className="newmark">NEW</b>}
+                {n.isNew && <b className="newmark">NEW</b>}
               </li>
             ))}
           </ul>
@@ -122,10 +118,12 @@ export function Portal() {
         <h3>로그인</h3>
         <AuthBox />
 
-        <div className="evt">
-          <b>잉크 두 배 이벤트</b>
-          <span>오늘 글 쓰면 한 방울 더!</span>
-        </div>
+        {site.eventTitle && (
+          <div className="evt">
+            <b>{site.eventTitle}</b>
+            <span>{site.eventBody}</span>
+          </div>
+        )}
 
         <h3 style={{ marginTop: 14 }}>단짝 바로가기</h3>
         <div className="jjak-mini">

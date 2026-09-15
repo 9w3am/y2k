@@ -23,6 +23,7 @@ import { startCloudSync } from './lib/cloud'
 import { Portal } from './pages/Portal'
 import { PostView } from './pages/Posts'
 import { FriendsPage } from './pages/Friends'
+import { AdminPage } from './pages/Admin'
 import {
   Board,
   Diary,
@@ -41,6 +42,7 @@ function Pages() {
       <Route path="/" element={<Portal />} />
       <Route path="/v/:code" element={<SharedLoader />} />
       <Route path="/u/:handle" element={<VisitLoader />} />
+      <Route path="/admin" element={<AdminPage />} />
       <Route element={<Hompy />}>
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />

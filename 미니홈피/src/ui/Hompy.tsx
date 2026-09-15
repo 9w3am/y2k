@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useSite } from '../lib/store'
-import { TRACKS, trackById } from '../lib/bgm'
 import { lastFailure, onYtTitle, player, type Source } from '../lib/player'
 import { youtubeId } from '../lib/audioStore'
 import { pickImage } from '../lib/img'
@@ -47,15 +46,13 @@ const setBlockedGlobal = (b: boolean) => blockedListeners.forEach((f) => f(b))
 /** 지금 설정으로 어떤 소리를 낼지 정한다 */
 function useSource(): Source | null {
   const kind = useSite((s) => s.bgmKind)
-  const songId = useSite((s) => s.songId)
+  const fileName = useSite((s) => s.fileName)
   const ytUrl = useSite((s) => s.ytUrl)
 
-  if (kind === 'file') return { kind: 'file' }
-  if (kind === 'youtube') {
-    const id = youtubeId(ytUrl)
-    return id ? { kind: 'youtube', videoId: id } : null
-  }
-  return { kind: 'builtin', trackId: songId }
+  // 올린 것이 없으면 소리를 내지 않는다 — 없는 파일을 찾다가 오류 문구가 뜨지 않게
+  if (kind === 'file') return fileName ? { kind: 'file' } : null
+  const id = youtubeId(ytUrl)
+  return id ? { kind: 'youtube', videoId: id } : null
 }
 
 /**
@@ -111,26 +108,29 @@ export function BgmHost() {
 }
 
 export function Bgm() {
-  const { songId, playing, togglePlay, setSong, volume, setVolume, bgmKind, fileName, ytTitle } =
-    useSite()
+  const {
+    playing,
+    togglePlay,
+    volume,
+    setVolume,
+    bgmKind,
+    fileName,
+    ytTitle,
+    bgmTag,
+    setBgmTag,
+  } = useSite()
   const [blocked, setBlocked] = useState(false)
   const [pos, setPos] = useState(0)
   const bar = useRef<HTMLDivElement>(null)
   const src = useSource()
   const sounding = playing && !blocked && !!src
 
-  const cur = trackById(songId)
-  const i = TRACKS.findIndex((t) => t.id === cur.id)
-
   /* 지금 무슨 소리가 나는지 한 줄로 */
   const title =
-    bgmKind === 'file'
-      ? fileName || '올린 음악이 없습니다'
-      : bgmKind === 'youtube'
-        ? ytTitle || (src ? '유튜브 음악' : '유튜브 주소를 넣어주세요')
-        : cur.title
-  const by =
-    bgmKind === 'file' ? '내 파일' : bgmKind === 'youtube' ? '유튜브' : cur.artist
+    bgmKind === 'youtube'
+      ? ytTitle || (src ? '유튜브 음악' : '유튜브 주소를 넣어주세요')
+      : fileName || '올린 음악이 없습니다'
+  const by = bgmKind === 'youtube' ? '유튜브' : '내 파일'
 
   useEffect(() => {
     blockedListeners.push(setBlocked)
@@ -145,8 +145,6 @@ export function Bgm() {
     const id = window.setInterval(() => setPos(player.progress), 200)
     return () => clearInterval(id)
   }, [sounding])
-
-  const go = (d: number) => setSong(TRACKS[(i + d + TRACKS.length) % TRACKS.length].id)
 
   /** 브라우저가 막고 있으면 먼저 풀고, 아니면 그냥 껐다 켠다 */
   const onPlay = async () => {
@@ -175,7 +173,16 @@ export function Bgm() {
       <span className="bgm-disc" aria-hidden="true" />
       <div className="bgm-meta">
         <b className="bgm-name">{title}</b>
-        <em className="bgm-by">{by}</em>
+        {/* 작은 이름표는 쓰는 사람이 바로 눌러 고친다 — 비우면 기본 글자 */}
+        <Ed
+          className="bgm-by"
+          value={bgmTag?.[bgmKind] || by}
+          onChange={(v) => setBgmTag(bgmKind, v)}
+          multiline={false}
+          maxChars={16}
+          ph={by}
+          label="음악 이름표"
+        />
       </div>
       {blocked && (
         <span className="bgm-warn">
@@ -189,14 +196,6 @@ export function Bgm() {
 
       {/* 글자 기호(◀◀ ❚❚)는 폰마다 모양·높이가 달라 삐뚤어 보인다 — 그림으로 그린다 */}
       <div className="bgm-ctl">
-        {bgmKind === 'builtin' && (
-          <button className="bgm-btn" onClick={() => go(-1)} aria-label="이전 곡">
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M2.6 2.4v7.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              <path d="M10 2.6 4.4 6 10 9.4z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-            </svg>
-          </button>
-        )}
         <button
           className="bgm-btn bgm-play"
           onClick={onPlay}
@@ -214,14 +213,6 @@ export function Bgm() {
             </svg>
           )}
         </button>
-        {bgmKind === 'builtin' && (
-          <button className="bgm-btn" onClick={() => go(1)} aria-label="다음 곡">
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M9.4 2.4v7.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              <path d="M2 2.6 7.6 6 2 9.4z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-            </svg>
-          </button>
-        )}
         <label className="bgm-volw">
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
             <path d="M2 5.2h2.2L7.4 2.6v8.8L4.2 8.8H2z" fill="currentColor" />

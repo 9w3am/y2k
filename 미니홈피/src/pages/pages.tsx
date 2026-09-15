@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/supabase'
+import { useIsAdmin } from '../lib/admin'
 import {
   deleteGuest as delCloudGuest,
   replyGuest as replyCloudGuest,
@@ -11,7 +12,6 @@ import {
   type HomeOwner,
 } from '../lib/social'
 import { SKINS, useSite } from '../lib/store'
-import { TRACKS } from '../lib/bgm'
 import { pickImage } from '../lib/img'
 import { Bgm, Counter } from '../ui/Hompy'
 import { Ed } from '../ui/Ed'
@@ -270,6 +270,8 @@ function CloudGuest({ owner }: { owner: HomeOwner }) {
   const { session } = useSession()
   const myId = session?.user.id ?? ''
   const isOwner = myId === owner.id
+  // 운영자는 어느 기록장의 방명록이든 지울 수 있다 (서버 규칙도 같이 허락)
+  const isAdmin = useIsAdmin() === true
   const nav = useNavigate()
   const { rows, loading, nosetup, reload } = useGuestbook(owner.id)
   const [body, setBody] = useState('')
@@ -367,7 +369,7 @@ function CloudGuest({ owner }: { owner: HomeOwner }) {
                       답글
                     </button>
                   )}
-                  {(isOwner || (myId && g.writerId === myId)) && (
+                  {(isOwner || isAdmin || (myId && g.writerId === myId)) && (
                     <button
                       className="btn-x"
                       aria-label="지우기"
@@ -636,7 +638,7 @@ const pv = (id: string): React.CSSProperties => {
 /* ── 설정 ────────────────────────────────────────────────── */
 export function Setting() {
   const {
-    me, setMe, songId, setSong, volume, setVolume, skin, owned, setSkin, resetAll, shell, setShell,
+    me, setMe, volume, setVolume, skin, owned, setSkin, resetAll, shell, setShell,
     bgmKind, setBgmKind, fileName, setFileName, ytUrl, ytTitle, setYt,
     custom, setCustom,
     tabs, setTab, moveTab,
@@ -1066,7 +1068,6 @@ export function Setting() {
           <div className="pickrow">
             {(
               [
-                ['builtin', '내장곡'],
                 ['file', '내 파일'],
                 ['youtube', '유튜브'],
               ] as const
@@ -1080,21 +1081,6 @@ export function Setting() {
               </button>
             ))}
           </div>
-
-          {bgmKind === 'builtin' && (
-            <select
-              className="inp"
-              style={{ marginTop: 7 }}
-              value={songId}
-              onChange={(e) => setSong(e.target.value)}
-            >
-              {TRACKS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.title} — {s.artist}
-                </option>
-              ))}
-            </select>
-          )}
 
           {bgmKind === 'file' && (
             <div style={{ marginTop: 7 }}>

@@ -311,15 +311,28 @@ html[data-skin='night'] {
 html[data-skin='night']:not([data-custom='1']) body {
   background-color: #34357f;
   background-image:
-    /* 달은 책에 가리지 않게 오른쪽 가장자리 바탕에 걸친다 */
-    radial-gradient(circle at calc(100% - 20px) 118px, #3a3a87 0 21px, transparent 22px),
-    radial-gradient(circle at calc(100% - 32px) 128px, #fff4cf 0 24px, rgba(255, 244, 207, 0.32) 25px 38px, transparent 60px),
+    /* 초승달 — 겹친 원으로 흉내 내면 하늘색과 안 맞는 덩어리가 남는다. 속이 빈 그림으로 (social.css --tile-moon) */
+    var(--tile-moon),
+    radial-gradient(circle at calc(100% - 94px) 152px, rgba(255, 244, 207, 0.34) 0 38px, rgba(255, 244, 207, 0.12) 64px, transparent 104px),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cpath d='M26 18l1.6 4.4 4.4 1.6-4.4 1.6L26 30l-1.6-4.4L20 24l4.4-1.6z' fill='%23fff' fill-opacity='.9'/%3E%3Cpath d='M104 86l1.1 3 3 1.1-3 1.1-1.1 3-1.1-3-3-1.1 3-1.1z' fill='%23fff3c4'/%3E%3Cpath d='M50 64l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z' fill='%23ffd9ef'/%3E%3Ccircle cx='70' cy='40' r='1.6' fill='%23fff' fill-opacity='.8'/%3E%3Ccircle cx='118' cy='22' r='1.1' fill='%23fff' fill-opacity='.6'/%3E%3Ccircle cx='16' cy='92' r='1.3' fill='%23fff' fill-opacity='.7'/%3E%3Ccircle cx='58' cy='118' r='1' fill='%23fff' fill-opacity='.5'/%3E%3Ccircle cx='88' cy='128' r='1.5' fill='%23fff' fill-opacity='.6'/%3E%3C/svg%3E"),
     radial-gradient(90% 55% at 50% 100%, rgba(255, 210, 236, 0.55), transparent 70%),
     linear-gradient(180deg, var(--bg-1), var(--bg-2) 58%, var(--bg-3));
-  background-size: auto, auto, 140px 140px, auto, auto;
+  background-size: 96px 96px, auto, 140px 140px, auto, auto;
+  background-position: right 44px top 102px, 0 0, 0 0, 0 0, 0 0;
   background-repeat: no-repeat, no-repeat, repeat, no-repeat, no-repeat;
   background-attachment: fixed;
+}
+/* 여백이 좁아지면 달도 작게, 책이 화면을 다 덮는 폭에서는 뺀다 */
+@media (max-width: 1180px) {
+  html[data-skin='night']:not([data-custom='1']) body {
+    background-size: 60px 60px, 0 0, 140px 140px, auto, auto;
+    background-position: right 10px top 88px, 0 0, 0 0, 0 0, 0 0;
+  }
+}
+@media (max-width: 860px) {
+  html[data-skin='night']:not([data-custom='1']) body {
+    background-size: 0 0, 0 0, 140px 140px, auto, auto;
+  }
 }
 
 /* ══ 민트초코 (예전 블랙민트) — 다시 그림 ═══════════════════

@@ -1,17 +1,13 @@
-import { bgm } from './bgm'
 import { loadAudio } from './audioStore'
 
 /* ══════════════════════════════════════════════════════════
-   BGM 재생기 — 세 갈래를 하나로 묶는다
-   · 내장곡  : 브라우저가 직접 연주하는 오르골/피아노
+   BGM 재생기 — 두 갈래를 하나로 묶는다
    · 내 파일 : 올려둔 음악 파일 (IndexedDB 에 보관)
    · 유튜브  : 링크만 붙이면 숨은 플레이어로
+   (브라우저가 직접 연주하던 내장곡은 오류가 잦아 뺐다)
    ══════════════════════════════════════════════════════════ */
 
-export type Source =
-  | { kind: 'builtin'; trackId: string }
-  | { kind: 'file' }
-  | { kind: 'youtube'; videoId: string }
+export type Source = { kind: 'file' } | { kind: 'youtube'; videoId: string }
 
 /* ── 내 파일 ─────────────────────────────────────────────── */
 let audioEl: HTMLAudioElement | null = null
@@ -175,12 +171,6 @@ export const player = {
     current = src
     failure = null
 
-    if (src.kind === 'builtin') {
-      const ok = await bgm.play(src.trackId)
-      if (!ok) failure = 'blocked'
-      return ok
-    }
-
     if (src.kind === 'file') {
       const el = await ensureAudio()
       if (!el) {
@@ -220,14 +210,9 @@ export const player = {
    */
   pauseAll() {
     try {
-      bgm.pause()
-    } catch {
-      /* 소리만 못 멈춘 것뿐 */
-    }
-    try {
       audioEl?.pause()
     } catch {
-      /* 위와 같음 */
+      /* 소리만 못 멈춘 것뿐 */
     }
     ytCall('pauseVideo')
   },
@@ -238,7 +223,6 @@ export const player = {
 
   setVolume(v: number) {
     vol = v
-    bgm.setVolume(v)
     if (audioEl) audioEl.volume = v
     ytCall('setVolume', Math.round(v * 100))
   },
@@ -246,7 +230,6 @@ export const player = {
   /** 한 곡 안에서 어디쯤인지 (0~1) */
   get progress(): number {
     if (!current) return 0
-    if (current.kind === 'builtin') return bgm.progress
     if (current.kind === 'file') {
       const el = audioEl
       if (!el || !el.duration) return 0
@@ -259,7 +242,6 @@ export const player = {
 
   seek(frac: number) {
     if (!current) return
-    if (current.kind === 'builtin') return bgm.seek(frac)
     if (current.kind === 'file') {
       const el = audioEl
       if (el?.duration) el.currentTime = frac * el.duration

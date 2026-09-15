@@ -33,6 +33,78 @@ async function saveAndMatch(api, selector, label, wait = 20000) {
 }
 
 export const SCENARIOS = {
+  /** 운영 — 로그인 안 한 사람은 운영 페이지가 막히고 '운영' 메뉴도 없어야 한다. 대문 공지는 그대로 */
+  async admin(api, step) {
+    for (const [tag, w, h, mobile] of [
+      ['pc', 1280, 860, false],
+      ['m', 390, 844, true],
+    ]) {
+      await api.viewport(w, h, mobile)
+      await step(`${tag} 로그인 없이 #/admin`, async () => {
+        await api.go(`${api.ILOG}#/admin`, 3000)
+        const blocked = await api.has('운영자만 들어올 수 있습니다')
+        const menu = await api.eval(`!!document.querySelector('.gnb-admin')`)
+        await api.shot(`admin-anon-${tag}`)
+        if (!blocked || menu) throw new Error(`막힘 ${blocked}, 운영 메뉴 ${menu}`)
+        return { 막힘: blocked }
+      })
+      await step(`${tag} 대문 공지·이벤트`, async () => {
+        await api.go(`${api.ILOG}#/`, 3000)
+        const notices = await api.eval(`[...document.querySelectorAll('.notice-list li')].map((l) => l.innerText.replace(/\\s+/g, ' ')).slice(0, 4)`)
+        const evt = await api.eval(`document.querySelector('.evt')?.innerText?.replace(/\\s+/g, ' ') ?? null`)
+        const marquee = await api.eval(`document.querySelector('.marquee')?.innerText ?? null`)
+        if (!notices.length) throw new Error('공지 없음')
+        return { 공지: notices, 이벤트: evt, 흐르는공지: marquee?.slice(0, 30) }
+      })
+    }
+  },
+
+  /** 음악 칸 이름표 — 눌러서 고치고, 새로고침해도 남는지, 비우면 기본 글자로 돌아오는지 */
+  async bgmtag(api, step) {
+    await api.viewport(1280, 860)
+    await step('이름표 고치기 → 새로고침', async () => {
+      await api.go(`${api.ILOG}#/home`, 2500)
+      const before = await api.eval(`document.querySelector('.bgm .bgm-by')?.innerText`)
+      const editable = await api.eval(`document.querySelector('.bgm .bgm-by')?.getAttribute('contenteditable')`)
+      await api.type('.bgm .bgm-by', '내가 고른 노래')
+      const after = await api.eval(`document.querySelector('.bgm .bgm-by')?.innerText`)
+      await api.reload(2500)
+      const kept = await api.eval(`document.querySelector('.bgm .bgm-by')?.innerText`)
+      await api.shot('bgmtag-after')
+      if (after !== '내가 고른 노래' || kept !== '내가 고른 노래') throw new Error(`고친 뒤 ${after}, 새로고침 뒤 ${kept}`)
+      return { 처음: before, 고칠수있음: editable, 새로고침뒤: kept }
+    })
+    await step('지우면 기본 글자', async () => {
+      await api.type('.bgm .bgm-by', '')
+      await api.reload(2500)
+      return await api.eval(`document.querySelector('.bgm .bgm-by')?.innerText`)
+    })
+  },
+
+  /** 스킨 보기 — 기록장에 저장된 스킨을 바꿔 가며 대문·홈·상점을 찍는다 (SKINS 환경변수로 고름) */
+  async skins(api, step) {
+    const list = (process.env.SKINS ?? 'night,lemon').split(',')
+    for (const [tag, w, h, mobile] of [
+      ['pc', 1280, 860, false],
+      ['m', 390, 844, true],
+    ]) {
+      await api.viewport(w, h, mobile)
+      for (const sk of list) {
+        await step(`${tag} ${sk}`, async () => {
+          await api.go(`${api.ILOG}#/home`, 1500)
+          await api.eval(`(() => { const k = 'ilog:v1'; const v = JSON.parse(localStorage.getItem(k) || '{"state":{},"version":0}'); v.state.skin = ${JSON.stringify(sk)}; v.state.owned = [...new Set([...(v.state.owned || []), ${JSON.stringify(sk)}])]; localStorage.setItem(k, JSON.stringify(v)); return 1 })()`)
+          // 주소의 # 만 바뀌면 새로 불러오지 않아 메모리의 옛 스킨이 다시 저장된다 — 확실히 새로고침
+          await api.reload(1500)
+          for (const p of ['home', '', 'shop']) {
+            await api.hash(`#/${p}`, 2200)
+            await api.shot(`skin-${sk}-${p || 'portal'}-${tag}`)
+          }
+          return await api.eval('document.documentElement.dataset.skin')
+        })
+      }
+    }
+  },
+
   /** PC 한 화면 — 페이지 자체가 세로로 넘치는지 (넘치면 안 됨) */
   async fit(api, step) {
     for (const [w, h] of [
@@ -277,13 +349,14 @@ export const SCENARIOS = {
           return m
         })
 
-        await step('음악 다음 곡·멈춤', async () => {
+        await step('음악 — 내장곡 없음, 오류 문구 없음', async () => {
           await api.go(`${I}#/home`, 2500)
-          const t0 = await api.eval(`document.querySelector('.player, .bgm, [class*="player"]')?.innerText?.slice(0, 30)`)
-          await api.clickSel('[aria-label="다음 곡"]', { wait: 1500 })
-          const t1 = await api.eval(`document.querySelector('.player, .bgm, [class*="player"]')?.innerText?.slice(0, 30)`)
-          if (t0 === t1) throw new Error('곡이 안 바뀜')
-          return { 전: t0, 후: t1 }
+          const card = await api.eval(`document.querySelector('.bgm')?.innerText?.replace(/\\s+/g, ' ').slice(0, 60)`)
+          const warn = await api.eval(`document.querySelector('.bgm-warn')?.innerText ?? null`)
+          await api.go(`${I}#/setting`, 1800)
+          const kinds = await api.eval(`[...document.querySelectorAll('.pickrow .btn')].map((b) => b.innerText).filter((t) => /내장곡|내 파일|유튜브/.test(t))`)
+          if (warn || kinds.includes('내장곡')) throw new Error(`오류 ${warn}, 고르기 ${kinds}`)
+          return { 음악칸: card, 고르기: kinds }
         })
 
         await step('아이디로 놀러가기 qwer1234', async () => {

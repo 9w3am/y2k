@@ -262,3 +262,40 @@
     min-height: 0;
   }
 }
+
+/* ══ 스킨 그림 조각 — 바탕과 상점 미리보기가 같이 쓴다 ══════════════ */
+:root {
+  /* 초승달: 큰 원에서 작은 원을 도려낸다. 도려낸 자리는 비어서 하늘이 그대로 비친다 */
+  --tile-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cmask id='m'%3E%3Crect width='100' height='100' fill='white'/%3E%3Ccircle cx='70' cy='34' r='34' fill='black'/%3E%3C/mask%3E%3C/defs%3E%3Cg mask='url(%23m)'%3E%3Ccircle cx='48' cy='52' r='40' fill='%23fff4cf'/%3E%3Ccircle cx='28' cy='60' r='6' fill='%23f1dc9c'/%3E%3Ccircle cx='44' cy='80' r='4' fill='%23f1dc9c'/%3E%3Ccircle cx='18' cy='42' r='3' fill='%23f1dc9c'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ══ 레몬사탕 — 노란 바탕에 큰 흰 물방울 (L2) ══ */
+html[data-skin='lemon'] {
+  --accent: #dba10a;
+  --accent-2: #ffd84d;
+}
+html[data-skin='lemon']:not([data-custom='1']) body {
+  background-color: #ffe78f;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 7px, transparent 8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 7px, transparent 8px),
+    linear-gradient(175deg, #fff6c9, #ffe78f 60%, #ffd966);
+  background-size: 44px 44px, 44px 44px, auto;
+  background-position: 0 0, 22px 22px, 0 0;
+  background-repeat: repeat, repeat, no-repeat;
+  background-attachment: fixed;
+}
+
+/* 상점 미리보기도 같은 그림으로 */
+.shop-card .pv[data-pv='lemon'] {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 4px, transparent 4.6px) 0 0 / 24px 24px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 4px, transparent 4.6px) 12px 12px / 24px 24px,
+    linear-gradient(175deg, #fff6c9, #ffe78f 60%, #ffd966) !important;
+}
+.shop-card .pv[data-pv='night'] {
+  background:
+    var(--tile-moon) right 12% top 10% / 30px 30px no-repeat,
+    radial-gradient(circle at 84% 26%, rgba(255, 244, 207, 0.4) 0 12px, transparent 26px),
+    linear-gradient(180deg, #34357f, #7466c4 60%, #eab8d8) !important;
+}

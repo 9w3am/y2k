@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSite } from '../lib/store'
 import { exportScreen } from '../lib/exportPng'
 import { AccountChip } from './Account'
+import { useIsAdmin, useSiteText } from '../lib/admin'
 
 const MENU = [
   { to: '/', label: '아이로그 홈', end: true },
@@ -14,6 +15,9 @@ const MENU = [
 export function Gnb() {
   const { me, ink, shell, setShell } = useSite()
   const loc = useLocation()
+  const site = useSiteText()
+  // 운영자 계정일 때만 '운영' 메뉴 — 권한은 서버가 따로 막는다
+  const admin = useIsAdmin()
 
   return (
     <>
@@ -29,6 +33,11 @@ export function Gnb() {
                 {m.label}
               </NavLink>
             ))}
+            {admin && (
+              <NavLink to="/admin" className={({ isActive }) => `gnb-admin ${isActive ? 'on' : ''}`}>
+                운영
+              </NavLink>
+            )}
           </nav>
           <span className="gnb-sp" />
           <span className="gnb-user">
@@ -67,12 +76,11 @@ export function Gnb() {
           <Link to="/board">게시판</Link>
           <Link to="/paper">페이퍼</Link>
           <span className="sp" />
-          <span className="marquee" aria-hidden="true">
-            <span>
-              [공지] 아이로그 정기점검 안내 · 잉크 충전 이벤트 진행 중 · 스킨 6종 신규 입고
-              · 단짝 신청은 하루 20명까지
+          {site.marquee && (
+            <span className="marquee" aria-hidden="true">
+              <span>{site.marquee}</span>
             </span>
-          </span>
+          )}
         </div>
       </div>
     </>

@@ -10,6 +10,7 @@ import './styles/player.css'
 import './styles/blog.css'
 import './styles/account.css'
 import './styles/social.css'
+import './styles/admin.css'
 import { App } from './App'
 import { Boundary } from './ui/Boundary'
 
