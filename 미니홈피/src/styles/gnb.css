@@ -36,7 +36,11 @@
   text-overflow: ellipsis;
 }
 @media (max-width: 700px) {
+  /* 폰 규칙이 단추를 flex 로 바꿔서 … 가 안 먹는다 — 계정 단추만 글줄로 되돌린다 */
   .gnb-user .btn.acct {
+    display: inline-block;
     max-width: 104px;
+    line-height: 28px;
+    white-space: nowrap;
   }
 }
