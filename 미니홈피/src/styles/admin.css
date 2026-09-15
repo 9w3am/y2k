@@ -39,7 +39,8 @@
 .admin-body h3:first-child {
   margin-top: 0;
 }
-.admin-body h3 small {
+.admin-body h3 small,
+.admin-detail h4 small {
   margin-left: 6px;
   font-weight: 400;
   color: var(--ink-dim);
@@ -48,6 +49,60 @@
   width: 100%;
   margin-bottom: 6px;
 }
+textarea.admin-wide {
+  min-height: 70px;
+}
+.admin-note {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.admin-maint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+/* 한눈에 */
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 12px 14px;
+  text-align: left;
+  color: var(--ink);
+  background: var(--tab);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--round-sm);
+  cursor: pointer;
+}
+.admin-card:hover {
+  border-color: var(--accent);
+}
+.admin-card small {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.admin-card b {
+  font-size: 26px;
+  line-height: 1.2;
+  color: var(--accent);
+}
+.admin-card em {
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+
+/* 공지 줄 */
 .admin-notices {
   display: flex;
   flex-direction: column;
@@ -72,13 +127,15 @@
   flex: none;
   padding: 2px 9px;
 }
-.admin-notice .chk {
+.admin-notice .chk,
+.admin-inline .chk {
   flex: none;
   display: flex;
   align-items: center;
   gap: 3px;
   font-size: 11px;
   color: var(--ink-dim);
+  white-space: nowrap;
 }
 .admin-foot {
   display: flex;
@@ -90,6 +147,12 @@
   padding: 16px 4px;
   color: var(--ink-dim);
 }
+.admin-empty.small {
+  padding: 4px 2px;
+  font-size: 11px;
+}
+
+/* 목록 줄 */
 .admin-table {
   display: flex;
   flex-direction: column;
@@ -104,6 +167,9 @@
 }
 .admin-row.is-hidden {
   opacity: 0.6;
+}
+.admin-row.is-open {
+  background: var(--tab);
 }
 .admin-main {
   flex: 1;
@@ -140,12 +206,115 @@
   background: var(--tab);
   border: 1px solid var(--line-2);
   border-radius: 999px;
+  white-space: nowrap;
 }
 .admin-badge.on {
   color: #fff;
   background: var(--accent);
   border-color: var(--accent);
 }
+
+/* 회원 관리 펼침 */
+.admin-detail {
+  margin: 0 0 8px;
+  padding: 12px 14px;
+  background: var(--paper, #fff);
+  border: 1px solid var(--line-2);
+  border-top: 0;
+  border-radius: 0 0 var(--round-sm) var(--round-sm);
+  font-size: 12px;
+}
+.admin-detail h4 {
+  margin: 14px 0 4px;
+  font-size: 12px;
+  color: var(--accent);
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 8px 10px;
+  align-items: center;
+}
+.admin-grid > label {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.admin-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.admin-inline .inp {
+  flex: 1;
+  min-width: 120px;
+}
+.admin-inline .inp.admin-num {
+  flex: none;
+  width: 90px;
+  min-width: 0;
+}
+.admin-inline .btn {
+  flex: none;
+  padding: 2px 10px;
+}
+.admin-clears {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.admin-clear {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.admin-clear small {
+  color: var(--ink-dim);
+}
+.admin-clear .admin-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-clear .btn {
+  padding: 2px 10px;
+}
+.admin-pics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-pic {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 104px;
+}
+.admin-pic img,
+.admin-pic i {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 78px;
+  object-fit: cover;
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  background: var(--tab);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.admin-pic small {
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+.admin-pic .btn {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
 @media (max-width: 700px) {
   .admin-row {
     flex-wrap: wrap;
@@ -159,4 +328,43 @@
   .admin-notice input.inp {
     flex-basis: calc(100% - 90px);
   }
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══ 점검 중 화면 ═══════════════════════════════════════════ */
+.maint {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  padding: 20px 0;
+}
+.maint-box {
+  width: min(420px, 100%);
+  text-align: center;
+}
+.maint-box h3 {
+  justify-content: center;
+}
+.maint-box p {
+  margin: 8px 0 14px;
+  color: var(--ink-dim);
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+.maint-login summary {
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.maint-login[open] {
+  text-align: left;
+}
+
+/* ══ 팝업 공지 ═════════════════════════════════════════════ */
+.popup-body {
+  white-space: pre-wrap;
+  word-break: keep-all;
+  line-height: 1.7;
 }

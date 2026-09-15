@@ -24,6 +24,7 @@ import { Portal } from './pages/Portal'
 import { PostView } from './pages/Posts'
 import { FriendsPage } from './pages/Friends'
 import { AdminPage } from './pages/Admin'
+import { SiteGate } from './ui/SiteNotice'
 import {
   Board,
   Diary,
@@ -163,7 +164,9 @@ export function App() {
         <DialogHost />
         <ViewingBar />
         <div className="wrap">
-          <Pages />
+          <SiteGate>
+            <Pages />
+          </SiteGate>
         </div>
       </AppShell>
     )

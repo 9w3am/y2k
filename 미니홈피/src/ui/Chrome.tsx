@@ -5,7 +5,7 @@ import { AccountChip } from './Account'
 import { useIsAdmin, useSiteText } from '../lib/admin'
 
 const MENU = [
-  { to: '/', label: '아이로그 홈', end: true },
+  { to: '/', label: '홈', end: true },
   { to: '/home', label: '내 기록장' },
   { to: '/jjak', label: '단짝' },
   { to: '/shop', label: '상점' },
@@ -13,7 +13,7 @@ const MENU = [
 ]
 
 export function Gnb() {
-  const { me, ink, shell, setShell } = useSite()
+  const { ink, shell, setShell } = useSite()
   const loc = useLocation()
   const site = useSiteText()
   // 운영자 계정일 때만 '운영' 메뉴 — 권한은 서버가 따로 막는다
@@ -40,27 +40,17 @@ export function Gnb() {
             )}
           </nav>
           <span className="gnb-sp" />
+          {/* 아이디는 계정 단추 하나에 — 길면 말줄임 */}
           <span className="gnb-user">
-            <span>
-              <b style={{ color: 'var(--ink)' }}>{me.nick}</b> 님
-            </span>
             <AccountChip />
-            <span className="candy" title="잉크 — 아이로그에서 쓰는 알맹이">
-              잉크 <b>{ink}</b>방울
+            <span className="candy" title="잉크">
+              잉크 <b>{ink}</b>
             </span>
-            <button
-              className="btn"
-              style={{ padding: '2px 8px' }}
-              onClick={() => void exportScreen('web')}
-            >
+            <button className="btn" onClick={() => void exportScreen('web')}>
               PNG 저장
             </button>
-            <button
-              className="btn"
-              style={{ padding: '2px 8px' }}
-              onClick={() => setShell(shell === 'web' ? 'app' : 'web')}
-            >
-              {shell === 'web' ? '프로그램으로 보기' : '웹으로 보기'}
+            <button className="btn" onClick={() => setShell(shell === 'web' ? 'app' : 'web')}>
+              {shell === 'web' ? '프로그램 창' : '웹으로'}
             </button>
           </span>
         </div>

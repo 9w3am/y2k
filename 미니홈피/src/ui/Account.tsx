@@ -301,9 +301,17 @@ export function AccountChip() {
         로그인
       </button>
     )
+  // 남의 기록장을 구경 중이면 me.nick 은 그 사람 아이디라 — 계정에 적힌 내 아이디를 쓴다
+  const handle =
+    (session.user.user_metadata?.handle as string | undefined) || session.user.email?.split('@')[0] || '내 계정'
   return (
-    <button className={`btn acct s-${status}`} onClick={() => nav('/')} aria-label="계정">
-      {STATUS_TEXT[status] || '로그인됨'}
+    <button
+      className={`btn acct s-${status}`}
+      onClick={() => nav('/')}
+      aria-label="계정"
+      title={`${handle}${STATUS_TEXT[status] ? ` · ${STATUS_TEXT[status]}` : ''}`}
+    >
+      {handle}
     </button>
   )
 }

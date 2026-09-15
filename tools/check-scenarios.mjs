@@ -33,6 +33,32 @@ async function saveAndMatch(api, selector, label, wait = 20000) {
 }
 
 export const SCENARIOS = {
+  /** 위 메뉴줄 — 계정 단추에 긴 아이디(20자)를 넣어도 한 줄에서 안 깨지는지 */
+  async gnb(api, step) {
+    for (const [tag, w, h, mobile] of [
+      ['pc', 1280, 860, false],
+      ['pc-900', 900, 700, false],
+      ['m', 390, 844, true],
+    ]) {
+      await api.viewport(w, h, mobile)
+      await step(`${tag} 긴 아이디`, async () => {
+        await api.go(`${api.ILOG}#/`, 2500)
+        const r = await api.eval(`(() => {
+          const chip = document.querySelector('.gnb-user .btn.acct')
+          if (chip) chip.textContent = 'abcdefghijklmnopqrst'
+          const bar = document.querySelector('.gnb-in')
+          const items = [...document.querySelectorAll('.gnb-menu a, .gnb-user > *')]
+          const tall = items.filter((e) => e.getBoundingClientRect().height > 40).map((e) => e.textContent)
+          const out = items.filter((e) => e.getBoundingClientRect().right > innerWidth + 1).map((e) => e.textContent)
+          return { 줄높이: Math.round(bar.getBoundingClientRect().height), 두줄로깨짐: tall, 화면밖: out, 단추폭: Math.round(chip?.getBoundingClientRect().width ?? 0), 가로넘침: document.documentElement.scrollWidth - innerWidth }
+        })()`)
+        await api.shot(`gnb-${tag}`)
+        if (r.두줄로깨짐.length || r.화면밖.length || r.가로넘침 > 0) throw new Error(JSON.stringify(r))
+        return r
+      })
+    }
+  },
+
   /** 운영 — 로그인 안 한 사람은 운영 페이지가 막히고 '운영' 메뉴도 없어야 한다. 대문 공지는 그대로 */
   async admin(api, step) {
     for (const [tag, w, h, mobile] of [

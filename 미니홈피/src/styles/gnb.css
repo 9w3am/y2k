@@ -1,0 +1,42 @@
+/* ══ 위 메뉴줄 — 아이디가 길어도 한 줄에서 안 깨지게 ══════════ */
+.gnb-in {
+  min-width: 0;
+  gap: 12px;
+}
+.logo,
+.gnb-menu {
+  flex: none;
+}
+.gnb-menu {
+  gap: 12px;
+  white-space: nowrap;
+}
+.gnb-menu a.gnb-admin {
+  color: var(--accent);
+  font-weight: 700;
+}
+.gnb-user {
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: 6px;
+  white-space: nowrap;
+}
+.gnb-user .btn,
+.gnb-user .candy {
+  flex: none;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+/* 계정 단추만 줄어든다 — 긴 아이디는 … 로 */
+.gnb-user .btn.acct {
+  flex: 0 1 auto;
+  min-width: 48px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 700px) {
+  .gnb-user .btn.acct {
+    max-width: 104px;
+  }
+}
