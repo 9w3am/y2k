@@ -152,8 +152,7 @@
 }
 
 /* ══ 폰에서 글자 입력 중 — 키보드 위 남은 칸 전체를 화면에 ══
-   위 메뉴·조작 칸은 잠깐 치우고, 화면은 폭에 맞춰 크게.
-   키보드가 가린 만큼(--vvh)만 쓰고, 넘치는 부분은 칸 안에서 밀어 본다. */
+   위 메뉴·조작 칸은 잠깐 치우고, 키보드가 가리지 않은 칸(--vvh)에 화면 전체를 맞춘다. */
 html.typing,
 html.typing body {
   overflow: hidden;
@@ -165,14 +164,11 @@ html.typing .stage {
   top: var(--vvt, 0px);
   height: var(--vvh, 100dvh);
   z-index: 40;
-  display: block;
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 52px 8px 40vh;
-  -webkit-overflow-scrolling: touch;
-}
-html.typing .stage-inner {
-  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 48px 0 0;
+  transition: none;
 }
 html.typing .topbar,
 html.typing .panel {
@@ -204,4 +200,41 @@ html.typing .panel {
   border: 1px solid var(--ui-accent);
   border-radius: 999px;
   box-shadow: 0 6px 16px -8px rgba(39, 51, 61, 0.45);
+}
+
+/* 저장 창 단추 줄 */
+.png-sheet-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.png-sheet-btns .btn {
+  min-height: 40px;
+  padding: 0 16px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.png-sheet-box p {
+  color: var(--ui-fg-mute);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+/* 저장 그림을 만드는 동안 — 폰은 몇 초 걸린다 */
+body.png-busy::after {
+  content: '저장 중…';
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 300;
+  transform: translate(-50%, -50%);
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(20, 28, 36, 0.78);
+  border-radius: 999px;
+  pointer-events: none;
 }

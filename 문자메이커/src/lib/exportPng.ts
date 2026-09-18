@@ -48,7 +48,8 @@ const isTouch = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coars
  * 브라우저 캔버스는 넓이 한도가 있다. 폰은 메모리가 작아 한도보다 한참 전에 죽으므로 더 낮게 잡는다.
  */
 export function maxRatio(w: number, h: number, cap = 6): number {
-  const LIMIT = isIOS || isTouch ? 7_000_000 : 16_000_000
+  // 아이폰은 캔버스 메모리 한도를 넘으면 오류 없이 빈 그림을 준다 — 넉넉히 낮춘다
+  const LIMIT = isIOS ? 5_000_000 : isTouch ? 7_000_000 : 16_000_000
   return Math.max(1, Math.min(cap, Math.floor(Math.sqrt(LIMIT / (w * h)))))
 }
 
@@ -57,7 +58,10 @@ async function waitImages(node: HTMLElement): Promise<void> {
   const urls = new Set<string>()
   node.querySelectorAll<HTMLElement>('*').forEach((el) => {
     const bg = getComputedStyle(el).backgroundImage
-    for (const m of bg.matchAll(/url\("?(.*?)"?\)/g)) urls.add(m[1])
+    // matchAll 은 옛 사파리에 없다
+    const re = /url\("?(.*?)"?\)/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(bg))) urls.add(m[1])
   })
   node.querySelectorAll('img').forEach((img) => img.src && urls.add(img.src))
   await Promise.all(
@@ -97,39 +101,102 @@ function clipCorners(src: HTMLCanvasElement, radius: number): HTMLCanvasElement 
   return c
 }
 
-const toBlob = (c: HTMLCanvasElement) =>
-  new Promise<Blob | null>((resolve) => c.toBlob((b) => resolve(b), 'image/png'))
+/** 캔버스 → PNG. 옛 사파리는 toBlob 이 없거나 null 을 준다 — 그때는 dataURL 로 */
+async function toBlob(c: HTMLCanvasElement): Promise<Blob | null> {
+  const b = await new Promise<Blob | null>((resolve) => {
+    try {
+      if (c.toBlob) c.toBlob((x) => resolve(x), 'image/png')
+      else resolve(null)
+    } catch {
+      resolve(null)
+    }
+  })
+  if (b) return b
+  try {
+    const res = await fetch(c.toDataURL('image/png'))
+    return await res.blob()
+  } catch {
+    return null
+  }
+}
 
-/** 내려받기가 막힌 곳(아이폰 일부·앱 안 브라우저)에서는 그림을 띄워 길게 눌러 저장하게 한다 */
-function showForLongPress(url: string, name: string) {
+/** 메모리 한도에 걸리면 사파리는 오류 없이 빈(투명) 그림을 준다 — 몇 군데 찍어 확인한다 */
+function isBlank(c: HTMLCanvasElement): boolean {
+  try {
+    const ctx = c.getContext('2d')
+    if (!ctx) return true
+    let seen = 0
+    for (let y = 1; y <= 4; y++)
+      for (let x = 1; x <= 4; x++) {
+        const d = ctx.getImageData(Math.floor((c.width * x) / 5), Math.floor((c.height * y) / 5), 1, 1).data
+        if (d[3] > 0) seen++
+      }
+    return seen === 0
+  } catch {
+    return false
+  }
+}
+
+/** 다 쓴 캔버스는 크기를 0 으로 — 아이폰은 이렇게 해야 메모리를 바로 돌려준다 */
+function free(c: HTMLCanvasElement | null | undefined) {
+  if (!c) return
+  c.width = 0
+  c.height = 0
+}
+
+/**
+ * 저장 창 — 그림을 크게 보여주고
+ *  · 사진을 길게 눌러 저장 (어느 폰·어느 앱 안에서든 된다)
+ *  · '사진 앱에 저장' (공유 창이 되는 폰) / '내려받기' (그 밖)
+ * 공유 창·내려받기는 이 창의 단추를 '누른 그 순간'에 연다 —
+ * 저장 그림을 만드느라 몇 초 지나면 브라우저가 누른 것으로 쳐주지 않아 막힌다.
+ */
+function showSaveSheet(blob: Blob, name: string) {
+  const url = URL.createObjectURL(blob)
+  const file = typeof File === 'function' ? new File([blob], name, { type: 'image/png' }) : null
+  const canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] }))
+
   const wrap = document.createElement('div')
   wrap.className = 'png-sheet'
-  wrap.innerHTML = `<div class="png-sheet-box"><p>사진을 길게 눌러 저장하세요</p><img alt="${name}"><button class="btn btn-primary">닫기</button></div>`
-  wrap.querySelector('img')!.src = url
+  wrap.innerHTML = `<div class="png-sheet-box">
+    <img alt="">
+    <p>사진을 길게 눌러 저장할 수도 있어요</p>
+    <div class="png-sheet-btns">
+      ${canShare ? `<button class="btn btn-primary" data-act="share">${isIOS ? '사진 앱에 저장' : '공유'}</button>` : ''}
+      ${isInApp ? '' : `<a class="btn ${canShare ? '' : 'btn-primary'}" data-act="dl">내려받기</a>`}
+      <button class="btn" data-act="close">닫기</button>
+    </div>
+  </div>`
+  const img = wrap.querySelector('img') as HTMLImageElement
+  img.src = url
+  img.alt = name
+  const a = wrap.querySelector('[data-act="dl"]') as HTMLAnchorElement | null
+  if (a) {
+    a.href = url
+    a.download = name
+  }
   const close = () => {
     wrap.remove()
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
-  wrap.querySelector('button')!.onclick = close
-  wrap.onclick = (e) => e.target === wrap && close()
+  wrap.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement
+    const act = t.closest('[data-act]')?.getAttribute('data-act')
+    if (e.target === wrap || act === 'close') close()
+    if (act === 'share' && file) {
+      navigator.share({ files: [file] }).then(close, () => {
+        /* 공유 창을 닫은 것 — 창은 그대로 두어 길게 눌러 저장할 수 있게 */
+      })
+    }
+  })
   document.body.appendChild(wrap)
 }
 
 async function download(blob: Blob, name: string) {
+  // 폰·태블릿과 앱 안 브라우저는 저장 창으로 — 기종·브라우저마다 내려받기 동작이 제각각이라
+  // 어느 기기에서든 확실히 되는 '보여주고 고르게' 방식을 쓴다.
+  if (isIOS || isInApp || isTouch) return showSaveSheet(blob, name)
   const url = URL.createObjectURL(blob)
-  if (isInApp) return showForLongPress(url, name)
-  // 아이폰은 파일 공유 창으로 넘기는 편이 사진 앱에 바로 들어가 편하다
-  if (isIOS && navigator.canShare?.({ files: [new File([blob], name, { type: 'image/png' })] })) {
-    try {
-      await navigator.share({ files: [new File([blob], name, { type: 'image/png' })] })
-      URL.revokeObjectURL(url)
-      return
-    } catch (e) {
-      // 사용자가 공유 창을 닫은 것 — 그림을 띄워 둔다
-      if ((e as Error).name === 'AbortError') return URL.revokeObjectURL(url)
-      return showForLongPress(url, name)
-    }
-  }
   const a = document.createElement('a')
   a.download = name
   a.href = url
@@ -141,7 +208,7 @@ async function download(blob: Blob, name: string) {
 
 /**
  * 캔버스를 PNG로 뽑는다 — 화면에 보이는 그대로.
- * 편집 흔적(점선, 커서, 플레이스홀더)은 data-exporting 플래그로 CSS에서 전부 꺼진다.
+ * 편집 흔적(점선, 커서)은 data-exporting 플래그로 CSS에서 전부 꺼진다.
  */
 export async function exportPng(
   node: HTMLElement,
@@ -150,8 +217,11 @@ export async function exportPng(
   /** 화면 모서리 둥글기(CSS 픽셀). 0 이면 각진 화면 */
   radius = 0,
 ): Promise<void> {
+  if (busy) return
+  busy = true
   const root = document.documentElement
   root.dataset.exporting = '1'
+  document.body.classList.add('png-busy')
 
   // 캐럿이 남아 있으면 캡처에 잡힌다
   const active = document.activeElement as HTMLElement | null
@@ -178,22 +248,33 @@ export async function exportPng(
     if (document.fonts?.ready) await document.fonts.ready
     await nextPaint()
     await waitImages(node)
-    fontEmbedCSS = await buildFontCss(node)
-    // 미리 작게 그려 둔다 — 사파리는 처음 몇 번은 사진·글꼴을 빼먹고 그린다
-    for (let i = 0; i < (isWebKit ? 2 : 1); i++) await toCanvas(node, opts(isWebKit ? ratio : 1)).catch(() => null)
+    try {
+      fontEmbedCSS = await buildFontCss(node)
+    } catch {
+      fontEmbedCSS = ''
+    }
+    // 미리 그려 둔다 — 사파리는 처음 몇 번은 사진·글꼴을 빼먹고 그린다
+    for (let i = 0; i < (isWebKit ? 2 : 1); i++) free(await toCanvas(node, opts(isWebKit ? ratio : 1)).catch(() => null))
 
     // 한도에 걸려 실패하면 배율을 낮춰 다시 찍는다
     for (const r of [...new Set([ratio, Math.min(ratio, 4), Math.min(ratio, 3), 2, 1])].filter((n) => n <= ratio)) {
+      let shot: HTMLCanvasElement | null = null
+      let canvas: HTMLCanvasElement | null = null
       try {
-        const shot = await toCanvas(node, opts(r))
+        shot = await toCanvas(node, opts(r))
+        if (isBlank(shot)) throw new Error('빈 그림')
         paintScreenFx(shot, node, r)
-        const canvas = clipCorners(shot, radius * r)
+        canvas = clipCorners(shot, radius * r)
         const blob = await toBlob(canvas)
         if (!blob || blob.size < 1000) throw new Error('빈 그림')
+        free(shot)
+        if (canvas !== shot) free(canvas)
         await download(blob, `retro_${themeId}_${stamp()}.png`)
         return
       } catch (e) {
         lastErr = e
+        free(shot)
+        if (canvas && canvas !== shot) free(canvas)
       }
     }
     throw lastErr
@@ -202,8 +283,11 @@ export async function exportPng(
     void say('저장하지 못했습니다', why ? `이유: ${why.slice(0, 120)}` : '잠시 후 다시 시도해 주세요.')
   } finally {
     delete root.dataset.exporting
+    document.body.classList.remove('png-busy')
+    busy = false
   }
 }
+let busy = false
 
 /**
  * 업로드한 이미지를 localStorage 에 들어갈 크기로 줄인다.

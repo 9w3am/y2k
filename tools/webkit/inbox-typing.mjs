@@ -53,7 +53,9 @@ for (const [name, engine, dev, opt] of [
       return {
         입력모드: document.documentElement.classList.contains('typing'),
         화면폭: Math.round(c.width),
-        글자칸보임: r.top >= 40 && r.bottom <= innerHeight,
+        화면전체보임: c.top >= 48 && c.bottom <= innerHeight + 1 && c.left >= 0 && c.right <= innerWidth + 1,
+        가로넘침: document.documentElement.scrollWidth - innerWidth,
+        커서보임: (() => { const sel = getSelection(); const c = sel.rangeCount ? sel.getRangeAt(0).getClientRects()[0] : null; return !!c && c.top >= 48 && c.bottom <= innerHeight && c.left >= 0 && c.right <= innerWidth })(),
         글자높이: Math.round(r.height),
         완료단추: !!done,
       }

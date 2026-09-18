@@ -81,7 +81,9 @@ for (const t of THEMES) {
   await ed.click()
   await page.keyboard.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A')
   await page.keyboard.type(process.env.TEXT ?? '오늘 ♥ 점검 ^^ ★')
-  await page.locator('.topbar').click({ position: { x: 5, y: 5 } })
+  // 폰 입력 모드면 '완료', 아니면 빈 곳을 눌러 초점을 뺀다
+  if (await page.locator('.typing-done').count()) await page.locator('.typing-done').click()
+  else await page.locator('.topbar').click({ position: { x: 5, y: 5 } })
   await page.waitForTimeout(600)
 
   // 화면 — 캔버스를 실제 크기로 찍는다 (확대 1배로 되돌려 둔다)
@@ -89,9 +91,10 @@ for (const t of THEMES) {
   const shotScreen = await page.locator('.canvas').screenshot()
   writeFileSync(join(out, `${DEVICE}-${t}__화면.png`), shotScreen)
 
-  const dlP = page.waitForEvent('download', { timeout: 30000 }).catch(() => null)
+  const dlP = page.waitForEvent('download', { timeout: 40000 }).catch(() => null)
   await page.getByRole('button', { name: 'PNG 저장' }).click()
-  const dl = await dlP
+  // 폰은 저장 창이 뜬다 — 창이 뜨거나 내려받기가 되거나 둘 중 먼저
+  const dl = await Promise.race([dlP, page.locator('.png-sheet img').waitFor({ timeout: 40000 }).then(() => null, () => null)])
   let saved = null
   let sheet = false
   if (dl) {
@@ -111,7 +114,7 @@ for (const t of THEMES) {
       }, src)
       saved = join(out, `${DEVICE}-${t}__저장본.png`)
       writeFileSync(saved, Buffer.from(b, 'base64'))
-      await page.locator('.png-sheet button').click()
+      await page.locator('.png-sheet [data-act="close"]').click()
     }
   }
   const dialog = await page.locator('.overlay .modal').count()
