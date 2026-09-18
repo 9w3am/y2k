@@ -21,6 +21,25 @@ function syncViewport() {
   document.documentElement.style.setProperty('--vvt', `${Math.round(top)}px`)
 }
 
+/*
+   '완료'를 누르면 위 메뉴가 되돌아오는데, 그 자리에 'PNG 저장'이 있다.
+   손가락을 떼는 순간 이어지는 click 이 그 단추로 새어 들어가 저장 창이 뜬다 —
+   완료 직후 잠깐은 click 을 삼킨다.
+*/
+let swallowUntil = 0
+if (typeof document !== 'undefined') {
+  document.addEventListener(
+    'click',
+    (e) => {
+      if (Date.now() < swallowUntil) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    },
+    true,
+  )
+}
+
 export function useTyping(): [boolean, () => void] {
   const [typing, setTyping] = useState(false)
 
@@ -58,6 +77,7 @@ export function useTyping(): [boolean, () => void] {
   }, [typing])
 
   const done = () => {
+    swallowUntil = Date.now() + 600
     ;(document.activeElement as HTMLElement | null)?.blur?.()
     setTyping(false)
   }

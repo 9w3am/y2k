@@ -79,7 +79,6 @@ export function Stage({
             e.preventDefault()
             onDone?.()
           }}
-          onClick={onDone}
         >
           완료
         </button>
