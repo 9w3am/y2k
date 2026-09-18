@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: column;
   background: var(--field);
-  font-family: 'Malgun Gothic', Dotum, Gulim, sans-serif;
+  font-family: 'Nanum Gothic', sans-serif;
   color: var(--ink);
 }
 
@@ -164,7 +164,7 @@
 .t-smsview.f-pixel .body,
 .t-smsview.f-pixel .title,
 .t-smsview.f-pixel .keys {
-  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  font-family: 'Galmuri11', 'Nanum Gothic', sans-serif;
   -webkit-font-smoothing: none;
   text-rendering: geometricPrecision;
   text-shadow: none;

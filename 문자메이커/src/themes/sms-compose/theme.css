@@ -24,7 +24,7 @@
   flex-direction: column;
   background: var(--shell);
   color: var(--line);
-  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  font-family: 'Galmuri11', 'Nanum Gothic', sans-serif;
   -webkit-font-smoothing: none;
   text-rendering: geometricPrecision;
 }

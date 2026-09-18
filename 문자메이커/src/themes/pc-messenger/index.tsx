@@ -48,8 +48,10 @@ const CHARS = [
 function MailIcon() {
   return (
     <svg width="11" height="9" viewBox="0 0 11 9" shapeRendering="crispEdges" aria-hidden="true">
-      <path d="M0 0h11v9H0z" fill="#f6f8fb" stroke="#5a6b7d" strokeWidth="0.7" />
-      <path d="M0 0l5.5 5L11 0" fill="none" stroke="#5a6b7d" strokeWidth="0.7" />
+      {/* 선(stroke)은 기기마다 굵기가 달라져 칸을 칠해 그린다 */}
+      <path d="M0 0h11v9H0z" fill="#5a6b7d" />
+      <path d="M1 1h9v7H1z" fill="#f6f8fb" />
+      <path d="M1 1h1v1h-1zM9 1h1v1h-1zM2 2h1v1h-1zM8 2h1v1h-1zM3 3h1v1h-1zM7 3h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM5 5h1v1h-1z" fill="#5a6b7d" />
     </svg>
   )
 }

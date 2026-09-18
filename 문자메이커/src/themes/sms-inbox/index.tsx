@@ -126,7 +126,7 @@ export function Swatch() {
         gridTemplateRows: '8px 11px 1fr 10px',
         background: '#eef4f8',
         border: '1px solid rgba(0,0,0,.35)',
-        fontFamily: 'Galmuri11, sans-serif',
+        fontFamily: "'Galmuri11', 'Nanum Gothic', sans-serif",
       }}
     >
       <span style={{ background: '#0f2b44' }} />

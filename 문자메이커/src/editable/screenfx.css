@@ -26,7 +26,7 @@
     rgba(0, 255, 0, 0.055) 1px 2px,
     rgba(0, 60, 255, 0.055) 2px 3px
   );
-  mix-blend-mode: multiply;
+  /* 겹침 계산(mix-blend-mode)은 기기마다 달라 쓰지 않는다 — 그냥 얹는다 */
 }
 .fx-grain-h {
   background-image: repeating-linear-gradient(
@@ -38,10 +38,10 @@
 
 /* 색 틀어짐 — 사진에 끼는 색조 */
 .fx-tint-mul {
-  mix-blend-mode: multiply;
+  /* 겹침 계산(mix-blend-mode)은 기기마다 달라 쓰지 않는다 — 그냥 얹는다 */
 }
 .fx-tint-scr {
-  mix-blend-mode: screen;
+  /* 겹침 계산(mix-blend-mode)은 기기마다 달라 쓰지 않는다 — 그냥 얹는다 */
 }
 
 /* 유리 반사 */
@@ -55,7 +55,7 @@
     rgba(255, 255, 255, 0.06) 82%,
     rgba(255, 255, 255, 0.2) 100%
   );
-  mix-blend-mode: screen;
+  /* 겹침 계산(mix-blend-mode)은 기기마다 달라 쓰지 않는다 — 그냥 얹는다 */
 }
 
 /* 가장자리 그늘 — 액정 테두리에 눌린 자국 */

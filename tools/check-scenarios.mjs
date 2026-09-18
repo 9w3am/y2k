@@ -4,6 +4,7 @@
    가입·로그인은 누르지 않는다 (빈칸 검사까지만).
 */
 import { join } from 'node:path'
+import { writeFileSync } from 'node:fs'
 
 const ILOG_PAGES = ['', 'home', 'profile', 'diary', 'photo', 'board', 'paper', 'guest', 'jjak', 'shop', 'setting']
 const INBOX_THEMES = ['sms-write', 'sms-view', 'sms-compose', 'sms-attach', 'sms-inbox', 'pc-messenger']
@@ -33,6 +34,61 @@ async function saveAndMatch(api, selector, label, wait = 20000) {
 }
 
 export const SCENARIOS = {
+  /**
+   * 수신함 저장 전수 검사 — 테마마다 사진 깔고, 글자 바꾸고, 저장본을 화면과 나란히.
+   * INBOX_VARIANT=photo(기본) | square(각진 화면) | nofx(효과 끔) | dim(사진+어둡게)
+   */
+  async inboxfull(api, step) {
+    const S = api.INBOX
+    // 폰으로 찍은 사진처럼 큰 JPEG 한 장을 만들어 올린다 (하늘·노을·건물·잔무늬)
+    await api.viewport(800, 600)
+    await api.go(`${S}#/sms-write`, 800)
+    const b64 = await api.eval(`(() => {
+      const c = document.createElement('canvas'); c.width = 3000; c.height = 2000; const x = c.getContext('2d')
+      const g = x.createLinearGradient(0, 0, 0, 2000); g.addColorStop(0, '#3b6fd6'); g.addColorStop(0.55, '#f7a36b'); g.addColorStop(1, '#2b1d3a')
+      x.fillStyle = g; x.fillRect(0, 0, 3000, 2000)
+      x.fillStyle = '#ffe9a8'; x.beginPath(); x.arc(2200, 900, 180, 0, 7); x.fill()
+      for (let i = 0; i < 40; i++) { x.fillStyle = 'hsl(' + (200 + i * 3) + ',30%,' + (10 + (i % 5) * 4) + '%)'; x.fillRect(i * 75, 1300 - (i * 37 % 400), 70, 800) }
+      const d = x.getImageData(0, 0, 3000, 2000); for (let i = 0; i < d.data.length; i += 4) { const n = (Math.random() - 0.5) * 18; d.data[i] += n; d.data[i + 1] += n; d.data[i + 2] += n } x.putImageData(d, 0, 0)
+      return c.toDataURL('image/jpeg', 0.9).split(',')[1]
+    })()`)
+    const photo = join(api.out, 'test-photo.jpg')
+    writeFileSync(photo, Buffer.from(b64, 'base64'))
+    api.setUpload(photo)
+    const variant = process.env.INBOX_VARIANT ?? 'photo'
+    const themes = (process.env.THEMES ?? INBOX_THEMES.join(',')).split(',')
+    for (const [tag, w, h, mobile] of [
+      ['pc', 1440, 900, false],
+      ['m', 390, 844, true],
+    ]) {
+      await api.viewport(w, h, mobile)
+      for (const t of themes) {
+        await step(`${tag} ${t} ${variant}`, async () => {
+          await api.go(`${S}#/${t}`, 1200)
+          await api.eval(`localStorage.clear(); localStorage.setItem('retro:seen','1'); 1`)
+          await api.reload(2000)
+          const extra = {}
+          if (variant !== 'nofx' && variant !== 'square') {
+            await api.clickSel('.drop', { wait: 3500 })
+            extra.사진칸 = await api.eval(`getComputedStyle(document.querySelector('.drop-thumb')).backgroundImage.slice(0, 22)`)
+          }
+          if (variant === 'dim') {
+            await api.eval(`(() => { const s = [...document.querySelectorAll('.field')].find((f) => f.innerText.includes('배경 어둡기'))?.querySelector('input[type=range]'); if (!s) return 0; const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(s, '45'); s.dispatchEvent(new Event('input', { bubbles: true })); s.dispatchEvent(new Event('change', { bubbles: true })); return 1 })()`)
+          }
+          if (variant === 'square') await api.click('각지게', { exact: true, wait: 600 })
+          if (variant === 'nofx') {
+            for (const label of ['서브픽셀 결', '유리 반사', '가장자리 그늘'])
+              await api.eval(`(() => { const f = [...document.querySelectorAll('.field')].find((x) => x.innerText.includes(${JSON.stringify(label)})); f?.querySelector('.sw')?.click(); return 1 })()`)
+          }
+          await api.type('.canvas .ed:not(.ed-inline)', '오늘 ♥ 점검 ^^ ★', { index: 0 })
+          await api.sleep(600)
+          const m = await saveAndMatch(api, '.canvas', `full-${variant}-${tag}-${t}`, 20000)
+          return { ...extra, ...m }
+        })
+      }
+    }
+  },
+
   /** 위 메뉴줄 — 계정 단추에 긴 아이디(20자)를 넣어도 한 줄에서 안 깨지는지 */
   async gnb(api, step) {
     for (const [tag, w, h, mobile] of [

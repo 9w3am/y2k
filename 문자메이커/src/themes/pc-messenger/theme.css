@@ -23,7 +23,7 @@
   border: 3px solid var(--frame);
   border-top: 0;
   /* 그 시절 윈도우 한글은 비트맵이었다 — 픽셀 글꼴로 그 결을 맞춘다 */
-  font-family: 'Galmuri11', Gulim, Dotum, 'Malgun Gothic', sans-serif;
+  font-family: 'Galmuri11', 'Nanum Gothic', sans-serif;
   font-size: 11px;
   -webkit-font-smoothing: none;
   text-rendering: geometricPrecision;

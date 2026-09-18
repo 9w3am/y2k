@@ -117,3 +117,36 @@
     height: 38px;
   }
 }
+
+/* ══ 내려받기가 막힌 곳 — 그림을 띄워 길게 눌러 저장 ══ */
+.png-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(20, 28, 36, 0.6);
+}
+.png-sheet-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 14px;
+  background: #fff;
+  border-radius: 14px;
+}
+.png-sheet-box p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.png-sheet-box img {
+  max-width: min(420px, 100%);
+  max-height: 70vh;
+  border-radius: 8px;
+  -webkit-touch-callout: default;
+}

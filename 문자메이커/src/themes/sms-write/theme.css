@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   background: linear-gradient(160deg, var(--lcd-1), var(--lcd-2) 58%, var(--lcd-3));
-  font-family: 'Malgun Gothic', Dotum, Gulim, sans-serif;
+  font-family: 'Nanum Gothic', sans-serif;
   color: var(--ink);
 }
 
@@ -174,6 +174,7 @@
   color: var(--ink);
 }
 .t-smswrite .stamp {
+  white-space: nowrap;
   margin-top: 44px;
   align-self: flex-end;
   font-size: 19px;
@@ -186,7 +187,7 @@
 .t-smswrite.f-pixel .stamp,
 .t-smswrite.f-pixel .bar,
 .t-smswrite.f-pixel .sk {
-  font-family: 'Galmuri11', 'Malgun Gothic', Dotum, sans-serif;
+  font-family: 'Galmuri11', 'Nanum Gothic', sans-serif;
   -webkit-font-smoothing: none;
   text-rendering: geometricPrecision;
 }
@@ -212,6 +213,7 @@
   border-radius: 14px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-    0 1px 2px rgba(0, 0, 0, 0.12);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+  /* 바깥 그림자는 아이폰 저장본에서 네모로 번져 뺐다 — 아래 테두리를 조금 더 진하게 */
+  border-bottom-color: rgba(0, 0, 0, 0.5);
 }

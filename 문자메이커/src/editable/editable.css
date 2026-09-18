@@ -109,9 +109,7 @@
 [data-exporting] .edimg::after {
   outline: none !important;
 }
-[data-exporting] .ed:empty::before {
-  content: '' !important;
-}
+/* 빈 칸의 흐린 안내 글자는 화면에 보이는 그대로 저장본에도 남긴다 */
 [data-exporting] .edimg-hint,
 [data-exporting] .no-export {
   display: none !important;
