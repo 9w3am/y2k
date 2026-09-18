@@ -14,7 +14,12 @@ const fontCache = new Map<string, string>()
 async function toDataUrl(url: string): Promise<string> {
   const hit = fontCache.get(url)
   if (hit) return hit
-  const res = await fetch(url)
+  // 서버가 잠깐 응답을 안 줘도 저장이 멈추지 않게 — 8초 넘으면 그 조각은 건너뛴다
+  const res = (await Promise.race([
+    fetch(url),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+  ])) as Response
+  if (!res.ok) throw new Error(String(res.status))
   const blob = await res.blob()
   const data = await new Promise<string>((resolve, reject) => {
     const fr = new FileReader()

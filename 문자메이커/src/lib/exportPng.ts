@@ -249,19 +249,19 @@ export async function exportPng(
     await nextPaint()
     await waitImages(node)
     try {
-      fontEmbedCSS = await buildFontCss(node)
+      fontEmbedCSS = await within(buildFontCss(node), 20000)
     } catch {
       fontEmbedCSS = ''
     }
     // 미리 그려 둔다 — 사파리는 처음 몇 번은 사진·글꼴을 빼먹고 그린다
-    for (let i = 0; i < (isWebKit ? 2 : 1); i++) free(await toCanvas(node, opts(isWebKit ? ratio : 1)).catch(() => null))
+    for (let i = 0; i < (isWebKit ? 2 : 1); i++) free(await within(toCanvas(node, opts(isWebKit ? ratio : 1)), 30000).catch(() => null))
 
     // 한도에 걸려 실패하면 배율을 낮춰 다시 찍는다
     for (const r of [...new Set([ratio, Math.min(ratio, 4), Math.min(ratio, 3), 2, 1])].filter((n) => n <= ratio)) {
       let shot: HTMLCanvasElement | null = null
       let canvas: HTMLCanvasElement | null = null
       try {
-        shot = await toCanvas(node, opts(r))
+        shot = await within(toCanvas(node, opts(r)), 40000)
         if (isBlank(shot)) throw new Error('빈 그림')
         paintScreenFx(shot, node, r)
         canvas = clipCorners(shot, radius * r)
@@ -288,6 +288,11 @@ export async function exportPng(
   }
 }
 let busy = false
+
+/** 그리다 멈춘 채 끝나지 않는 일이 없게 — 시간 안에 못 끝내면 실패로 치고 다음 방법으로 */
+function within<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([p, new Promise<T>((_, reject) => setTimeout(() => reject(new Error('시간 초과')), ms))])
+}
 
 /**
  * 업로드한 이미지를 localStorage 에 들어갈 크기로 줄인다.
