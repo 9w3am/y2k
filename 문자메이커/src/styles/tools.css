@@ -150,3 +150,58 @@
   border-radius: 8px;
   -webkit-touch-callout: default;
 }
+
+/* ══ 폰에서 글자 입력 중 — 키보드 위 남은 칸 전체를 화면에 ══
+   위 메뉴·조작 칸은 잠깐 치우고, 화면은 폭에 맞춰 크게.
+   키보드가 가린 만큼(--vvh)만 쓰고, 넘치는 부분은 칸 안에서 밀어 본다. */
+html.typing,
+html.typing body {
+  overflow: hidden;
+}
+html.typing .stage {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--vvt, 0px);
+  height: var(--vvh, 100dvh);
+  z-index: 40;
+  display: block;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 52px 8px 40vh;
+  -webkit-overflow-scrolling: touch;
+}
+html.typing .stage-inner {
+  margin: 0 auto;
+}
+html.typing .topbar,
+html.typing .panel {
+  visibility: hidden;
+}
+/* 위 띠 — 글자가 밀려 올라가도 완료 단추 밑으로 숨지 않게 띠째 가린다 */
+.typing-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--vvt, 0px);
+  z-index: 41;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--ui-line-2);
+  backdrop-filter: blur(6px);
+}
+.typing-done {
+  height: 34px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ui-accent-ink, #fff);
+  background: linear-gradient(180deg, var(--ui-accent-2), var(--ui-accent));
+  border: 1px solid var(--ui-accent);
+  border-radius: 999px;
+  box-shadow: 0 6px 16px -8px rgba(39, 51, 61, 0.45);
+}

@@ -14,7 +14,12 @@ export function Stage({
   children,
   hint,
   tools,
+  typing = false,
+  onDone,
 }: {
+  /** 폰에서 글자를 고치는 중 — 폭에 맞춰 크게, 넘치면 칸 안에서 내린다 */
+  typing?: boolean
+  onDone?: () => void
   w: number
   h: number
   zoom: number
@@ -40,14 +45,27 @@ export function Stage({
       const narrow = el.clientWidth < 620
       const padX = narrow ? 18 : 56
       const padY = narrow ? 78 : 56
-      const s = Math.min((el.clientWidth - padX) / w, (el.clientHeight - padY) / h)
+      // 입력 중에는 높이는 따지지 않는다 — 키보드 때문에 높이로 맞추면 글자가 콩알만 해진다
+      let s = Math.min((el.clientWidth - padX) / w, (el.clientHeight - padY) / h)
+      if (typing) {
+        // 폭에 맞추되, 고치는 글자가 폰에서 18px 보다 작아 보이지 않게 — 넓은 화면(PC 발송기)은 옆으로 밀어 본다
+        s = (el.clientWidth - 16) / w
+        const a = document.activeElement as HTMLElement | null
+        const f = a?.closest(".canvas") ? parseFloat(getComputedStyle(a).fontSize) || 0 : 0
+        if (f > 0) s = Math.max(s, Math.min(3, 18 / f))
+      }
       setFit(Math.max(0.12, Math.min(2.2, s)))
     }
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(el)
-    return () => ro.disconnect()
-  }, [w, h])
+    // 다른 글자 칸으로 옮기면 그 글자 크기에 맞춰 다시 잰다
+    document.addEventListener("focusin", measure)
+    return () => {
+      ro.disconnect()
+      document.removeEventListener("focusin", measure)
+    }
+  }, [w, h, typing])
 
   const scale = fit * zoom
 
@@ -60,8 +78,23 @@ export function Stage({
           </div>
         </div>
       </div>
-      {tools}
-      {hint && <div className="stage-hint">{hint}</div>}
+      {!typing && tools}
+      {!typing && hint && <div className="stage-hint">{hint}</div>}
+      {typing && (
+        <div className="typing-bar">
+        <button
+          className="typing-done"
+          // 누르는 순간 바로 끝낸다 — 사파리는 누른 뒤 click 이 안 오는 때가 있다
+          onPointerDown={(e) => {
+            e.preventDefault()
+            onDone?.()
+          }}
+          onClick={onDone}
+        >
+          완료
+        </button>
+        </div>
+      )}
     </div>
   )
 }

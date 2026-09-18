@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Stage } from './ui/Stage'
+import { useTyping } from './ui/typing'
 import { Notice } from './ui/Notice'
 import { ThemePicker } from './ui/ThemePicker'
 import { byId, themes } from './themes/registry'
@@ -15,6 +16,7 @@ export function App() {
 
   const canvasRef = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(1)
+  const [typing, doneTyping] = useTyping()
   const [picker, setPicker] = useState(false)
   const [notice, setNotice] = useState(() => localStorage.getItem('retro:seen') !== '1')
 
@@ -131,7 +133,9 @@ export function App() {
       <Stage
         w={theme.canvas.w}
         h={theme.canvas.h}
-        zoom={zoom}
+        zoom={typing ? 1 : zoom}
+        typing={typing}
+        onDone={doneTyping}
         round={round}
         canvasRef={canvasRef}
         hint="화면 속 글자를 눌러 바로 고치세요 · 보이는 그대로 저장됩니다"

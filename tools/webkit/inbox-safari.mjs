@@ -26,6 +26,7 @@ page.on('console', (m) => m.type() === 'error' && errors.push(`console: ${m.text
 
 // 폰 사진 같은 큰 JPEG
 await page.goto(BASE + '#/sms-write')
+await page.waitForTimeout(3000)
 const photoPath = join(out, 'photo.jpg')
 if (PHOTO) {
   const b64 = await page.evaluate(() => {
@@ -56,6 +57,8 @@ const report = []
 for (const t of THEMES) {
   errors.length = 0
   await page.goto(BASE + '#/' + t)
+  await page.waitForLoadState('load')
+  await page.waitForTimeout(1500)
   await page.evaluate(() => {
     localStorage.clear()
     localStorage.setItem('retro:seen', '1')
